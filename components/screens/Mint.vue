@@ -95,7 +95,7 @@
           <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
             <a @click="selectPoolToken(poolToken)">
               <div
-                class="h-40 w-40 border border-gray-300 dark:border-gray-700 p-8 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
+                class="h-40 w-1/2 border border-gray-300 dark:border-gray-700 p-8 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
               >
                 <img src="~/assets/icons/crypto/dai.svg" width="40" alt="Dai" />
                 <p class="font-medium text-center pt-2 dark:text-white">
@@ -129,7 +129,7 @@ export default {
       selectedMintToken: '',
       supportedPoolTokens: [
         {
-          name: 'ETH-DAI',
+          name: 'UNI-ETH/DAI',
           exchange: 'Uniswap',
           address: '0x6b175474e89094c44da98b954eedeac495271d0f',
           currencyOneLogo:

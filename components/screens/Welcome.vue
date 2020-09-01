@@ -7,11 +7,11 @@
     <div class="flex flex-col space-y-4 mt-8 w-full px-2 md:px-8">
       <nuxt-link v-for="(data, i) in pages" :key="i" :to="data.route">
         <div
-          class="p-4 border border-gray-200 dark:border-gray-800 rounded-lg w-full flex space-x-4"
+          class="p-4 border border-gray-200 dark:border-gray-800 rounded-lg w-full flex space-x-4 gap-4"
         >
           <img
             :src="require(`~/assets/icons/${data.icon}.svg`)"
-            width="32"
+            width="64"
             :alt="data.title"
           />
           <div>
