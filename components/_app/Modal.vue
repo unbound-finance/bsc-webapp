@@ -49,7 +49,7 @@ export default {
 }
 
 .modal-container {
-  width: 300px;
+  width: 400px;
   overflow-x: auto;
   transition: all 0.3s ease;
 }

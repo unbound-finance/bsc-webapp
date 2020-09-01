@@ -14,7 +14,6 @@
           <i class="far fa-question-circle text-gray-600 text-lg"></i>
         </button>
       </div>
-
       <div
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
@@ -26,12 +25,23 @@
               type="number"
               placeholder="0.0"
             />
+
             <button
+              v-if="selectedPoolToken"
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
-              <span>Select Token</span>
+              <span>{{ selectedPoolToken.name }}</span>
+              <i class="fas fa-chevron-down pt-1"></i>
+            </button>
+            <button
+              v-else
+              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
+              type="button"
+              @click="ui.showDialog = !ui.showDialog"
+            >
+              <span>Select Pool Token</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
           </div>
@@ -54,10 +64,9 @@
             <button
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
-              @click="ui.showDialog = !ui.showDialog"
             >
-              <span>Select Token</span>
-              <i class="fas fa-chevron-down pt-1"></i>
+              <span>UDAI</span>
+              <!-- <i class="fas fa-chevron-down pt-1"></i> -->
             </button>
           </div>
         </form>
@@ -73,7 +82,7 @@
       <template>
         <div class="flex flex-col space-y-4">
           <div class="flex justify-between items-center">
-            <p class="font-medium dark:text-white">Select Token</p>
+            <p class="font-medium dark:text-white">Select Pool Token</p>
             <button
               type="button"
               class="focus:outline-none"
@@ -83,11 +92,23 @@
             </button>
           </div>
 
-          <div
-            class="h-24 w-24 border border-gray-300 dark:border-gray-700 p-4 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
-          >
-            <img src="~/assets/icons/crypto/dai.svg" width="40" alt="Dai" />
-            <p class="font-medium text-center pt-2 dark:text-white">Dai</p>
+          <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
+            <a @click="selectPoolToken(poolToken)">
+              <div
+                class="h-40 w-40 border border-gray-300 dark:border-gray-700 p-8 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
+              >
+                <img src="~/assets/icons/crypto/dai.svg" width="40" alt="Dai" />
+                <p class="font-medium text-center pt-2 dark:text-white">
+                  {{ poolToken.name }}
+                </p>
+                <p class="text-sm text-center dark:text-white">
+                  Balance: {{ poolToken.Balance }}
+                </p>
+                <p class="text-sm text-center dark:text-white">
+                  {{ poolToken.exchange }}
+                </p>
+              </div>
+            </a>
           </div>
         </div>
       </template>
@@ -104,7 +125,28 @@ export default {
       ui: {
         showDialog: false,
       },
+      selectedPoolToken: '',
+      selectedMintToken: '',
+      supportedPoolTokens: [
+        {
+          name: 'ETH-DAI',
+          exchange: 'Uniswap',
+          address: '0x6b175474e89094c44da98b954eedeac495271d0f',
+          currencyOneLogo:
+            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+          currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+        },
+      ],
     }
+  },
+
+  methods: {
+    selectPoolToken(poolToken) {
+      this.selectedPoolToken = poolToken
+      this.ui.showDialog = false
+    },
+    getPoolTokensOfUser() {},
+    getBalanceOfToken() {},
   },
 }
 </script>
