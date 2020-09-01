@@ -25,6 +25,11 @@ export default {
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    script: [
+      {
+        src: 'https://kit.fontawesome.com/8c55e9bfce.js',
+      },
+    ],
   },
   /*
    ** Global CSS
