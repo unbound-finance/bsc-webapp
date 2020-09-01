@@ -1,55 +1,38 @@
 <template>
-  <div>
-    <Nuxt />
+  <div class="w-full min-h-screen">
+    <div class="max-w-6xl mx-auto">
+      <Navbar />
+
+      <div class="w-full h-full flex justify-center px-4">
+        <div
+          class="w-full md:w-2/5 bg-white dark:bg-gray-800 rounded-lg mt-4 md:mt-8 p-4"
+        >
+          <nuxt />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
-<style>
-html {
-  font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, 'Helvetica Neue', Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
+<script>
+import Navbar from '@/components/Navbar'
+export default {
+  components: { Navbar },
+}
+</script>
+
+<style lang="scss">
+.light-mode {
+  $g-color-1: #ffe7d6;
+  $g-color-2: #f2f7ff;
+
+  background: radial-gradient($g-color-1, $g-color-2);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-}
+.dark-mode {
+  $g-color-1: #2c313a;
+  $g-color-2: #2b3546;
 
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
+  background: radial-gradient($g-color-1, $g-color-2);
 }
 </style>
