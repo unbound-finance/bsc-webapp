@@ -171,7 +171,11 @@ export default {
         this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = (LPTValueInDai * 50) / 100
-      return loanAmount - (loanAmount * 0.25) / 100
+      const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
+      const formattedAmount =
+        Math.round((loanAmountWithFees + Number.EPSILON) * 100) / 100
+
+      return formattedAmount
     },
   },
 
@@ -193,7 +197,9 @@ export default {
       const userAddress = signer.getAddress()
       const getBalance = await contract.balanceOf(userAddress)
       const balance = ethers.utils.formatEther(getBalance.toString())
-      this.balance = balance
+      const formattedBalance =
+        Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
+      this.balance = formattedBalance
     },
 
     async calculateLoanRatio() {
