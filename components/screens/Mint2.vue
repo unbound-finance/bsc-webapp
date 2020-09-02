@@ -21,7 +21,7 @@
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="lpTokenAmount"
+              v-model="poolTokenInput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -123,16 +123,23 @@
 <script>
 import Modal from '@/components/_app/Modal'
 import { ethers } from 'ethers'
-// import Web3 from 'web3'
+import Web3 from 'web3'
 
 import ERC20ABI from '~/configs/abi/ERC20'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import config from '~/configs/addresses'
 
-// import signature from '~/mixins/signature'
+import signature from '~/mixins/signature'
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+const config = {
+  tdai: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
+  teth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
+  lpToken: '0x1443398Aa8E16E0F289B12ddCf666eeC4215bF46',
+  uDai: '0x88b2d1c22f5bace62dccd488c07872c6f9c486f5',
+  llc: '0x769fd7De5d4E6e8fc22800Acc3Ad5236B5847332',
+}
 
 export default {
   components: { Modal },
@@ -144,7 +151,7 @@ export default {
       selectedPoolToken: '',
       selectedMintToken: '',
       balance: '--.--',
-      lpTokenAmount: '1',
+      poolTokenInput: '1',
       loanRatio: {
         totalDai: '',
         totalLPTokens: '',
@@ -167,7 +174,7 @@ export default {
     udaiOutput() {
       // Liquidity pool token value in dai
       const LPTValueInDai =
-        (this.loanRatio.totalDai * this.lpTokenAmount) /
+        (this.loanRatio.totalDai * this.poolTokenInput) /
         this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = (LPTValueInDai * 50) / 100
@@ -186,7 +193,7 @@ export default {
       this.selectedPoolToken = poolToken
       this.ui.showDialog = false
     },
-
+    async getPoolTokensOfUser() {},
     async getBalanceOfToken(tokenAddress) {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
@@ -195,7 +202,6 @@ export default {
       const balance = ethers.utils.formatEther(getBalance.toString())
       this.balance = balance
     },
-
     async calculateLoanRatio() {
       const signer = provider.getSigner()
       const uniswapLptAddress = config.lpToken
@@ -212,33 +218,100 @@ export default {
       this.loanRatio.totalLPTokens = totalLPTokens.toString()
     },
 
-    async approve(tokenAddress) {
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        config.lpToken,
-        ERC20ABI,
-        signer
+    async mint() {
+      const mmSigner = provider.getSigner()
+      const nonce = await signature.methods.getNonce(config.llc)
+      const sig = await signature.methods.getEIP712Signature(
+        '0x464499A3D0a578448f4F4B6e223A97497cFDB8d6',
+        nonce.toString()
+      )
+      console.log(sig)
+
+      const web3 = new Web3(window.ethereum)
+      const signer = await web3.eth.getAccounts()
+
+      web3.currentProvider.sendAsync(
+        {
+          method: 'eth_signTypedData_v3',
+          params: [signer[0], sig],
+          from: signer[0],
+        },
+        async (err, signature) => {
+          if (err || signature.error) {
+            return console.error(signature)
+          }
+          const signed = signature.result
+
+          const splitSig = ethers.utils.splitSignature(signed)
+
+          console.log(splitSig, mmSigner, UnboundLLCABI)
+
+          const contract = await new ethers.Contract(
+            config.llc,
+            UnboundLLCABI,
+            mmSigner
+          )
+
+          const LPTAmt = '100'
+          const tokenNum = '0'
+          const extraTime = '1599563554'
+
+          console.log(LPTAmt, tokenNum, extraTime, contract)
+
+          console.log(window.ethereum)
+
+          try {
+            const mintUDai = await contract.lockLPT(
+              LPTAmt,
+              tokenNum,
+              extraTime,
+              splitSig.v,
+              splitSig.r,
+              splitSig.s
+            )
+            console.log(mintUDai)
+          } catch (error) {
+            console.log(error)
+          }
+        }
       )
 
-      const totalSupply = contract.totalSupply()
-      const approved = await contract.approve(config.llc, totalSupply)
-      console.log(approved)
-    },
+      // const signedData = await signer.signMessage(sig)
+      // console.log(signedData)
+      // const splitSig = ethers.utils.splitSignature(signedData)
 
-    async mint(tokenAddress) {
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        config.llc,
-        UnboundLLCABI,
-        signer
-      )
-      const LPTAmount = ethers.utils.parseEther(this.lpTokenAmount)
-      try {
-        const approved = await contract.lockLPT1(LPTAmount, '0')
-        console.log(approved)
-      } catch (error) {
-        console.log(error)
-      }
+      // const contract = await new ethers.Contract(
+      //   '0x62Aa6b3f266f38bf4774c503b022fD1709CAd4F3',
+      //   UnboundLLCABI,
+      //   signer
+      // )
+
+      // const LPTAmt = 1
+      // const tokenNum = 0
+      // const extraTime = 1599563554
+
+      // console.log(LPTAmt, tokenNum, extraTime, contract)
+
+      // console.log(window.ethereum)
+
+      // try {
+      //   provider.send({
+      //     method: 'eth_signTypedData_v3',
+      //     params: [signer, sig],
+      //     from: signer,
+      //   })
+
+      //   // const mintUDai = await contract.lockLPT(
+      //   //   LPTAmt,
+      //   //   tokenNum,
+      //   //   extraTime,
+      //   //   splitSig.v,
+      //   //   splitSig.r,
+      //   //   splitSig.s
+      //   // )
+      // } catch (error) {
+      //   console.log(error)
+      // }
     },
   },
 }
