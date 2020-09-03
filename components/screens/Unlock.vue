@@ -174,7 +174,7 @@ export default {
       selectedMintToken: '',
       balance: '--.--',
       txLink: '',
-      burnTokenAmount: '1',
+      burnTokenAmount: '',
       loanRatio: {
         totalDai: '',
         totalLPTokens: '',
@@ -195,15 +195,7 @@ export default {
 
   computed: {
     udaiOutput() {
-      // Liquidity pool token value in dai
-      const LPTValueInDai =
-        (this.loanRatio.totalDai * 1) / this.loanRatio.totalLPTokens
-      // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
-      const loanAmount = (LPTValueInDai * 50) / 100
-      const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      const ratio =
-        Math.round((loanAmountWithFees + Number.EPSILON) * 100) / 100
-
+      const ratio = this.getRatio()
       return this.burnTokenAmount / ratio
     },
   },
@@ -247,6 +239,18 @@ export default {
       this.loanRatio.totalLPTokens = totalLPTokens.toString()
     },
 
+    getRatio() {
+      // Liquidity pool token value in dai
+      const LPTValueInDai =
+        (this.loanRatio.totalDai * 1) / this.loanRatio.totalLPTokens
+      // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
+      const loanAmount = (LPTValueInDai * 50) / 100
+      const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
+      const ratio =
+        Math.round((loanAmountWithFees + Number.EPSILON) * 100) / 100
+      return ratio
+    },
+
     async approve(tokenAddress) {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
@@ -267,9 +271,11 @@ export default {
         UnboundLLCABI,
         signer
       )
-      const LPTAmount = ethers.utils.parseEther(this.burnTokenAmount)
+      const ratio = this.getRatio()
+      const LPTAmount = (this.burnTokenAmount / ratio).toString()
+      const rawLPTAmount = ethers.utils.parseEther(LPTAmount)
       try {
-        const approved = await contract.unlockLPT(LPTAmount, '0')
+        const approved = await contract.unlockLPT(rawLPTAmount, '0')
         this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
       } catch (error) {
         this.$toasted.show('Transaction Rejected', {
