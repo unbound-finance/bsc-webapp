@@ -99,7 +99,7 @@
 
       <button
         class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
-        @click="mint"
+        @click="burn"
       >
         Unlock
       </button>
@@ -197,15 +197,14 @@ export default {
     udaiOutput() {
       // Liquidity pool token value in dai
       const LPTValueInDai =
-        (this.loanRatio.totalDai * this.burnTokenAmount) /
-        this.loanRatio.totalLPTokens
+        (this.loanRatio.totalDai * 1) / this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = (LPTValueInDai * 50) / 100
       const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      const formattedAmount =
+      const ratio =
         Math.round((loanAmountWithFees + Number.EPSILON) * 100) / 100
 
-      return formattedAmount
+      return this.burnTokenAmount / ratio
     },
   },
 
@@ -261,7 +260,7 @@ export default {
       console.log(approved)
     },
 
-    async mint(tokenAddress) {
+    async burn(tokenAddress) {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
         config.llc,
@@ -276,7 +275,7 @@ export default {
         this.$toasted.show('Transaction Rejected', {
           theme: 'bubble',
           position: 'top-center',
-          duration: 5000,
+          duration: 3000,
         })
         console.log(error)
       }
