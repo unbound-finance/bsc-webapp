@@ -14,58 +14,19 @@
           <i class="far fa-question-circle text-gray-600 text-lg"></i>
         </button>
       </div>
-      <p
-        v-if="txLink"
-        class="p-2 border-1 bg-primary-400 rounded-full px-8 bg-opacity-25 text-light-primary dark:text-white text-gray-900"
-        style="background: #06d6a0"
-      >
-        Transaction Success.
-        <a :href="txLink" target="_blank"> View On Etherscan </a>
-      </p>
-
-      <p
-        v-if="!selectedPoolToken"
-        class="p-2 border-1 rounded-full px-8 bg-opacity-25 text-light-primary dark:text-white text-gray-600"
-      >
-        Please select pool token you want to stake
-      </p>
-
       <div
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
-        <div class="flex items-center justify-between">
-          <p class="text-sm text-gray-700 font-medium">Supply</p>
-          <p v-if="selectedPoolToken" class="text-gray-600 text-sm">
-            Balance: {{ balance }}
-          </p>
-        </div>
+        <p class="text-sm text-gray-700 font-medium">Supply</p>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="lpTokenAmount"
+              v-model="poolTokenInput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
-              :disabled="!selectedPoolToken"
             />
 
-            <button
-              v-if="!isTokenApproved && selectedPoolToken"
-              type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-              @click="approve"
-            >
-              Approve
-            </button>
-
-            <button
-              v-else-if="isTokenApproved && selectedPoolToken"
-              type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-              @click="setInputMax"
-            >
-              Max
-            </button>
             <button
               v-if="selectedPoolToken"
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
@@ -75,7 +36,6 @@
               <span>{{ selectedPoolToken.name }}</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
-
             <button
               v-else
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
@@ -163,14 +123,23 @@
 <script>
 import Modal from '@/components/_app/Modal'
 import { ethers } from 'ethers'
-// import Web3 from 'web3'
+import Web3 from 'web3'
 
 import ERC20ABI from '~/configs/abi/ERC20'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import config from '~/configs/addresses'
 
-// import signature from '~/mixins/signature'
+import signature from '~/mixins/signature'
+
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+const config = {
+  tdai: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
+  teth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
+  lpToken: '0x1443398Aa8E16E0F289B12ddCf666eeC4215bF46',
+  uDai: '0x88b2d1c22f5bace62dccd488c07872c6f9c486f5',
+  llc: '0x769fd7De5d4E6e8fc22800Acc3Ad5236B5847332',
+}
 
 export default {
   components: { Modal },
@@ -182,14 +151,12 @@ export default {
       selectedPoolToken: '',
       selectedMintToken: '',
       balance: '--.--',
-      lpTokenAmount: '0',
+      poolTokenInput: '1',
       loanRatio: {
         totalDai: '',
         totalLPTokens: '',
         rating: '50',
       },
-      isTokenApproved: '',
-      txLink: '',
       supportedPoolTokens: [
         {
           name: 'UNI-ETH/DAI',
@@ -207,21 +174,16 @@ export default {
     udaiOutput() {
       // Liquidity pool token value in dai
       const LPTValueInDai =
-        (this.loanRatio.totalDai * this.lpTokenAmount) /
+        (this.loanRatio.totalDai * this.poolTokenInput) /
         this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = (LPTValueInDai * 50) / 100
-      const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      const formattedAmount =
-        Math.round((loanAmountWithFees + Number.EPSILON) * 100) / 100
-
-      return formattedAmount
+      return loanAmount - (loanAmount * 0.25) / 100
     },
   },
 
   mounted() {
     this.getBalanceOfToken(this.supportedPoolTokens[0].address)
-    this.getAllowance()
     this.calculateLoanRatio()
     // this.mint()
   },
@@ -231,23 +193,16 @@ export default {
       this.selectedPoolToken = poolToken
       this.ui.showDialog = false
     },
-
+    async getPoolTokensOfUser() {},
     async getBalanceOfToken(tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const userAddress = signer.getAddress()
       const getBalance = await contract.balanceOf(userAddress)
       const balance = ethers.utils.formatEther(getBalance.toString())
-      const formattedBalance =
-        Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
-      this.balance = formattedBalance
+      this.balance = balance
     },
-
     async calculateLoanRatio() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-
       const signer = provider.getSigner()
       const uniswapLptAddress = config.lpToken
       const contract = await new ethers.Contract(
@@ -263,93 +218,100 @@ export default {
       this.loanRatio.totalLPTokens = totalLPTokens.toString()
     },
 
-    async approve(tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        config.lpToken,
-        ERC20ABI,
-        signer
+    async mint() {
+      const mmSigner = provider.getSigner()
+      const nonce = await signature.methods.getNonce(config.llc)
+      const sig = await signature.methods.getEIP712Signature(
+        '0x464499A3D0a578448f4F4B6e223A97497cFDB8d6',
+        nonce.toString()
       )
+      console.log(sig)
 
-      try {
-        const totalSupply = contract.totalSupply()
-        await contract.approve(config.llc, totalSupply)
-        this.$toasted.show('Token approveed Successfully', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 5000,
-        })
-        this.isTokenApproved = true
-      } catch (error) {
-        this.$toasted.show('Transaction Rejected', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 5000,
-        })
-      }
-    },
+      const web3 = new Web3(window.ethereum)
+      const signer = await web3.eth.getAccounts()
 
-    async mint(tokenAddress) {
-      if (!this.isTokenApproved) {
-        this.$toasted.show('Please approve the tokens first', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 5000,
-        })
-      } else {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
-        const contract = await new ethers.Contract(
-          config.llc,
-          UnboundLLCABI,
-          signer
-        )
-        const LPTAmount = ethers.utils.parseEther(this.lpTokenAmount)
-        try {
-          const approved = await contract.lockLPT1(LPTAmount, '0')
-          this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
-          // this.$toasted.show('Transaction Success', {
-          //   theme: 'bubble',
-          //   position: 'top-center',
-          //   duration: 5000,
-          // })
-          console.log(approved)
-        } catch (error) {
-          this.$toasted.show('Transaction Rejected', {
-            theme: 'bubble',
-            position: 'top-center',
-            duration: 5000,
-          })
-          console.log(error)
+      web3.currentProvider.sendAsync(
+        {
+          method: 'eth_signTypedData_v3',
+          params: [signer[0], sig],
+          from: signer[0],
+        },
+        async (err, signature) => {
+          if (err || signature.error) {
+            return console.error(signature)
+          }
+          const signed = signature.result
+
+          const splitSig = ethers.utils.splitSignature(signed)
+
+          console.log(splitSig, mmSigner, UnboundLLCABI)
+
+          const contract = await new ethers.Contract(
+            config.llc,
+            UnboundLLCABI,
+            mmSigner
+          )
+
+          const LPTAmt = '100'
+          const tokenNum = '0'
+          const extraTime = '1599563554'
+
+          console.log(LPTAmt, tokenNum, extraTime, contract)
+
+          console.log(window.ethereum)
+
+          try {
+            const mintUDai = await contract.lockLPT(
+              LPTAmt,
+              tokenNum,
+              extraTime,
+              splitSig.v,
+              splitSig.r,
+              splitSig.s
+            )
+            console.log(mintUDai)
+          } catch (error) {
+            console.log(error)
+          }
         }
-      }
-    },
-
-    async getAllowance() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-      const signer = provider.getSigner()
-      const userAddress = provider.getSigner().getAddress()
-      const contract = await new ethers.Contract(
-        config.lpToken,
-        ERC20ABI,
-        signer
       )
-      const allowance = await contract.allowance(userAddress, config.llc)
-      console.log(allowance.toString())
-      // eslint-disable-next-line eqeqeq
-      if (allowance.toString() == 0) {
-        this.isTokenApproved = false
-        // do nothing
-      } else {
-        this.isTokenApproved = true
-      }
-    },
 
-    setInputMax() {
-      this.lpTokenAmount = this.balance
+      // const signedData = await signer.signMessage(sig)
+      // console.log(signedData)
+      // const splitSig = ethers.utils.splitSignature(signedData)
+
+      // const contract = await new ethers.Contract(
+      //   '0x62Aa6b3f266f38bf4774c503b022fD1709CAd4F3',
+      //   UnboundLLCABI,
+      //   signer
+      // )
+
+      // const LPTAmt = 1
+      // const tokenNum = 0
+      // const extraTime = 1599563554
+
+      // console.log(LPTAmt, tokenNum, extraTime, contract)
+
+      // console.log(window.ethereum)
+
+      // try {
+      //   provider.send({
+      //     method: 'eth_signTypedData_v3',
+      //     params: [signer, sig],
+      //     from: signer,
+      //   })
+
+      //   // const mintUDai = await contract.lockLPT(
+      //   //   LPTAmt,
+      //   //   tokenNum,
+      //   //   extraTime,
+      //   //   splitSig.v,
+      //   //   splitSig.r,
+      //   //   splitSig.s
+      //   // )
+      // } catch (error) {
+      //   console.log(error)
+      // }
     },
   },
 }

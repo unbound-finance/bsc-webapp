@@ -6,7 +6,7 @@
  */
 module.exports = {
   theme: {
-    darkSelector: '.dark-mode', //class for dark mode
+    darkSelector: '.dark-mode', // class for dark mode
 
     colors: {
       light: {
