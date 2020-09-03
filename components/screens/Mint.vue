@@ -29,7 +29,6 @@
       >
         Please select pool token you want to stake
       </p>
-
       <div
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
@@ -161,14 +160,17 @@
 </template>
 
 <script>
+// import components
 import Modal from '@/components/_app/Modal'
+
 import { ethers } from 'ethers'
-// import Web3 from 'web3'
 
 import ERC20ABI from '~/configs/abi/ERC20'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import config from '~/configs/addresses'
+
+import contractAddresses from '~/configs/addresses'
+import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
 // import signature from '~/mixins/signature'
 
@@ -190,16 +192,7 @@ export default {
       },
       isTokenApproved: '',
       txLink: '',
-      supportedPoolTokens: [
-        {
-          name: 'UNI-ETH/DAI',
-          exchange: 'Uniswap',
-          address: config.lpToken,
-          currencyOneLogo:
-            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-          currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-        },
-      ],
+      supportedPoolTokens,
     }
   },
 
@@ -211,16 +204,13 @@ export default {
         this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = (LPTValueInDai * 50) / 100
-      const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      const formattedAmount =
-        Math.round((loanAmountWithFees + Number.EPSILON) * 100) / 100
-
-      return formattedAmount
+      // const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
+      return loanAmount.toFixed(4).slice(0, -1)
     },
   },
 
   mounted() {
-    this.getBalanceOfToken(this.supportedPoolTokens[0].address)
+    this.getBalanceOfToken(supportedPoolTokens[0].address)
     this.getAllowance()
     this.calculateLoanRatio()
     // this.mint()
@@ -249,7 +239,7 @@ export default {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
 
       const signer = provider.getSigner()
-      const uniswapLptAddress = config.lpToken
+      const uniswapLptAddress = contractAddresses.lpToken
       const contract = await new ethers.Contract(
         uniswapLptAddress,
         UniswapLPTABI,
@@ -268,14 +258,14 @@ export default {
 
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.lpToken,
+        contractAddresses.lpToken,
         ERC20ABI,
         signer
       )
 
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(config.llc, totalSupply)
+        await contract.approve(contractAddresses.llc, totalSupply)
         this.$toasted.show('Token approveed Successfully', {
           theme: 'bubble',
           position: 'top-center',
@@ -302,7 +292,7 @@ export default {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
         const contract = await new ethers.Contract(
-          config.llc,
+          contractAddresses.llc,
           UnboundLLCABI,
           signer
         )
@@ -333,11 +323,14 @@ export default {
       const signer = provider.getSigner()
       const userAddress = provider.getSigner().getAddress()
       const contract = await new ethers.Contract(
-        config.lpToken,
+        contractAddresses.lpToken,
         ERC20ABI,
         signer
       )
-      const allowance = await contract.allowance(userAddress, config.llc)
+      const allowance = await contract.allowance(
+        userAddress,
+        contractAddresses.llc
+      )
       console.log(allowance.toString())
       // eslint-disable-next-line eqeqeq
       if (allowance.toString() == 0) {
