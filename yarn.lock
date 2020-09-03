@@ -10693,6 +10693,11 @@ vue-toast-notification@^0.5.0:
   resolved "https://registry.yarnpkg.com/vue-toast-notification/-/vue-toast-notification-0.5.0.tgz#6601248bd5211e4369519f22570961076747b8b5"
   integrity sha512-/dCVrd+XXa4bbcauMI51qVIE/P+Z9KkyT6Jt3zVIk5rQ4vpuSD7XPr+DUSTGlY0z2wIzYEFEnboWFW+JBKeMJg==
 
+vue-toasted@^1.1.28:
+  version "1.1.28"
+  resolved "https://registry.yarnpkg.com/vue-toasted/-/vue-toasted-1.1.28.tgz#dbabb83acc89f7a9e8765815e491d79f0dc65c26"
+  integrity sha512-UUzr5LX51UbbiROSGZ49GOgSzFxaMHK6L00JV8fir/CYNJCpIIvNZ5YmS4Qc8Y2+Z/4VVYRpeQL2UO0G800Raw==
+
 vue@^2.6.12:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"

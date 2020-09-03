@@ -59,19 +59,27 @@ export default {
       if (window.ethereum) {
         try {
           // Request account access if needed
-          window.ethereum.enable()
+          await window.ethereum.enable()
           const provider = await new ethers.providers.Web3Provider(
             window.ethereum
           )
           const address = await provider.getSigner().getAddress()
           this.address = address
+          location.reload()
           // Acccounts now exposed
         } catch (error) {
+          console.log(error)
+          // this.isMetamaskConnected()
           // User denied account access...
-          alert('Please allow access for the app to work')
+          // alert('Please allow access for the app to work')
         }
       } else if (window.web3) {
         window.web3 = new Web3(window.web3.currentProvider)
+        const provider = await new ethers.providers.Web3Provider(
+          window.ethereum
+        )
+        const address = await provider.getSigner().getAddress()
+        this.address = address
         // Acccounts always exposed
       } else {
         console.log(
@@ -81,9 +89,16 @@ export default {
     },
 
     async isMetamaskConnected() {
-      const provider = await new ethers.providers.Web3Provider(window.ethereum)
-      const address = await provider.getSigner().getAddress()
-      this.address = address
+      try {
+        const provider = await new ethers.providers.Web3Provider(
+          window.ethereum
+        )
+        const address = await provider.getSigner().getAddress()
+        this.address = address
+      } catch (error) {
+        console.log(error)
+        // location.reload()
+      }
     },
   },
 }

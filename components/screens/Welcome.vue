@@ -38,8 +38,8 @@ export default {
           description: 'Mint ETH/DAI by Locking Uniswap Pool Tokens.',
         },
         {
-          title: 'Burn',
-          route: '/burn',
+          title: 'Unlock',
+          route: '/unlock',
           icon: 'burn',
           description: 'Get Back Uniswap Pool Tokens.',
         },
