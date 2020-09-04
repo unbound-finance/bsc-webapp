@@ -60,6 +60,7 @@ export default {
    */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
+    'nuxt-purgecss',
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
   ],

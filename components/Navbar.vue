@@ -66,6 +66,16 @@ export default {
           const address = await provider.getSigner().getAddress()
           this.address = address
           location.reload()
+
+          window.ethereum.on('accountsChanged', function (accounts) {
+            location.reload()
+            // Time to reload your interface with accounts[0]!
+          })
+
+          window.ethereum.on('networkChanged', function (networkId) {
+            location.reload()
+            // Time to reload your interface with the new networkId
+          })
           // Acccounts now exposed
         } catch (error) {
           console.log(error)
