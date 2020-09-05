@@ -114,9 +114,15 @@
         </form>
       </div>
 
-      <div class="bg-gray-300 rounded-lg w-full border border-gray-300">
-        <p class="text-gray-800 text-sm mx-4 my-2">Fees</p>
-        <div class="bg-white rounded-lg p-4">
+      <div
+        class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
+      >
+        <p
+          class="text-gray-800 dark:text-gray-400 font-medium text-sm mx-4 my-2"
+        >
+          Fees
+        </p>
+        <div class="bg-white dark:bg-dark-bg rounded-lg p-4">
           <div class="flex flex-col space-y-1">
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
