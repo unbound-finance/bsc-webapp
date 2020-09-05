@@ -57,7 +57,7 @@ export default {
           icon: 'earn',
           description:
             'Stake Unbound Tokens to Keep Earning on Autopilot (soon)',
-          isDisabled: true,
+          isDisabled: false,
         },
       ],
     }
