@@ -1,14 +1,6 @@
 <template>
-  <div class="w-full min-h-screen">
-    <div class="max-w-6xl mx-auto">
-      <div class="w-full h-full flex justify-center px-4">
-        <div
-          class="w-full md:w-2/5 bg-white dark:bg-dark-bg rounded-lg mt-4 md:mt-8 p-4"
-        >
-          <nuxt />
-        </div>
-      </div>
-    </div>
+  <div class="bg-white">
+    <nuxt />
   </div>
 </template>
 
