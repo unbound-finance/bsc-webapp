@@ -137,10 +137,14 @@
 
           <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
             <a @click="selectPoolToken(poolToken)">
-              <div
+              <!-- <div
                 class="h-40 w-1/2 border border-gray-300 dark:border-gray-700 p-8 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
               >
-                <img src="~/assets/icons/crypto/dai.svg" width="40" alt="Dai" />
+                <img
+                  src="~/assets/pool-tokens/eth-dai.svg"
+                  width="40"
+                  alt="Dai"
+                />
                 <p class="font-medium text-center pt-2 dark:text-white">
                   {{ poolToken.name }}
                 </p>
@@ -150,6 +154,24 @@
                 <p class="text-sm text-center dark:text-white">
                   {{ poolToken.exchange }}
                 </p>
+              </div> -->
+
+              <div
+                class="w-full flex items-center justify-between cursor-pointer hover:text-light-primary py-4"
+              >
+                <div class="space-x-2 flex items-center">
+                  <img
+                    src="~/assets/pool-tokens/eth-dai.svg"
+                    width="32"
+                    alt="Dai"
+                  />
+                  <span class="font-medium dark:text-white text-sm"
+                    >{{ poolToken.name }} ({{ poolToken.exchange }})</span
+                  >
+                </div>
+                <div>
+                  <span class="dark:text-white text-sm">{{ balance }}</span>
+                </div>
               </div>
             </a>
           </div>
