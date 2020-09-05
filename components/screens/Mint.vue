@@ -170,10 +170,69 @@
                   >
                 </div>
                 <div>
-                  <span class="dark:text-white text-sm">{{ balance }}</span>
+                  <span class="dark:text-white text-gray-800 font-medium">{{
+                    balance
+                  }}</span>
                 </div>
               </div>
             </a>
+          </div>
+        </div>
+      </template>
+    </Modal>
+
+    <Modal :show="ui.showConfirmation" @close="ui.showConfirmation = false">
+      <template>
+        <div class="flex flex-col space-y-4">
+          <div class="flex justify-between items-center">
+            <p class="font-medium dark:text-white">Confirm Mint</p>
+            <button
+              type="button"
+              class="focus:outline-none"
+              @click="ui.showConfirmation = false"
+            >
+              <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
+            </button>
+          </div>
+
+          <div class="flex flex-col space-y-4">
+            <div class="flex w-full items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <img src="~/assets/pool-tokens/eth-dai.svg" width="40" alt="" />
+                <span class="text-2xl dark:text-white">{{
+                  lpTokenAmount
+                }}</span>
+              </div>
+              <p class="text-lg font-medium dark:text-white">UNIETH-DAI</p>
+            </div>
+            <i
+              class="fas fa-arrow-down text-lg text-gray-800 dark:text-gray-500 mx-2"
+            ></i>
+            <div class="flex w-full items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt="" />
+                <span class="text-2xl dark:text-white">{{ udaiOutput }}</span>
+              </div>
+              <p class="text-lg font-medium dark:text-white">uDAI</p>
+            </div>
+          </div>
+
+          <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-md">
+            <div class="flex flex-col space-y-1">
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-600">Fees</p>
+                <p class="font-medium text-sm dark:text-white">0.25%</p>
+              </div>
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-gray-600">Funding Rate</p>
+                <p class="font-medium text-sm dark:text-white">50%</p>
+              </div>
+            </div>
+            <button
+              class="w-full mt-4 py-2 bg-light-primary dark:bg-dark-primary font-medium text-white rounded-md"
+            >
+              Confirm Mint
+            </button>
           </div>
         </div>
       </template>
@@ -202,6 +261,7 @@ export default {
     return {
       ui: {
         showDialog: false,
+        showConfirmation: true,
       },
       selectedPoolToken: '',
       selectedMintToken: '',
