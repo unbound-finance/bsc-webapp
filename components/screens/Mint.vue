@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-col items-center w-full py-8 space-y-6 px-4">
+    <div class="flex flex-col items-center w-full py-2 space-y-4 px-4">
       <div class="flex w-full items-center justify-between">
         <nuxt-link to="/">
           <button class="focus:outline-none">
@@ -25,7 +25,7 @@
 
       <p
         v-if="!selectedPoolToken"
-        class="p-2 border-1 rounded-full px-8 bg-opacity-25 text-light-primary dark:text-white text-gray-600"
+        class="text-center border-1 rounded-full px-8 bg-opacity-25 text-light-primary dark:text-white text-gray-600"
       >
         Please select pool token you want to stake
       </p>
@@ -112,6 +112,22 @@
             </button>
           </div>
         </form>
+      </div>
+
+      <div class="bg-gray-300 rounded-lg w-full border border-gray-300">
+        <p class="text-gray-800 text-sm mx-4 my-2">Fees</p>
+        <div class="bg-white rounded-lg p-4">
+          <div class="flex flex-col space-y-1">
+            <div class="flex items-center justify-between">
+              <p class="text-sm text-gray-600">Minting Fees</p>
+              <p class="font-medium text-sm dark:text-white">0.25%</p>
+            </div>
+            <div class="flex items-center justify-between">
+              <p class="text-sm text-gray-600">Funding Rate</p>
+              <p class="font-medium text-sm dark:text-white">50%</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <button
@@ -261,7 +277,7 @@ export default {
     return {
       ui: {
         showDialog: false,
-        showConfirmation: true,
+        showConfirmation: false,
       },
       selectedPoolToken: '',
       selectedMintToken: '',

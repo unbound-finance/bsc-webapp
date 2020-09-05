@@ -5,7 +5,7 @@
 
       <div class="w-full h-full flex justify-center px-4">
         <div
-          class="w-full md:w-2/5 bg-white dark:bg-dark-bg rounded-lg mt-4 md:mt-8 p-4"
+          class="w-full md:w-2/5 bg-white dark:bg-dark-bg rounded-lg my-4 md:my-8 p-4"
         >
           <nuxt />
         </div>
