@@ -7,9 +7,14 @@
     </div>
 
     <div class="flex items-center space-x-4">
-      <p v-if="address" class="p-3 rounded bg-gray-300">
+      <a
+        v-if="address"
+        href="#"
+        class="p-3 rounded bg-gray-300"
+        @click="ui.showDialog = true"
+      >
         {{ address.substring(0, 15) + '...' }}
-      </p>
+      </a>
       <button
         v-else
         class="px-6 py-2 font-semibold rounded text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 focus:outline-none"

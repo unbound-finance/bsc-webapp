@@ -37,7 +37,7 @@
             />
 
             <button
-              v-if="selectedToken.allowance === 0 && selectedToken"
+              v-if="selectedToken.allowance == 0 && selectedToken"
               type="button"
               class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
               @click="approve(selectedToken.address)"
@@ -393,7 +393,7 @@ export default {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        '0x521f8bC67b0fD83A5A724D66d4C48E38E0d5Cf05',
+        contractAddresses.staking,
         UnboundStakingABI,
         signer
       )
