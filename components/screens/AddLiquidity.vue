@@ -22,7 +22,7 @@
       >
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Input</p>
-          <p v-if="selectedPoolToken" class="text-gray-600 text-sm">
+          <p v-if="selectedToken" class="text-gray-600 text-sm">
             Balance: {{ balance }}
           </p>
         </div>
@@ -33,20 +33,20 @@
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
-              :disabled="!selectedPoolToken"
+              :disabled="!selectedToken"
             />
 
             <button
-              v-if="!isTokenApproved && selectedPoolToken"
+              v-if="selectedToken.allowance === 0 && selectedToken"
               type="button"
               class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-              @click="approve"
+              @click="approve(selectedToken.address)"
             >
               Approve
             </button>
 
             <button
-              v-else-if="isTokenApproved && selectedPoolToken"
+              v-else-if="selectedToken.allowance !== 0 && selectedToken"
               type="button"
               class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
               @click="setInputMax"
@@ -54,12 +54,12 @@
               Max
             </button>
             <button
-              v-if="selectedPoolToken"
+              v-if="selectedToken"
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
-              <span>{{ selectedPoolToken.name }}</span>
+              <span>{{ selectedToken.name }}</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
 
@@ -81,7 +81,12 @@
       <div
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
-        <p class="text-sm text-gray-700 font-medium">Input</p>
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-gray-700 font-medium">Input</p>
+          <p v-if="selectedUToken" class="text-gray-600 text-sm">
+            Balance: {{ uDaiBalance }}
+          </p>
+        </div>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
@@ -92,10 +97,27 @@
               readonly
             />
             <button
+              v-if="selectedUToken.allowance == 0 && selectedToken"
+              type="button"
+              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
+              @click="approve(selectedUToken.address)"
+            >
+              Approve
+            </button>
+
+            <button
+              v-else-if="!selectedUToken.allowance == 0 && selectedToken"
+              type="button"
+              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
+              @click="setInputMax"
+            >
+              Max
+            </button>
+            <button
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
             >
-              <span>UDAI</span>
+              <span>{{ selectedUToken.name }}</span>
               <!-- <i class="fas fa-chevron-down pt-1"></i> -->
             </button>
           </div>
@@ -114,7 +136,7 @@
           <div class="flex flex-col space-y-1">
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Pool Share</p>
-              <p class="font-medium text-sm dark:text-white">0.1%</p>
+              <p class="font-medium text-sm dark:text-white">100%</p>
             </div>
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Your Positions</p>
@@ -129,6 +151,7 @@
 
       <button
         class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
+        @click="stake"
       >
         Add Liquidity
       </button>
@@ -163,7 +186,7 @@
                 <p class="text-sm text-center dark:text-white">
                   Balance: {{ balance }}
                 </p>
-                <p class="text-sm text-center dark:text-white">
+                <p class="text-sm text-center dark:text-white"> 
                   {{ poolToken.exchange }}
                 </p>
               </div> -->
@@ -173,13 +196,14 @@
               >
                 <div class="space-x-2 flex items-center">
                   <img
-                    src="~/assets/pool-tokens/eth-dai.svg"
+                    src="~/assets/icons/crypto/dai.svg"
                     width="32"
                     alt="Dai"
                   />
                   <span class="font-medium dark:text-white text-sm"
-                    >{{ poolToken.name }} ({{ poolToken.exchange }})</span
-                  >
+                    >{{ poolToken.name }}
+                    <!-- ({{ poolToken.exchange }}) -->
+                  </span>
                 </div>
                 <div>
                   <span class="dark:text-white text-gray-800 font-medium">{{
@@ -259,11 +283,12 @@ import Modal from '@/components/_app/Modal'
 import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
+// import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+// import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
+import UnboundStakingABI from '~/configs/abi/UnboundStaking'
 
 import contractAddresses from '~/configs/addresses'
-import supportedPoolTokens from '~/configs/supportedPoolTokens'
+// import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
 // import signature from '~/mixins/signature'
 
@@ -275,44 +300,56 @@ export default {
         showDialog: false,
         showConfirmation: false,
       },
-      selectedPoolToken: '',
-      selectedMintToken: '',
+      selectedToken: {
+        name: 'tDAI',
+        exchange: 'Uniswap',
+        address: contractAddresses.tdai,
+        allowance: '',
+        tokenIcon:
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+      },
+      selectedUToken: {
+        name: 'uDai',
+        address: contractAddresses.uDai,
+        allowance: '',
+        tokenIcon:
+          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+      },
       balance: '--.--',
       lpTokenAmount: '0',
-      loanRatio: {
-        totalDai: '',
-        totalLPTokens: '',
-        rating: '50',
-      },
-      isTokenApproved: '',
+      // isTokenApproved: '',
       txLink: '',
-      supportedPoolTokens,
+      uDaiBalance: '',
+      supportedPoolTokens: [
+        {
+          name: 'tDAI',
+          exchange: 'Uniswap',
+          address: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
+          currencyOneLogo:
+            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+          currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+        },
+      ],
     }
   },
 
   computed: {
     udaiOutput() {
-      // Liquidity pool token value in dai
-      const LPTValueInDai =
-        (this.loanRatio.totalDai * this.lpTokenAmount) /
-        this.loanRatio.totalLPTokens
-      // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
-      const loanAmount = (LPTValueInDai * 50) / 100
-      // const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      return loanAmount.toFixed(4).slice(0, -1)
+      return this.lpTokenAmount
     },
   },
 
-  mounted() {
-    this.getBalanceOfToken(supportedPoolTokens[0].address)
-    this.getAllowance()
-    this.calculateLoanRatio()
+  async mounted() {
+    this.balance = await this.getBalanceOfToken(this.selectedToken.address)
+    this.uDaiBalance = await this.getBalanceOfToken(this.selectedUToken.address)
+    this.checkAllowances()
+    // this.calculateLoanRatio()
     // this.mint()
   },
 
   methods: {
     selectPoolToken(poolToken) {
-      this.selectedPoolToken = poolToken
+      this.selectedToken = poolToken
       this.ui.showDialog = false
     },
 
@@ -326,46 +363,23 @@ export default {
       const balance = ethers.utils.formatEther(getBalance.toString())
       const formattedBalance =
         Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
-      this.balance = formattedBalance
-    },
-
-    async calculateLoanRatio() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-      const signer = provider.getSigner()
-      const uniswapLptAddress = contractAddresses.lpToken
-      const contract = await new ethers.Contract(
-        uniswapLptAddress,
-        UniswapLPTABI,
-        signer
-      )
-      const reserve = await contract.getReserves()
-      const totalLPTokens = await contract.totalSupply()
-      // total value locked in the smart contract in terms of Dai
-      const totalDai = reserve[0].toString() * 2
-      this.loanRatio.totalDai = totalDai
-      this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      console.log(formattedBalance)
+      return formattedBalance
     },
 
     async approve(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
-
       const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        contractAddresses.lpToken,
-        ERC20ABI,
-        signer
-      )
-
+      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(contractAddresses.llc, totalSupply)
+        await contract.approve(contractAddresses.staking, totalSupply)
         this.$toasted.show('Token approveed Successfully', {
           theme: 'bubble',
           position: 'top-center',
           duration: 5000,
         })
-        this.isTokenApproved = true
+        this.checkAllowances()
       } catch (error) {
         this.$toasted.show('Transaction Rejected', {
           theme: 'bubble',
@@ -375,64 +389,54 @@ export default {
       }
     },
 
-    async mint(tokenAddress) {
-      if (!this.isTokenApproved) {
-        this.$toasted.show('Please approve the tokens first', {
+    async stake() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const contract = await new ethers.Contract(
+        '0x521f8bC67b0fD83A5A724D66d4C48E38E0d5Cf05',
+        UnboundStakingABI,
+        signer
+      )
+      const LPTAmount = ethers.utils.parseEther(this.lpTokenAmount)
+      try {
+        const approved = await contract.stake(LPTAmount, LPTAmount)
+        this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
+        this.$toasted.show('Transaction Success', {
           theme: 'bubble',
           position: 'top-center',
           duration: 5000,
         })
-      } else {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
-        const contract = await new ethers.Contract(
-          contractAddresses.llc,
-          UnboundLLCABI,
-          signer
-        )
-        const LPTAmount = ethers.utils.parseEther(this.lpTokenAmount)
-        try {
-          const approved = await contract.lockLPT1(LPTAmount, '0')
-          this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
-          // this.$toasted.show('Transaction Success', {
-          //   theme: 'bubble',
-          //   position: 'top-center',
-          //   duration: 5000,
-          // })
-          console.log(approved)
-        } catch (error) {
-          this.$toasted.show('Transaction Rejected', {
-            theme: 'bubble',
-            position: 'top-center',
-            duration: 5000,
-          })
-          console.log(error)
-        }
+        console.log(approved)
+      } catch (error) {
+        this.$toasted.show('Transaction Rejected', {
+          theme: 'bubble',
+          position: 'top-center',
+          duration: 5000,
+        })
+        console.log(error)
       }
     },
 
-    async getAllowance() {
+    async getAllowance(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
 
       const signer = provider.getSigner()
       const userAddress = provider.getSigner().getAddress()
-      const contract = await new ethers.Contract(
-        contractAddresses.lpToken,
-        ERC20ABI,
-        signer
-      )
+      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const allowance = await contract.allowance(
         userAddress,
-        contractAddresses.llc
+        contractAddresses.staking
       )
       console.log(allowance.toString())
-      // eslint-disable-next-line eqeqeq
-      if (allowance.toString() == 0) {
-        this.isTokenApproved = false
-        // do nothing
-      } else {
-        this.isTokenApproved = true
-      }
+      return allowance
+    },
+
+    async checkAllowances() {
+      const uDaiAllowance = await this.getAllowance(contractAddresses.uDai)
+      const tDaiAllowance = await this.getAllowance(contractAddresses.tdai)
+      this.selectedToken.allowance = tDaiAllowance.toString()
+      this.selectedUToken.allowance = uDaiAllowance.toString()
+      console.log(uDaiAllowance.toString(), tDaiAllowance.toString())
     },
 
     setInputMax() {
