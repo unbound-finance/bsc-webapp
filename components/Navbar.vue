@@ -8,11 +8,11 @@
 
     <div class="flex items-center space-x-4">
       <button
-        v-if="address"
-        class="px-6 py-1 bg-white dark:bg-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-800 focus:outline-none"
+        v-if="userAddress"
+        class="px-6 py-2 bg-white dark:bg-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-800 focus:outline-none"
         @click="ui.showDialog = true"
       >
-        {{ address.substring(0, 15) + '...' }}
+        {{ userAddress.substring(0, 15) + '...' }}
       </button>
       <ConnectWalletBtn v-else />
       <button
@@ -63,13 +63,13 @@
               <p
                 class="truncate font-medium text-md md:text-xl dark:text-white"
               >
-                {{ address }}
+                {{ userAddress }}
               </p>
             </div>
 
             <div class="mt-2">
               <a
-                :href="`https://etherscan.io/address/${address}`"
+                :href="`https://etherscan.io/address/${userAddress}`"
                 target="_blank"
                 class="flex items-center space-x-1 hover:underline"
               >
@@ -97,6 +97,13 @@ export default {
       },
     }
   },
+
+  computed: {
+    userAddress() {
+      return this.$store.state.address
+    },
+  },
+
   mounted() {
     window.ethereum.on('accountsChanged', function (networkId) {
       location.reload()

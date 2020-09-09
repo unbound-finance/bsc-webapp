@@ -34,7 +34,6 @@ export default {
           // Store provider in state
           this.$store.commit('getProvider', address)
 
-          location.reload()
           // Acccounts now exposed
         } catch (error) {
           console.log(error)

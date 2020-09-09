@@ -60,17 +60,18 @@
             <button
               v-else-if="isTokenApproved && selectedPoolToken"
               type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
+              class="px-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
               @click="setInputMax"
             >
               Max
             </button>
             <button
               v-if="selectedPoolToken"
-              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
+              class="flex-shrink-0 dark:text-white transition-all duration-200 text-sm font-medium py-1 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
+              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt="" />
               <span>{{ selectedPoolToken.name }}</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
@@ -137,19 +138,22 @@
           </div>
         </div>
       </div>
-
       <button
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
-        :class="
-          lpTokenAmount > balance
-            ? 'bg-gray-300 dark:bg-gray-800 text-gray-600 cursor-not-allowed'
-            : 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
-        "
-        :disabled="lpTokenAmount > balance ? true : false"
+        :class="[
+          !lpTokenAmount ? getDisabledClass : getActiveClass,
+          lpTokenAmount > balance ? getDisabledClass : getActiveClass,
+        ]"
+        :disabled="[
+          !lpTokenAmount ? true : false,
+          lpTokenAmount > balance ? true : false,
+        ]"
         @click="mint"
       >
-        {{ lpTokenAmount > balance ? 'Insufficient Balance' : 'Mint' }}
+        <span v-if="!lpTokenAmount">Enter an amount</span>
+        <span v-else-if="lpTokenAmount > balance">Insufficient Balance</span>
+        <span v-else>Mint</span>
       </button>
 
       <ConnectWalletBtn v-else class="w-full" />
@@ -315,6 +319,14 @@ export default {
       }
       return false
     },
+
+    getDisabledClass() {
+      return 'bg-gray-500 dark:bg-gray-800 text-gray-600 cursor-not-allowed'
+    },
+
+    getActiveClass() {
+      return 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
+    },
   },
 
   mounted() {
@@ -455,5 +467,3 @@ export default {
   },
 }
 </script>
-
-<style></style>
