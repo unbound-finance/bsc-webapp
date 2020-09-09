@@ -38,6 +38,8 @@
         />
       </button>
     </div>
+
+    <!-- Change Wallet Address Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
       <template>
         <div class="flex flex-col space-y-4">
@@ -66,7 +68,9 @@
             </div>
 
             <div class="w-full md:w-1/2 pt-4">
-              <p class="truncate font-medium text-md md:text-xl">
+              <p
+                class="truncate font-medium text-md md:text-xl dark:text-white"
+              >
                 {{ address }}
               </p>
             </div>

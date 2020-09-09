@@ -114,7 +114,9 @@
         </form>
       </div>
 
+      <!-- Show fees -->
       <div
+        v-if="lpTokenAmount"
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
       >
         <p
@@ -143,6 +145,8 @@
         Mint
       </button>
     </div>
+
+    <!-- Select LP Tokens Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
       <template>
         <div class="flex flex-col space-y-4">
@@ -203,6 +207,7 @@
       </template>
     </Modal>
 
+    <!-- Transaction confirmation Modal -->
     <Modal :show="ui.showConfirmation" @close="ui.showConfirmation = false">
       <template>
         <div class="flex flex-col space-y-4">
@@ -288,7 +293,7 @@ export default {
       selectedPoolToken: '',
       selectedMintToken: '',
       balance: '--.--',
-      lpTokenAmount: '0',
+      lpTokenAmount: '',
       loanRatio: {
         totalDai: '',
         totalLPTokens: '',

@@ -104,6 +104,8 @@
         Unlock
       </button>
     </div>
+
+    <!-- Select LP Tokens Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
       <template>
         <div class="flex flex-col space-y-4">

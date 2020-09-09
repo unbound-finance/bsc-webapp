@@ -25,10 +25,103 @@
     <div class="mt-4 px-4">
       <p class="font-medium text-sm dark:text-gray-400">Your Liquidity</p>
       <div
+        v-if="!liquidity"
         class="h-24 mt-4 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-800"
       >
-        <span class="text-gray-500">No Liquidity Found.</span>
+        <span v-if="ui.loading" class="text-gray-500">Loading...</span>
+        <span v-else class="text-gray-500">No Liquidity Found.</span>
+      </div>
+
+      <div class="mt-4">
+        <div class="flex w-full items-center justify-between px-4">
+          <div class="flex items-center space-x-2">
+            <img
+              src="~/assets/pool-tokens/eth-dai.svg"
+              width="24"
+              alt="LP token logo"
+            />
+            <p class="font-medium dark:text-white">tDAI/uDAI</p>
+          </div>
+
+          <button class="focus:outline-none" @click="ui.active = !ui.active">
+            <i
+              class="text-sm dark:text-white"
+              :class="ui.active ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"
+            ></i>
+          </button>
+        </div>
+
+        <div v-if="ui.active" class="flex flex-col pt-2">
+          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+            <div class="w-1/2">
+              <p>Pooled tDAI</p>
+            </div>
+            <div class="w-1/2 text-right">
+              <p>100</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+            <div class="w-1/2">
+              <p>Pooled uDAI</p>
+            </div>
+            <div class="w-1/2 text-right">
+              <p>100</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+            <div class="w-1/2">
+              <p>Your pool tokens</p>
+            </div>
+            <div class="w-1/2 text-right">
+              <p>0.1</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+            <div class="w-1/2">
+              <p>Your pool share</p>
+            </div>
+            <div class="w-1/2 text-right">
+              <p>0.01%</p>
+            </div>
+          </div>
+
+          <div class="flex items-center py-4">
+            <div class="w-1/2 px-1">
+              <button
+                class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
+              >
+                Add
+              </button>
+            </div>
+            <div class="w-1/2 px-1">
+              <button
+                class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+// import { ethers } from 'ethers'
+// import Web3 from 'web3'
+// import contractAddresses from '~/configs/addresses'
+// import stakingABI from '~/configs/abi/UnboundStaking'
+
+export default {
+  data() {
+    return {
+      ui: {
+        loading: false,
+        active: false,
+      },
+      liquidity: null,
+    }
+  },
+}
+</script>

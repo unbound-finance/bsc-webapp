@@ -2,7 +2,7 @@
   <div>
     <div class="flex flex-col items-center w-full py-2 space-y-4 px-4">
       <div class="flex w-full items-center justify-between">
-        <nuxt-link to="/">
+        <nuxt-link to="/earn">
           <button class="focus:outline-none">
             <i
               class="fas fa-chevron-left text-gray-900 dark:text-white text-lg"
@@ -156,6 +156,8 @@
         Add Liquidity
       </button>
     </div>
+
+    <!-- Select Tokens Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
       <template>
         <div class="flex flex-col space-y-4">
@@ -217,6 +219,7 @@
       </template>
     </Modal>
 
+    <!-- Transaction confirmation Modal -->
     <Modal :show="ui.showConfirmation" @close="ui.showConfirmation = false">
       <template>
         <div class="flex flex-col space-y-4">
