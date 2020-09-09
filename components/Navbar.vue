@@ -7,21 +7,14 @@
     </div>
 
     <div class="flex items-center space-x-4">
-      <a
+      <button
         v-if="address"
-        href="#"
-        class="p-3 rounded bg-gray-300"
+        class="px-6 py-1 bg-white dark:bg-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-800 focus:outline-none"
         @click="ui.showDialog = true"
       >
         {{ address.substring(0, 15) + '...' }}
-      </a>
-      <button
-        v-else
-        class="px-6 py-2 font-semibold rounded text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 focus:outline-none"
-        @click="connectMetamask"
-      >
-        Connect Wallet
       </button>
+      <ConnectWalletBtn v-else />
       <button
         class="p-3 rounded bg-gray-300 focus:outline-none"
         @click="toggleMode"
@@ -38,7 +31,6 @@
         />
       </button>
     </div>
-
     <!-- Change Wallet Address Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
       <template>
@@ -59,12 +51,12 @@
           >
             <div class="flex justify-between items-center">
               <p class="text-sm text-gray-600">Connected with Metamask</p>
-              <button
+              <!-- <button
                 type="button"
                 class="focus:outline-none px-2 py-1 rounded text-sm bg-light-primary dark:bg-dark-primary bg-opacity-25 text-light-primary dark:text-white"
               >
                 Change
-              </button>
+              </button> -->
             </div>
 
             <div class="w-full md:w-1/2 pt-4">
@@ -93,77 +85,28 @@
 </template>
 
 <script>
-import { ethers } from 'ethers'
-import Web3 from 'web3'
 import Modal from '@/components/_app/Modal'
+import ConnectWalletBtn from '@/components/ConnectWalletBtn'
 
 export default {
-  components: { Modal },
+  components: { Modal, ConnectWalletBtn },
   data() {
     return {
-      address: '',
       ui: {
         showDialog: false,
       },
     }
   },
-
   mounted() {
     window.ethereum.on('accountsChanged', function (networkId) {
       location.reload()
       // Time to reload your interface with the new networkId
     })
-    this.isMetamaskConnected()
   },
   methods: {
     toggleMode() {
       this.$colorMode.preference =
         this.$colorMode.value === 'light' ? 'dark' : 'light'
-    },
-    async connectMetamask() {
-      if (window.ethereum) {
-        try {
-          // Request account access if needed
-          await window.ethereum.enable()
-          const provider = await new ethers.providers.Web3Provider(
-            window.ethereum
-          )
-          const address = await provider.getSigner().getAddress()
-          this.address = address
-          location.reload()
-          // Acccounts now exposed
-        } catch (error) {
-          console.log(error)
-          // this.isMetamaskConnected()
-          // User denied account access...
-          // alert('Please allow access for the app to work')
-        }
-      } else if (window.web3) {
-        window.web3 = new Web3(window.web3.currentProvider)
-        const provider = await new ethers.providers.Web3Provider(
-          window.ethereum
-        )
-        const address = await provider.getSigner().getAddress()
-        this.address = address
-        // Acccounts always exposed
-      } else {
-        console.log(
-          'Non-Ethereum browser detected. You should consider trying MetaMask!'
-        )
-      }
-    },
-
-    async isMetamaskConnected() {
-      try {
-        const provider = await new ethers.providers.Web3Provider(
-          window.ethereum
-        )
-        const address = await provider.getSigner().getAddress()
-        this.address = address
-      } catch (error) {
-        console.log(error)
-        // location.reload()
-      }
     },
   },
 }

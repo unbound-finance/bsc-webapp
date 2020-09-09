@@ -139,11 +139,20 @@
       </div>
 
       <button
-        class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
+        v-if="isWalletConnected"
+        class="font-medium w-full py-2 rounded-md focus:outline-none"
+        :class="
+          lpTokenAmount > balance
+            ? 'bg-gray-300 dark:bg-gray-800 text-gray-600 cursor-not-allowed'
+            : 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
+        "
+        :disabled="lpTokenAmount > balance ? true : false"
         @click="mint"
       >
-        Mint
+        {{ lpTokenAmount > balance ? 'Insufficient Balance' : 'Mint' }}
       </button>
+
+      <ConnectWalletBtn v-else class="w-full" />
     </div>
 
     <!-- Select LP Tokens Modal -->
@@ -163,25 +172,6 @@
 
           <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
             <a @click="selectPoolToken(poolToken)">
-              <!-- <div
-                class="h-40 w-1/2 border border-gray-300 dark:border-gray-700 p-8 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
-              >
-                <img
-                  src="~/assets/pool-tokens/eth-dai.svg"
-                  width="40"
-                  alt="Dai"
-                />
-                <p class="font-medium text-center pt-2 dark:text-white">
-                  {{ poolToken.name }}
-                </p>
-                <p class="text-sm text-center dark:text-white">
-                  Balance: {{ balance }}
-                </p>
-                <p class="text-sm text-center dark:text-white">
-                  {{ poolToken.exchange }}
-                </p>
-              </div> -->
-
               <div
                 class="w-full flex items-center justify-between cursor-pointer hover:text-light-primary py-4"
               >
@@ -270,6 +260,7 @@
 <script>
 // import components
 import Modal from '@/components/_app/Modal'
+import ConnectWalletBtn from '@/components/ConnectWalletBtn'
 
 import { ethers } from 'ethers'
 
@@ -283,7 +274,7 @@ import supportedPoolTokens from '~/configs/supportedPoolTokens'
 // import signature from '~/mixins/signature'
 
 export default {
-  components: { Modal },
+  components: { Modal, ConnectWalletBtn },
   data() {
     return {
       ui: {
@@ -315,6 +306,14 @@ export default {
       const loanAmount = (LPTValueInDai * 50) / 100
       // const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
       return loanAmount.toFixed(4).slice(0, -1)
+    },
+
+    isWalletConnected() {
+      const walletAddress = this.$store.state.address
+      if (walletAddress) {
+        return true
+      }
+      return false
     },
   },
 
