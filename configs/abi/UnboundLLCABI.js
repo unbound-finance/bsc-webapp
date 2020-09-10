@@ -11,9 +11,62 @@ export default [
         name: 'LPTaddress',
         type: 'address',
       },
+      {
+        internalType: 'uint8',
+        name: 'position',
+        type: 'uint8',
+      },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
+  },
+  {
+    inputs: [],
+    name: '_position',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: '_tokensLocked',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [],
+    name: 'pair',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
   },
   {
     inputs: [
@@ -23,13 +76,13 @@ export default [
         type: 'uint256',
       },
       {
-        internalType: 'uint8',
-        name: 'tokenNum',
-        type: 'uint8',
+        internalType: 'address',
+        name: 'uTokenAddr',
+        type: 'address',
       },
       {
         internalType: 'uint256',
-        name: 'extraTime',
+        name: 'deadline',
         type: 'uint256',
       },
       {
@@ -61,12 +114,12 @@ export default [
         type: 'uint256',
       },
       {
-        internalType: 'uint8',
-        name: 'tokenNum',
-        type: 'uint8',
+        internalType: 'address',
+        name: 'uTokenAddr',
+        type: 'address',
       },
     ],
-    name: 'lockLPT1',
+    name: 'lockLPTWithPermit',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -79,9 +132,9 @@ export default [
         type: 'uint256',
       },
       {
-        internalType: 'uint8',
-        name: 'tokenNum',
-        type: 'uint8',
+        internalType: 'address',
+        name: 'uTokenAddr',
+        type: 'address',
       },
     ],
     name: 'unlockLPT',

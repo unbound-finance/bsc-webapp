@@ -1,5 +1,6 @@
 <template>
   <div class="w-full min-h-screen">
+    <notifications group="general" position="top center" />
     <div class="max-w-6xl mx-auto">
       <Navbar />
 

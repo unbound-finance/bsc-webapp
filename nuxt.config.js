@@ -39,7 +39,7 @@ export default {
    ** Plugins to load before mounting the App
    ** https://nuxtjs.org/guide/plugins
    */
-  plugins: ['@/plugins/vue-toasted.js'],
+  plugins: ['@/plugins/vue-toasted.js', '@/plugins/notification.js'],
   /*
    ** Auto import components
    ** See https://nuxtjs.org/api/configuration-components
