@@ -286,14 +286,11 @@ import Modal from '@/components/_app/Modal'
 import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
-// import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 // import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import UnboundStakingABI from '~/configs/abi/UnboundStaking'
+// import UnboundStakingABI from '~/configs/abi/UnboundStaking'
 
-import contractAddresses from '~/configs/addresses'
-// import supportedPoolTokens from '~/configs/supportedPoolTokens'
-
-// import signature from '~/mixins/signature'
+import config from '~/configs/config'
 
 export default {
   components: { Modal },
@@ -306,14 +303,14 @@ export default {
       selectedToken: {
         name: 'tDAI',
         exchange: 'Uniswap',
-        address: contractAddresses.tdai,
+        address: config.contracts.tdai,
         allowance: '',
         tokenIcon:
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
       },
       selectedUToken: {
         name: 'uDai',
-        address: contractAddresses.uDai,
+        address: config.contracts.unboundDai,
         allowance: '',
         tokenIcon:
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
@@ -376,7 +373,7 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(contractAddresses.staking, totalSupply)
+        await contract.approve(config.contracts.uDaiUniswapPool, totalSupply)
         this.$toasted.show('Token approveed Successfully', {
           theme: 'bubble',
           position: 'top-center',
@@ -396,8 +393,8 @@ export default {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        contractAddresses.staking,
-        UnboundStakingABI,
+        config.contracts.uDaiUniswapPool,
+        UniswapLPTABI,
         signer
       )
       const LPTAmount = ethers.utils.parseEther(this.lpTokenAmount)
@@ -428,15 +425,15 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const allowance = await contract.allowance(
         userAddress,
-        contractAddresses.staking
+        config.contracts.uDaiUniswapPool
       )
       console.log(allowance.toString())
       return allowance
     },
 
     async checkAllowances() {
-      const uDaiAllowance = await this.getAllowance(contractAddresses.uDai)
-      const tDaiAllowance = await this.getAllowance(contractAddresses.tdai)
+      const uDaiAllowance = await this.getAllowance(config.contracts.unboundDai)
+      const tDaiAllowance = await this.getAllowance(config.contracts.tdai)
       this.selectedToken.allowance = tDaiAllowance.toString()
       this.selectedUToken.allowance = uDaiAllowance.toString()
       console.log(uDaiAllowance.toString(), tDaiAllowance.toString())
