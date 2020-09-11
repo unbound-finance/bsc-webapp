@@ -138,6 +138,10 @@
             ? getDisabledClass
             : getActiveClass,
         ]"
+        :disabled="[
+          !liquidityPoolTokenAmount ? true : false,
+          liquidityPoolTokenAmount > balance ? true : false,
+        ]"
         @click="ui.showConfirmation = true"
       >
         <span v-if="!liquidityPoolTokenAmount">Enter an amount</span>
@@ -343,7 +347,7 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const userAddress = signer.getAddress()
       const getBalance = await contract.balanceOf(userAddress)
-      const balance = ethers.utils.formaether(getBalance.toString())
+      const balance = ethers.utils.formatEther(getBalance.toString())
       const formattedBalance =
         Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
       this.balance = formattedBalance
