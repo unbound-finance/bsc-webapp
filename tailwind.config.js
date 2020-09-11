@@ -9,6 +9,7 @@ module.exports = {
     darkSelector: '.dark-mode', // class for dark mode
 
     colors: {
+      accent: '#305CF8',
       light: {
         primary: '#E6006E',
       },

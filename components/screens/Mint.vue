@@ -250,6 +250,9 @@
         </div>
       </template>
     </Modal>
+
+    <SuccessModal :show="ui.showSuccess" />
+    <RejectedModal :show="ui.showRejected" />
   </div>
 </template>
 
@@ -257,6 +260,8 @@
 // import components
 import Modal from '@/components/_app/Modal'
 import ConnectWalletBtn from '@/components/ConnectWalletBtn'
+import SuccessModal from '@/components/modals/Success'
+import RejectedModal from '@/components/modals/Rejected'
 
 import { ethers } from 'ethers'
 import Web3 from 'web3'
@@ -274,12 +279,14 @@ import config from '~/configs/config'
 import { getNonce, getEIP712Signature } from '~/mixins/crypto'
 
 export default {
-  components: { Modal, ConnectWalletBtn },
+  components: { Modal, ConnectWalletBtn, SuccessModal, RejectedModal },
   data() {
     return {
       ui: {
         showDialog: false,
         showConfirmation: false,
+        showSuccess: false,
+        showRejected: false,
       },
       selectedPoolToken: '',
       selectedMintToken: '',
@@ -414,21 +421,23 @@ export default {
               signature.r,
               signature.s
             )
-            // change this part @saurabh
+            // show success screen
             this.ui.showConfirmation = false
-            this.$notify({
-              group: 'general',
-              type: 'success',
-              title: 'Transaction Success',
-            })
+            // this.$notify({
+            //   group: 'general',
+            //   type: 'success',
+            //   title: 'Transaction Success',
+            // })
+            this.ui.showSuccess = true
             console.log(mintUDai.hash)
           } catch (error) {
             this.ui.showConfirmation = false
-            this.$notify({
-              group: 'general',
-              type: 'error',
-              title: 'Transaction Rejected',
-            })
+            // this.$notify({
+            //   group: 'general',
+            //   type: 'error',
+            //   title: 'Transaction Rejected',
+            // })
+            this.ui.showRejected = true
           }
         }
       )
