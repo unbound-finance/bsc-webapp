@@ -219,7 +219,7 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const userAddress = signer.getAddress()
       const getBalance = await contract.balanceOf(userAddress)
-      const balance = ethers.utils.formatEther(getBalance.toString())
+      const balance = ethers.utils.formaether(getBalance.toString())
       const formattedBalance =
         Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
       this.balance = formattedBalance

@@ -151,7 +151,7 @@
 
       <button
         class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
-        @click="stake"
+        @click="addLiquidity"
       >
         Add Liquidity
       </button>
@@ -286,7 +286,8 @@ import Modal from '@/components/_app/Modal'
 import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+// import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+import UniswapRouterABI from '~/configs/abi/UniswapRouter'
 // import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
 // import UnboundStakingABI from '~/configs/abi/UnboundStaking'
 
@@ -301,9 +302,9 @@ export default {
         showConfirmation: false,
       },
       selectedToken: {
-        name: 'tDAI',
+        name: 'dai',
         exchange: 'Uniswap',
-        address: config.contracts.tdai,
+        address: config.contracts.dai,
         allowance: '',
         tokenIcon:
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
@@ -322,7 +323,7 @@ export default {
       uDaiBalance: '',
       supportedPoolTokens: [
         {
-          name: 'tDAI',
+          name: 'dai',
           exchange: 'Uniswap',
           address: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
           currencyOneLogo:
@@ -355,7 +356,6 @@ export default {
 
     async getBalanceOfToken(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
-
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const userAddress = signer.getAddress()
@@ -363,7 +363,6 @@ export default {
       const balance = ethers.utils.formatEther(getBalance.toString())
       const formattedBalance =
         Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
-      console.log(formattedBalance)
       return formattedBalance
     },
 
@@ -373,7 +372,7 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(config.contracts.uDaiUniswapPool, totalSupply)
+        await contract.approve(config.contracts.uniswapRouter, totalSupply)
         this.$toasted.show('Token approveed Successfully', {
           theme: 'bubble',
           position: 'top-center',
@@ -389,24 +388,44 @@ export default {
       }
     },
 
-    async stake() {
+    async addLiquidity() {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.contracts.uDaiUniswapPool,
-        UniswapLPTABI,
+        config.contracts.uniswapRouter,
+        UniswapRouterABI,
         signer
       )
-      const LPTAmount = ethers.utils.parseEther(this.lpTokenAmount)
+      const amountA = ethers.utils.parseEther(this.lpTokenAmount).toString()
+      const amountB = ethers.utils.parseEther(this.lpTokenAmount).toString()
+
       try {
-        const approved = await contract.stake(LPTAmount, LPTAmount)
-        this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
-        this.$toasted.show('Transaction Success', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 5000,
+        const tokenA = config.contracts.dai
+        const tokenB = config.contracts.unboundDai
+        const amountADesired = amountA
+        const amountBDesired = amountB
+        const amountAMin = (amountA - (amountA * 10) / 100).toString()
+        const amountBMin = (amountB - (amountB * 10) / 100).toString()
+        const to = await signer.getAddress()
+        const deadline = +new Date() + 5000
+
+        const addLiquidity = await contract.addLiquidity(
+          tokenA,
+          tokenB,
+          amountADesired,
+          amountBDesired,
+          amountAMin,
+          amountBMin,
+          to,
+          deadline
+        )
+
+        this.txLink = `https://kovan.etherscan.io/tx/${addLiquidity.hash}`
+        this.$notify({
+          group: 'general',
+          type: 'success',
+          title: `Transaction Success`,
         })
-        console.log(approved)
       } catch (error) {
         this.$toasted.show('Transaction Rejected', {
           theme: 'bubble',
@@ -425,7 +444,7 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const allowance = await contract.allowance(
         userAddress,
-        config.contracts.uDaiUniswapPool
+        config.contracts.uniswapRouter
       )
       console.log(allowance.toString())
       return allowance
@@ -433,10 +452,10 @@ export default {
 
     async checkAllowances() {
       const uDaiAllowance = await this.getAllowance(config.contracts.unboundDai)
-      const tDaiAllowance = await this.getAllowance(config.contracts.tdai)
-      this.selectedToken.allowance = tDaiAllowance.toString()
+      const daiAllowance = await this.getAllowance(config.contracts.dai)
+      this.selectedToken.allowance = daiAllowance.toString()
       this.selectedUToken.allowance = uDaiAllowance.toString()
-      console.log(uDaiAllowance.toString(), tDaiAllowance.toString())
+      console.log(uDaiAllowance.toString(), daiAllowance.toString())
     },
 
     setInputMax() {

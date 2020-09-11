@@ -40,7 +40,7 @@
               width="24"
               alt="LP token logo"
             />
-            <p class="font-medium dark:text-white">tDAI/uDAI</p>
+            <p class="font-medium dark:text-white">dai/uDAI</p>
           </div>
 
           <button class="focus:outline-none" @click="ui.active = !ui.active">
@@ -54,7 +54,7 @@
         <div v-if="ui.active" class="flex flex-col pt-2">
           <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
             <div class="w-1/2">
-              <p>Pooled tDAI</p>
+              <p>Pooled dai</p>
             </div>
             <div class="w-1/2 text-right">
               <p>100</p>
