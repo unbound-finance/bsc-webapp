@@ -1,6 +1,6 @@
 export default {
   contracts: {
-    dai: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
+    dai: '0xc30d0164Fb4c013dB62E32d48f81BeD92735d97a',
     eth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
     liquidityPoolToken: '0x266480906Fd0aa3edD7fF64f466ea9684b792179',
     unboundDai: '0x8Fd5616486a16255296DF246CED2ec3AD994e08c',

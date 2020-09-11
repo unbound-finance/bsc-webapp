@@ -287,9 +287,9 @@ import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
 // import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import UniswapRouterABI from '~/configs/abi/UniswapRouter'
-// import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-// import UnboundStakingABI from '~/configs/abi/UnboundStaking'
+// import UniswapRouterABI from '~/configs/abi/UniswapRouter'
+
+import { addLiquidity } from '~/mixins/stake'
 
 import config from '~/configs/config'
 
@@ -389,50 +389,25 @@ export default {
     },
 
     async addLiquidity() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        config.contracts.uniswapRouter,
-        UniswapRouterABI,
-        signer
-      )
-      const amountA = ethers.utils.parseEther(this.lpTokenAmount).toString()
-      const amountB = ethers.utils.parseEther(this.lpTokenAmount).toString()
-
       try {
-        const tokenA = config.contracts.dai
-        const tokenB = config.contracts.unboundDai
-        const amountADesired = amountA
-        const amountBDesired = amountB
-        const amountAMin = (amountA - (amountA * 10) / 100).toString()
-        const amountBMin = (amountB - (amountB * 10) / 100).toString()
-        const to = await signer.getAddress()
-        const deadline = +new Date() + 5000
-
-        const addLiquidity = await contract.addLiquidity(
-          tokenA,
-          tokenB,
-          amountADesired,
-          amountBDesired,
-          amountAMin,
-          amountBMin,
-          to,
-          deadline
+        const transaction = await addLiquidity(
+          config.contracts.dai,
+          config.contracts.unboundDai,
+          this.lpTokenAmount,
+          this.lpTokenAmount
         )
-
-        this.txLink = `https://kovan.etherscan.io/tx/${addLiquidity.hash}`
+        console.log(transaction)
         this.$notify({
           group: 'general',
           type: 'success',
-          title: `Transaction Success`,
+          title: 'Transaction Success',
         })
       } catch (error) {
-        this.$toasted.show('Transaction Rejected', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 5000,
+        this.$notify({
+          group: 'general',
+          type: 'error',
+          title: 'Transaction Rejected',
         })
-        console.log(error)
       }
     },
 
