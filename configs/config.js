@@ -6,7 +6,7 @@ export default {
     unboundDai: '0x8Fd5616486a16255296DF246CED2ec3AD994e08c',
     liquidityLock: '0x27A3F227fD5ddEc6a26D6f57c25be41816273C12',
     unboundStaking: '0x339004Ea6d1F74B94A905a314B52211f0DdeC00F',
-    uDaiUniswapPool: '0x6bdc51c8017abe83cb45dc20a4d4a1060861021c',
+    uDaiUniswapPool: '0x6d89c31af0068ac708732588e3d805172f45f4ba',
     uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   },
   chainId: 42,

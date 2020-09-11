@@ -323,7 +323,7 @@ export default {
       uDaiBalance: '',
       supportedPoolTokens: [
         {
-          name: 'dai',
+          name: 'Dai',
           exchange: 'Uniswap',
           address: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
           currencyOneLogo:
