@@ -138,6 +138,10 @@
             ? getDisabledClass
             : getActiveClass,
         ]"
+        :disabled="[
+          !liquidityPoolTokenAmount ? true : false,
+          liquidityPoolTokenAmount > balance ? true : false,
+        ]"
         @click="ui.showConfirmation = true"
       >
         <span v-if="!liquidityPoolTokenAmount">Enter an amount</span>
