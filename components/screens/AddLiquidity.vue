@@ -124,7 +124,7 @@
         </form>
       </div>
 
-      <div
+      <!-- <div
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
       >
         <p
@@ -147,7 +147,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <button
         class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
@@ -323,7 +323,7 @@ export default {
       uDaiBalance: '',
       supportedPoolTokens: [
         {
-          name: 'Dai',
+          name: 'dai',
           exchange: 'Uniswap',
           address: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
           currencyOneLogo:
