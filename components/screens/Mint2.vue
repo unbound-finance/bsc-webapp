@@ -134,8 +134,8 @@ import signature from '~/mixins/signature'
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 
 const config = {
-  tdai: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
-  teth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
+  dai: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
+  eth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
   lpToken: '0x1443398Aa8E16E0F289B12ddCf666eeC4215bF46',
   uDai: '0x88b2d1c22f5bace62dccd488c07872c6f9c486f5',
   llc: '0x769fd7De5d4E6e8fc22800Acc3Ad5236B5847332',
@@ -199,7 +199,7 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const userAddress = signer.getAddress()
       const getBalance = await contract.balanceOf(userAddress)
-      const balance = ethers.utils.formatEther(getBalance.toString())
+      const balance = ethers.utils.formaether(getBalance.toString())
       this.balance = balance
     },
     async calculateLoanRatio() {

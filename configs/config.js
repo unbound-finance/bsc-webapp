@@ -1,11 +1,13 @@
 export default {
   contracts: {
-    tdai: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
-    teth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
-    liquidityPoolToken: '0x1443398Aa8E16E0F289B12ddCf666eeC4215bF46',
-    unboundDai: '0xbE803e975157179Ad35D91461eE2C5b262DA65a1',
-    liquidityLock: '0x452ac89d34a0cd9d894f9464b382d71f0d5141df',
+    dai: '0xc30d0164Fb4c013dB62E32d48f81BeD92735d97a',
+    eth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
+    liquidityPoolToken: '0x266480906Fd0aa3edD7fF64f466ea9684b792179',
+    unboundDai: '0x8Fd5616486a16255296DF246CED2ec3AD994e08c',
+    liquidityLock: '0x27A3F227fD5ddEc6a26D6f57c25be41816273C12',
     unboundStaking: '0x339004Ea6d1F74B94A905a314B52211f0DdeC00F',
+    uDaiUniswapPool: '0x6d89c31af0068ac708732588e3d805172f45f4ba',
+    uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   },
   chainId: 42,
 }

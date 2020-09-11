@@ -32,7 +32,7 @@
         <span v-else class="text-gray-500">No Liquidity Found.</span>
       </div>
 
-      <div class="mt-4">
+      <div v-else class="mt-4">
         <div class="flex w-full items-center justify-between px-4">
           <div class="flex items-center space-x-2">
             <img
@@ -40,7 +40,7 @@
               width="24"
               alt="LP token logo"
             />
-            <p class="font-medium dark:text-white">tDAI/uDAI</p>
+            <p class="font-medium dark:text-white">Dai / uDAI</p>
           </div>
 
           <button class="focus:outline-none" @click="ui.active = !ui.active">
@@ -54,10 +54,10 @@
         <div v-if="ui.active" class="flex flex-col pt-2">
           <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
             <div class="w-1/2">
-              <p>Pooled tDAI</p>
+              <p>Pooled Dai</p>
             </div>
             <div class="w-1/2 text-right">
-              <p>100</p>
+              <p>{{ liquidity.token0 }}</p>
             </div>
           </div>
           <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
@@ -65,40 +65,44 @@
               <p>Pooled uDAI</p>
             </div>
             <div class="w-1/2 text-right">
-              <p>100</p>
+              <p>{{ liquidity.token1 }}</p>
             </div>
           </div>
-          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+          <!-- <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
             <div class="w-1/2">
               <p>Your pool tokens</p>
             </div>
             <div class="w-1/2 text-right">
               <p>0.1</p>
             </div>
-          </div>
+          </div> -->
           <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
             <div class="w-1/2">
               <p>Your pool share</p>
             </div>
             <div class="w-1/2 text-right">
-              <p>0.01%</p>
+              <p>{{ liquidity.poolShare }} %</p>
             </div>
           </div>
 
           <div class="flex items-center py-4">
             <div class="w-1/2 px-1">
-              <button
-                class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
-              >
-                Add
-              </button>
+              <nuxt-link class="w-full" to="/add">
+                <button
+                  class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
+                >
+                  Add
+                </button>
+              </nuxt-link>
             </div>
             <div class="w-1/2 px-1">
-              <button
-                class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
-              >
-                Remove
-              </button>
+              <nuxt-link class="w-full" to="/remove">
+                <button
+                  class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
+                >
+                  Remove
+                </button>
+              </nuxt-link>
             </div>
           </div>
         </div>
@@ -108,6 +112,11 @@
 </template>
 
 <script>
+import { ethers } from 'ethers'
+import config from '~/configs/config'
+
+import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+import { getAmountOfLockedTokens } from '~/mixins/stake'
 // import { ethers } from 'ethers'
 // import Web3 from 'web3'
 // import contractAddresses from '~/configs/addresses'
@@ -122,6 +131,36 @@ export default {
       },
       liquidity: null,
     }
+  },
+
+  mounted() {
+    this.fetchLiquidity()
+  },
+
+  methods: {
+    async fetchLiquidity() {
+      this.ui.loading = true
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const userAddress = provider.getSigner().getAddress()
+
+      const poolTokenContract = new ethers.Contract(
+        config.contracts.uDaiUniswapPool,
+        UniswapLPTABI,
+        signer
+      )
+
+      try {
+        const ptBalance = await poolTokenContract.balanceOf(userAddress)
+        if (ptBalance > 0) {
+          const data = await getAmountOfLockedTokens()
+          this.liquidity = data
+        }
+        this.ui.loading = false
+      } catch (error) {
+        this.ui.loading = false
+      }
+    },
   },
 }
 </script>

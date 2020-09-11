@@ -10,7 +10,7 @@
           </button>
         </nuxt-link>
         <p class="text-center font-medium dark:text-white text-lg">
-          Add Liquidity
+          Remove Liquidity
         </p>
         <button class="focus:outline-none">
           <i class="far fa-question-circle text-gray-600 text-lg"></i>
@@ -124,7 +124,7 @@
         </form>
       </div>
 
-      <!-- <div
+      <div
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
       >
         <p
@@ -147,13 +147,13 @@
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
 
       <button
         class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
-        @click="addLiquidity"
+        @click="removeLiquidity"
       >
-        Add Liquidity
+        Remove Liquidity
       </button>
     </div>
 
@@ -289,7 +289,7 @@ import ERC20ABI from '~/configs/abi/ERC20'
 // import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 // import UniswapRouterABI from '~/configs/abi/UniswapRouter'
 
-import { addLiquidity } from '~/mixins/stake'
+import { removeLiquidity } from '~/mixins/stake'
 
 import config from '~/configs/config'
 
@@ -323,7 +323,7 @@ export default {
       uDaiBalance: '',
       supportedPoolTokens: [
         {
-          name: 'dai',
+          name: 'Dai',
           exchange: 'Uniswap',
           address: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
           currencyOneLogo:
@@ -388,9 +388,9 @@ export default {
       }
     },
 
-    async addLiquidity() {
+    async removeLiquidity() {
       try {
-        const transaction = await addLiquidity(
+        const transaction = await removeLiquidity(
           config.contracts.dai,
           config.contracts.unboundDai,
           this.lpTokenAmount,

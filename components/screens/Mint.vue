@@ -129,6 +129,11 @@
           </div>
         </div>
       </div>
+
+      <!-- :disabled="[
+          !liquidityPoolTokenAmount ? true : false,
+          liquidityPoolTokenAmount > balance ? true : false,
+        ]" -->
       <button
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
@@ -270,7 +275,7 @@ import ERC20ABI from '~/configs/abi/ERC20'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
 
-import contractAddresses from '~/configs/addresses'
+// import contractAddresses from '~/configs/addresses'
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
 import config from '~/configs/config'
@@ -332,7 +337,7 @@ export default {
   },
 
   mounted() {
-    this.getBalanceOfToken(supportedPoolTokens[0].address)
+    this.getBalanceOfToken(config.contracts.liquidityPoolToken)
     this.calculateLoanRatio()
     // this.mint()
   },
@@ -360,7 +365,7 @@ export default {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
 
       const signer = provider.getSigner()
-      const uniswapLptAddress = contractAddresses.lpToken
+      const uniswapLptAddress = config.contracts.liquidityPoolToken
       const contract = await new ethers.Contract(
         uniswapLptAddress,
         UniswapLPTABI,
@@ -412,8 +417,16 @@ export default {
             UnboundLLCABI,
             signer
           )
+          console.log({
+            amount,
+            uDai: config.contracts.unboundDai,
+            deadline,
+            sigV: signature.v,
+            sigR: signature.r,
+            sigS: signature.s,
+          })
           try {
-            const mintUDai = await UnboundLLCContract.lockLPT(
+            const mintUDai = await UnboundLLCContract.lockLPTWithPermit(
               amount,
               config.contracts.unboundDai,
               deadline,

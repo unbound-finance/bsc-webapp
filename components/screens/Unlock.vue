@@ -28,8 +28,10 @@
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
         <div class="flex items-center justify-between">
-          <p class="text-sm text-gray-700 font-medium">Burn</p>
-          <p class="text-gray-600 text-sm">Balance: {{ balance }}</p>
+          <p class="text-sm text-gray-700 font-medium">Unlock</p>
+          <p class="text-gray-600 text-sm">
+            Locked: {{ lockedLPTokenBalance }}
+          </p>
         </div>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
@@ -53,7 +55,7 @@
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
             >
-              <span>{{ selectedBurnToken.name }}</span>
+              <span>UNI-ETH/DAI</span>
               <!-- <i class="fas fa-chevron-down pt-1"></i> -->
             </button>
 
@@ -75,7 +77,7 @@
       <div
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
-        <p class="text-sm text-gray-700 font-medium">Receive</p>
+        <p class="text-sm text-gray-700 font-medium">Burn</p>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
@@ -90,7 +92,7 @@
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
             >
-              <span>UNI-ETH/DAI</span>
+              <span>{{ selectedBurnToken.name }}</span>
               <!-- <i class="fas fa-chevron-down pt-1"></i> -->
             </button>
           </div>
@@ -152,7 +154,7 @@ import { ethers } from 'ethers'
 import ERC20ABI from '~/configs/abi/ERC20'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import config from '~/configs/addresses'
+import config from '~/configs/config'
 
 // import signature from '~/mixins/signature'
 
@@ -168,13 +170,14 @@ export default {
       selectedBurnToken: {
         name: 'uDai',
         exchange: 'Uniswap',
-        address: config.uDai,
+        address: config.contracts.unboundDai,
         currencyOneLogo:
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
         currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
       },
       selectedMintToken: '',
       balance: '--.--',
+      lockedLPTokenBalance: '--.--',
       txLink: '',
       burnTokenAmount: '',
       loanRatio: {
@@ -186,7 +189,7 @@ export default {
         {
           name: 'UNI-ETH/DAI',
           exchange: 'Uniswap',
-          address: config.uDai,
+          address: config.contracts.liquidityPoolToken,
           currencyOneLogo:
             'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
           currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
@@ -198,11 +201,12 @@ export default {
   computed: {
     udaiOutput() {
       const ratio = this.getRatio()
-      return this.burnTokenAmount / ratio
+      return this.burnTokenAmount * ratio
     },
   },
 
   mounted() {
+    this.getLPTokenBalance()
     this.getBalanceOfToken(this.supportedPoolTokens[0].address)
     this.calculateLoanRatio()
     // this.mint()
@@ -225,9 +229,24 @@ export default {
       this.balance = formattedBalance
     },
 
+    async getLPTokenBalance() {
+      const signer = provider.getSigner()
+      const contract = await new ethers.Contract(
+        config.contracts.liquidityLock,
+        UnboundLLCABI,
+        signer
+      )
+      const userAddress = signer.getAddress()
+      const getBalance = await contract._tokensLocked(userAddress)
+      const balance = ethers.utils.formatEther(getBalance.toString())
+      const formattedBalance =
+        Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
+      this.lockedLPTokenBalance = formattedBalance
+    },
+
     async calculateLoanRatio() {
       const signer = provider.getSigner()
-      const uniswapLptAddress = config.lpToken
+      const uniswapLptAddress = config.contracts.liquidityPoolToken
       const contract = await new ethers.Contract(
         uniswapLptAddress,
         UniswapLPTABI,
@@ -256,20 +275,23 @@ export default {
     async approve(tokenAddress) {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.lpToken,
+        config.contracts.liquidityPoolToken,
         ERC20ABI,
         signer
       )
 
       const totalSupply = contract.totalSupply()
-      const approved = await contract.approve(config.llc, totalSupply)
+      const approved = await contract.approve(
+        config.contracts.liquidityLock,
+        totalSupply
+      )
       console.log(approved)
     },
 
     async burn(tokenAddress) {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.llc,
+        config.contracts.liquidityLock,
         UnboundLLCABI,
         signer
       )
@@ -277,7 +299,10 @@ export default {
       const LPTAmount = (this.burnTokenAmount / ratio).toString()
       const rawLPTAmount = ethers.utils.parseEther(LPTAmount)
       try {
-        const approved = await contract.unlockLPT(rawLPTAmount, '0')
+        const approved = await contract.unlockLPT(
+          rawLPTAmount,
+          config.contracts.unboundDai
+        )
         this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
       } catch (error) {
         this.$toasted.show('Transaction Rejected', {
@@ -290,7 +315,7 @@ export default {
     },
 
     setInputMax() {
-      this.burnTokenAmount = this.balance
+      this.burnTokenAmount = this.lockedLPTokenBalance
     },
   },
 }
