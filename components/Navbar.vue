@@ -105,10 +105,12 @@ export default {
   },
 
   mounted() {
-    window.ethereum.on('accountsChanged', function (networkId) {
-      location.reload()
-      // Time to reload your interface with the new networkId
-    })
+    try {
+      window.ethereum.on('accountsChanged', function (networkId) {
+        location.reload()
+        // Time to reload your interface with the new networkId
+      })
+    } catch (error) {}
   },
   methods: {
     toggleMode() {
