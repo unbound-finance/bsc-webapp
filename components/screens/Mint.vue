@@ -129,6 +129,11 @@
           </div>
         </div>
       </div>
+
+      <!-- :disabled="[
+          !liquidityPoolTokenAmount ? true : false,
+          liquidityPoolTokenAmount > balance ? true : false,
+        ]" -->
       <button
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
@@ -137,10 +142,6 @@
           liquidityPoolTokenAmount > balance
             ? getDisabledClass
             : getActiveClass,
-        ]"
-        :disabled="[
-          !liquidityPoolTokenAmount ? true : false,
-          liquidityPoolTokenAmount > balance ? true : false,
         ]"
         @click="ui.showConfirmation = true"
       >

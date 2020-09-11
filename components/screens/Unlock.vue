@@ -154,7 +154,7 @@ import { ethers } from 'ethers'
 import ERC20ABI from '~/configs/abi/ERC20'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import config from '~/configs/addresses'
+import config from '~/configs/config'
 
 // import signature from '~/mixins/signature'
 
@@ -170,7 +170,7 @@ export default {
       selectedBurnToken: {
         name: 'uDai',
         exchange: 'Uniswap',
-        address: config.uDai,
+        address: config.contracts.unboundDai,
         currencyOneLogo:
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
         currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
@@ -189,7 +189,7 @@ export default {
         {
           name: 'UNI-ETH/DAI',
           exchange: 'Uniswap',
-          address: config.uDai,
+          address: config.contracts.liquidityPoolToken,
           currencyOneLogo:
             'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
           currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
@@ -232,7 +232,7 @@ export default {
     async getLPTokenBalance() {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.llc,
+        config.contracts.liquidityLock,
         UnboundLLCABI,
         signer
       )
@@ -246,7 +246,7 @@ export default {
 
     async calculateLoanRatio() {
       const signer = provider.getSigner()
-      const uniswapLptAddress = config.lpToken
+      const uniswapLptAddress = config.contracts.liquidityPoolToken
       const contract = await new ethers.Contract(
         uniswapLptAddress,
         UniswapLPTABI,
@@ -275,20 +275,23 @@ export default {
     async approve(tokenAddress) {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.lpToken,
+        config.contracts.liquidityPoolToken,
         ERC20ABI,
         signer
       )
 
       const totalSupply = contract.totalSupply()
-      const approved = await contract.approve(config.llc, totalSupply)
+      const approved = await contract.approve(
+        config.contracts.liquidityLock,
+        totalSupply
+      )
       console.log(approved)
     },
 
     async burn(tokenAddress) {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.llc,
+        config.contracts.liquidityLock,
         UnboundLLCABI,
         signer
       )
@@ -296,7 +299,10 @@ export default {
       const LPTAmount = (this.burnTokenAmount / ratio).toString()
       const rawLPTAmount = ethers.utils.parseEther(LPTAmount)
       try {
-        const approved = await contract.unlockLPT(rawLPTAmount, '0')
+        const approved = await contract.unlockLPT(
+          rawLPTAmount,
+          config.contracts.unboundDai
+        )
         this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
       } catch (error) {
         this.$toasted.show('Transaction Rejected', {
