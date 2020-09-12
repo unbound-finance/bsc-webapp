@@ -160,6 +160,7 @@ import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
 import config from '~/configs/config'
 
 import { getERC20Balance } from '~/mixins/ERC20'
+// import { getERC20Balance } from '~/mixins/ERC20'
 
 // import signature from '~/mixins/signature'
 
@@ -261,10 +262,17 @@ export default {
       )
       const reserve = await contract.getReserves()
       const totalLPTokens = await contract.totalSupply()
+      const token0 = await contract.token0()
       // total value locked in the smart contract in terms of Dai
-      const totalDai = reserve[0].toString() * 2
-      this.loanRatio.totalDai = totalDai
-      this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      if (token0.toLowerCase() === config.contracts.dai) {
+        const totalDai = reserve[0].toString() * 2
+        this.loanRatio.totalDai = totalDai
+        this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      } else {
+        const totalDai = reserve[1].toString() * 2
+        this.loanRatio.totalDai = totalDai
+        this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      }
     },
 
     getRatio() {
