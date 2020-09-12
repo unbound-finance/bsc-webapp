@@ -4,7 +4,7 @@
       <img src="~/assets/icons/modal/success.svg" width="128" alt="success" />
       <div>
         <p class="text-xl dark:text-white font-medium text-gray-800">
-          Transaction Successful
+          Transaction Submitted
         </p>
         <a :href="`https://kovan.etherscan.io/tx/${hash}`" target="_blank">
           <p class="text-xs text-center text-accent">View on Etherscan</p>
