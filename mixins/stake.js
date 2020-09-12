@@ -1,8 +1,11 @@
 import { ethers } from 'ethers'
+import Web3 from 'web3'
 
 import UniswapRouterABI from '~/configs/abi/UniswapRouter'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
+
+import { getEIP712Signature, getNonce } from '~/mixins/crypto'
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
@@ -37,45 +40,102 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 }
 
 const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
-  // const poolTokenBalance = await getPoolTokenBalance()
-  // // const poolTokenReserves = await getPoolTokenReserves()
-  // const poolTokenTotalSupply = await getPoolTokenTotalSupply()
-
-  const contract = await new ethers.Contract(
-    config.contracts.uniswapRouter,
-    UniswapRouterABI,
-    signer
-  )
+  const userAddress = await signer.getAddress()
+  const nonce = await getNonce(config.contracts.uDaiUniswapPool, signer)
+  const deadline = +new Date() + 10000
   const formatAmountA = ethers.utils.parseEther(amountA).toString()
   const formatAmountB = ethers.utils.parseEther(amountB).toString()
 
-  const liquidity = Math.sqrt(formatAmountA * formatAmountB)
+  const liquidity = Math.sqrt(formatAmountA * formatAmountB).toString()
 
   const amountAMin = (formatAmountA - (formatAmountA * 10) / 100).toString()
   const amountBMin = (formatAmountB - (formatAmountB * 10) / 100).toString()
-  const to = await signer.getAddress()
-  const deadline = +new Date() + 5000
 
-  console.log({
-    tokenA,
-    tokenB,
+  const signedData = await getEIP712Signature(
+    config.contracts.uDaiUniswapPool,
+    config.contracts.uniswapRouter,
+    userAddress,
     liquidity,
-    amountAMin,
-    amountBMin,
-    to,
-    deadline,
-  })
-
-  const transaction = await contract.removeLiquidity(
-    tokenA,
-    tokenB,
-    liquidity,
-    amountAMin,
-    amountBMin,
-    to,
+    nonce,
     deadline
   )
-  return transaction
+
+  const web3 = new Web3(window.ethereum)
+  const metamaskSigner = await web3.eth.getAccounts()
+
+  await web3.currentProvider.sendAsync(
+    {
+      method: 'eth_signTypedData_v3',
+      params: [metamaskSigner[0], signedData],
+      from: metamaskSigner[0],
+    },
+    async (error, signedData) => {
+      if (error || signedData.error) {
+        return console.log(error)
+      }
+      const signature = ethers.utils.splitSignature(signedData.result)
+      console.log(signature)
+      const UniswapRouter = await new ethers.Contract(
+        config.contracts.uniswapRouter,
+        UniswapRouterABI,
+        signer
+      )
+      try {
+        const removeLiquidity = await UniswapRouter.removeLiquidityWithPermit(
+          tokenA,
+          tokenB,
+          liquidity,
+          amountAMin,
+          amountBMin,
+          userAddress,
+          deadline,
+          false,
+          signature.v,
+          signature.r,
+          signature.s
+        )
+        console.log(removeLiquidity)
+        return removeLiquidity.hash
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  )
+  // const signature = ethers.utils.splitSignature(signedData.result)
+  // console.log(signature)
+  // const contract = await new ethers.Contract(
+  //   config.contracts.uniswapRouter,
+  //   UniswapRouterABI,
+  //   signer
+  // )
+  // const formatAmountA = ethers.utils.parseEther(amountA).toString()
+  // const formatAmountB = ethers.utils.parseEther(amountB).toString()
+
+  // const liquidity = Math.sqrt(formatAmountA * formatAmountB)
+
+  // const amountAMin = (formatAmountA - (formatAmountA * 10) / 100).toString()
+  // const amountBMin = (formatAmountB - (formatAmountB * 10) / 100).toString()
+  // const to = await signer.getAddress()
+
+  // console.log({
+  //   tokenA,
+  //   tokenB,
+  //   liquidity,
+  //   amountAMin,
+  //   amountBMin,
+  //   to,
+  //   deadline,
+  // })
+
+  // const transaction = await contract.removeLiquidity(
+  //   tokenA,
+  //   tokenB,
+  //   liquidity,
+  //   amountAMin,
+  //   amountBMin,
+  //   to,
+  //   deadline
+  // )
 }
 
 const getPoolTokenBalance = async () => {

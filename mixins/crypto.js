@@ -17,7 +17,7 @@ const getNonce = async (poolTokenAddress, signer) => {
 // https://github.com/ethereum/EIPs/blob/8a34d644aacf0f9f8f00815307fd7dd5da07655f/EIPS/eip-2612.md
 const getEIP712Signature = (
   poolTokenAddress,
-  liquidityLockAddress,
+  spender,
   userAddress,
   amount,
   nonce,
@@ -65,7 +65,7 @@ const getEIP712Signature = (
   ]
   const message = {
     owner: userAddress,
-    spender: liquidityLockAddress,
+    spender,
     value: amount,
     nonce,
     deadline,
