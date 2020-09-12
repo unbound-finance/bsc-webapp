@@ -77,7 +77,10 @@
       <div
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
-        <p class="text-sm text-gray-700 font-medium">Burn</p>
+        <div class="flex items-center justify-between">
+          <p class="text-sm text-gray-700 font-medium">Burn</p>
+          <p class="text-gray-600 text-sm">Balance: {{ uDaiBalance }}</p>
+        </div>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
@@ -156,6 +159,8 @@ import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
 import config from '~/configs/config'
 
+import { getERC20Balance } from '~/mixins/ERC20'
+
 // import signature from '~/mixins/signature'
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -180,6 +185,7 @@ export default {
       lockedLPTokenBalance: '--.--',
       txLink: '',
       burnTokenAmount: '',
+      uDaiBalance: '',
       loanRatio: {
         totalDai: '',
         totalLPTokens: '',
@@ -209,6 +215,7 @@ export default {
     this.getLPTokenBalance()
     this.getBalanceOfToken(this.supportedPoolTokens[0].address)
     this.calculateLoanRatio()
+    this.getBurnTokenBalance()
     // this.mint()
   },
 
@@ -312,6 +319,12 @@ export default {
         })
         console.log(error)
       }
+    },
+
+    async getBurnTokenBalance() {
+      const balance = await getERC20Balance(config.contracts.unboundDai)
+      console.log(balance)
+      this.uDaiBalance = parseFloat(balance.formatted).toFixed(4).slice(0, -1)
     },
 
     setInputMax() {
