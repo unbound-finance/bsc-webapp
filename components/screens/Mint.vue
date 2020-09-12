@@ -130,10 +130,6 @@
         </div>
       </div>
 
-      <!-- :disabled="[
-          !liquidityPoolTokenAmount ? true : false,
-          liquidityPoolTokenAmount > balance ? true : false,
-        ]" -->
       <button
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
@@ -143,6 +139,7 @@
             ? getDisabledClass
             : getActiveClass,
         ]"
+        :disabled="shouldDisable"
         @click="ui.showConfirmation = true"
       >
         <span v-if="!liquidityPoolTokenAmount">Enter an amount</span>
@@ -256,8 +253,8 @@
       </template>
     </Modal>
 
-    <SuccessModal :show="ui.showSuccess" />
-    <RejectedModal :show="ui.showRejected" />
+    <SuccessModal :show="ui.showSuccess" @close="ui.showSuccess" />
+    <RejectedModal :show="ui.showRejected" @close="ui.showRejected" />
   </div>
 </template>
 
@@ -325,6 +322,16 @@ export default {
         return true
       }
       return false
+    },
+
+    shouldDisable() {
+      if (!this.liquidityPoolTokenAmount) {
+        return true
+      } else if (this.liquidityPoolTokenAmount > this.balance) {
+        return true
+      } else {
+        return false
+      }
     },
 
     getDisabledClass() {
