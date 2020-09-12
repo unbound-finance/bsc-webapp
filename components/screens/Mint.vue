@@ -298,7 +298,7 @@ export default {
         (this.loanRatio.totalDai * this.liquidityPoolTokenAmount) /
         this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
-      const loanAmount = (LPTValueInDai * 50) / 100
+      const loanAmount = LPTValueInDai * 0.5
       // const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
       return loanAmount.toFixed(4).slice(0, -1)
     },
@@ -360,10 +360,17 @@ export default {
       )
       const reserve = await contract.getReserves()
       const totalLPTokens = await contract.totalSupply()
+      const token0 = await contract.token0()
+      if (token0.toLowerCase() === config.contracts.dai) {
+        const totalDai = reserve[0].toString() * 2
+        this.loanRatio.totalDai = totalDai
+        this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      } else {
+        const totalDai = reserve[1].toString() * 2
+        this.loanRatio.totalDai = totalDai
+        this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      }
       // total value locked in the smart contract in terms of Dai
-      const totalDai = reserve[0].toString() * 2
-      this.loanRatio.totalDai = totalDai
-      this.loanRatio.totalLPTokens = totalLPTokens.toString()
     },
 
     async mint(poolTokenAddress) {
