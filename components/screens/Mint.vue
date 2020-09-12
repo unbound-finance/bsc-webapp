@@ -253,8 +253,8 @@
       </template>
     </Modal>
 
-    <SuccessModal :show="ui.showSuccess" @close="ui.showSuccess" />
-    <RejectedModal :show="ui.showRejected" @close="ui.showRejected" />
+    <SuccessModal :show="ui.showSuccess" />
+    <RejectedModal :show="ui.showRejected" />
   </div>
 </template>
 
