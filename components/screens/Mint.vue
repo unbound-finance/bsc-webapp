@@ -14,14 +14,6 @@
           <i class="far fa-question-circle text-gray-600 text-lg"></i>
         </button>
       </div>
-      <p
-        v-if="txLink"
-        class="p-2 border-1 bg-primary-400 rounded-full px-8 bg-opacity-25 text-light-primary dark:text-white text-gray-900"
-        style="background: #06d6a0"
-      >
-        Transaction Success.
-        <a :href="txLink" target="_blank"> View On Etherscan </a>
-      </p>
 
       <p
         v-if="!selectedPoolToken"
@@ -153,7 +145,7 @@
     </div>
 
     <!-- Select LP Tokens Modal -->
-    <Modal :show="ui.showDialog" @close="ui.showDialog = false">
+    <Modal v-model="ui.showDialog">
       <template>
         <div class="flex flex-col space-y-4">
           <div class="flex justify-between items-center">
@@ -195,7 +187,7 @@
     </Modal>
 
     <!-- Transaction confirmation Modal -->
-    <Modal :show="ui.showConfirmation" @close="ui.showConfirmation = false">
+    <Modal v-model="ui.showConfirmation">
       <template>
         <div class="flex flex-col space-y-4">
           <div class="flex justify-between items-center">
@@ -253,17 +245,13 @@
       </template>
     </Modal>
 
-    <SuccessModal :show="ui.showSuccess" />
-    <RejectedModal :show="ui.showRejected" />
+    <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
+    <RejectedModal v-model="ui.showRejected" />
   </div>
 </template>
 
 <script>
 // import components
-import Modal from '@/components/_app/Modal'
-import ConnectWalletBtn from '@/components/ConnectWalletBtn'
-import SuccessModal from '@/components/modals/Success'
-import RejectedModal from '@/components/modals/Rejected'
 
 import { ethers } from 'ethers'
 import Web3 from 'web3'
@@ -281,7 +269,6 @@ import config from '~/configs/config'
 import { getNonce, getEIP712Signature } from '~/mixins/crypto'
 
 export default {
-  components: { Modal, ConnectWalletBtn, SuccessModal, RejectedModal },
   data() {
     return {
       ui: {
@@ -317,21 +304,14 @@ export default {
     },
 
     isWalletConnected() {
-      const walletAddress = this.$store.state.address
-      if (walletAddress) {
-        return true
-      }
-      return false
+      return !!this.$store.state.address
     },
 
     shouldDisable() {
-      if (!this.liquidityPoolTokenAmount) {
-        return true
-      } else if (this.liquidityPoolTokenAmount > this.balance) {
-        return true
-      } else {
-        return false
-      }
+      return (
+        !this.liquidityPoolTokenAmount ||
+        this.liquidityPoolTokenAmount > this.balance
+      )
     },
 
     getDisabledClass() {
@@ -448,6 +428,7 @@ export default {
             //   type: 'success',
             //   title: 'Transaction Success',
             // })
+            this.txLink = mintUDai.hash
             this.ui.showSuccess = true
             console.log(mintUDai.hash)
           } catch (error) {

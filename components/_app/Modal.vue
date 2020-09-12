@@ -1,7 +1,7 @@
 <template>
   <transition name="modal-transition">
     <div
-      v-show="show"
+      v-show="modal"
       class="modal-backdrop flex justify-center items-center"
       @click="close"
     >
@@ -18,12 +18,28 @@
 <script>
 export default {
   name: 'modal',
-  props: ['show'],
+  props: {
+    value: Boolean,
+  },
+  data() {
+    return {
+      modal: this.value,
+    }
+  },
+  watch: {
+    value(a) {
+      this.modal = a
+    },
+    modal(a) {
+      this.$emit('input', a)
+    },
+  },
   mounted() {
     this.closeOnEsc()
   },
   methods: {
     close() {
+      this.modal = false
       this.$emit('close')
     },
     closeOnEsc() {
