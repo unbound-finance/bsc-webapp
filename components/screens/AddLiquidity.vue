@@ -149,6 +149,32 @@
         </div>
       </div> -->
 
+      <!-- Show fees -->
+      <div
+        v-if="lpTokenAmount"
+        class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
+      >
+        <p
+          class="text-gray-800 dark:text-gray-400 font-medium text-sm mx-4 my-2"
+        >
+          Earn
+        </p>
+        <div class="bg-white dark:bg-dark-bg rounded-lg p-4">
+          <div class="flex flex-col space-y-1">
+            <!-- <div class="flex items-center justify-between">
+              <p class="text-sm text-gray-600">Pool Share</p>
+              <p class="font-medium text-sm dark:text-white">
+                {{ (parseInt(udaiOutput) * 0.25) / 100 }} uDai
+              </p>
+            </div> -->
+            <div class="flex items-center justify-between">
+              <p class="text-sm text-gray-600">Estimated Earning</p>
+              <p class="font-medium text-sm dark:text-white">Coming Soon</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <button
         class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
         @click="addLiquidity"
