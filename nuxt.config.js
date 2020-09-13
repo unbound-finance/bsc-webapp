@@ -75,6 +75,6 @@ export default {
    */
   build: {},
   purgeCSS: {
-    whitelist: ['dark-mode'],
+    whitelist: ['dark-mode', 'light-mode'],
   },
 }

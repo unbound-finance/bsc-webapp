@@ -247,6 +247,7 @@
 
     <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
     <RejectedModal v-model="ui.showRejected" />
+    <AwaitingModal v-model="ui.showAwaiting" />
   </div>
 </template>
 
@@ -276,6 +277,7 @@ export default {
         showConfirmation: false,
         showSuccess: false,
         showRejected: false,
+        showAwaiting: false,
       },
       selectedPoolToken: '',
       selectedMintToken: '',
@@ -374,6 +376,7 @@ export default {
     },
 
     async mint(poolTokenAddress) {
+      this.ui.showAwaiting = true
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
 
@@ -403,6 +406,7 @@ export default {
         },
         async (error, signedData) => {
           if (error || signedData.error) {
+            this.ui.showAwaiting = false
             return console.error(signedData)
           }
           const signature = ethers.utils.splitSignature(signedData.result)
@@ -428,23 +432,16 @@ export default {
               signature.r,
               signature.s
             )
+            // close awaiting modal
+            this.ui.showAwaiting = false
             // show success screen
             this.ui.showConfirmation = false
-            // this.$notify({
-            //   group: 'general',
-            //   type: 'success',
-            //   title: 'Transaction Success',
-            // })
             this.txLink = mintUDai.hash
             this.ui.showSuccess = true
             console.log(mintUDai.hash)
           } catch (error) {
+            this.ui.showAwaiting = false
             this.ui.showConfirmation = false
-            // this.$notify({
-            //   group: 'general',
-            //   type: 'error',
-            //   title: 'Transaction Rejected',
-            // })
             this.ui.showRejected = true
           }
         }
