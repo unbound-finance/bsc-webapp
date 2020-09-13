@@ -36,7 +36,7 @@
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="burnTokenAmount"
+              v-model="LPTAmount"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -186,6 +186,7 @@ export default {
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
         currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
       },
+      LPTAmount: '',
       selectedMintToken: '',
       balance: '--.--',
       lockedLPTokenBalance: '--.--',
@@ -213,7 +214,7 @@ export default {
   computed: {
     udaiOutput() {
       const ratio = this.getRatio()
-      return this.burnTokenAmount * ratio
+      return this.LPTAmount * ratio
     },
   },
 
@@ -252,9 +253,7 @@ export default {
       const userAddress = signer.getAddress()
       const getBalance = await contract._tokensLocked(userAddress)
       const balance = ethers.utils.formatEther(getBalance.toString())
-      const formattedBalance =
-        Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
-      this.lockedLPTokenBalance = formattedBalance
+      this.lockedLPTokenBalance = parseFloat(balance).toFixed(4).slice(0, -1)
     },
 
     async calculateLoanRatio() {
@@ -287,8 +286,7 @@ export default {
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = (LPTValueInDai * 50) / 100
       const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      const ratio =
-        Math.round((loanAmountWithFees + Number.EPSILON) * 100) / 100
+      const ratio = parseFloat(loanAmountWithFees).toFixed(4).slice(0, -1)
       return ratio
     },
 
@@ -315,15 +313,14 @@ export default {
         UnboundLLCABI,
         signer
       )
-      const ratio = this.getRatio()
-      const LPTAmount = (this.burnTokenAmount / ratio).toString()
-      const rawLPTAmount = ethers.utils.parseEther(LPTAmount)
+      const rawLPTAmount = ethers.utils.parseEther(this.LPTAmount)
+      console.log(rawLPTAmount)
       try {
-        const approved = await contract.unlockLPT(
+        const unlock = await contract.unlockLPT(
           rawLPTAmount,
           config.contracts.unboundDai
         )
-        this.txLink = approved.hash
+        this.txLink = unlock.txLink
         this.ui.showSuccess = true
       } catch (error) {
         console.log(error)

@@ -301,8 +301,8 @@ export default {
         this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = LPTValueInDai * 0.5
-      // const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      return loanAmount.toFixed(4).slice(0, -1)
+      const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
+      return loanAmountWithFees.toFixed(4).slice(0, -1)
     },
 
     isWalletConnected() {
