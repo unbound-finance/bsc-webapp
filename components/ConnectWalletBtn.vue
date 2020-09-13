@@ -1,6 +1,13 @@
 <template>
   <div>
     <button
+      v-if="address"
+      class="px-6 py-2 bg-white dark:bg-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-800 focus:outline-none"
+    >
+      {{ address.substring(0, 15) + '...' }}
+    </button>
+    <button
+      v-else
       class="w-full px-6 py-2 font-semibold rounded text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 focus:outline-none"
       @click="connectMetamask"
     >
@@ -18,6 +25,9 @@ export default {
     return {
       address: '',
     }
+  },
+  mounted() {
+    this.connectMetamask()
   },
   methods: {
     async connectMetamask() {

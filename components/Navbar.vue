@@ -7,14 +7,7 @@
     </div>
 
     <div class="flex items-center space-x-4">
-      <button
-        v-if="userAddress"
-        class="px-6 py-2 bg-white dark:bg-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-800 focus:outline-none"
-        @click="ui.showDialog = true"
-      >
-        {{ userAddress.substring(0, 15) + '...' }}
-      </button>
-      <ConnectWalletBtn v-else />
+      <ConnectWalletBtn />
       <button
         class="p-3 rounded bg-gray-300 focus:outline-none"
         @click="toggleMode"
