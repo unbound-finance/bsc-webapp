@@ -157,6 +157,9 @@
       </button>
     </div>
 
+    <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
+    <RejectedModal v-model="ui.showRejected" />
+
     <!-- Select Tokens Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
       <template>
@@ -300,6 +303,8 @@ export default {
       ui: {
         showDialog: false,
         showConfirmation: false,
+        showSuccess: false,
+        showRejected: false,
       },
       selectedToken: {
         name: 'dai',
@@ -397,17 +402,9 @@ export default {
           this.lpTokenAmount
         )
         console.log(transaction)
-        this.$notify({
-          group: 'general',
-          type: 'success',
-          title: 'Transaction Success',
-        })
+        this.ui.showSuccess = true
       } catch (error) {
-        this.$notify({
-          group: 'general',
-          type: 'error',
-          title: 'Transaction Rejected',
-        })
+        this.ui.showRejected = true
       }
     },
 

@@ -110,6 +110,9 @@
       </button>
     </div>
 
+    <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
+    <RejectedModal v-model="ui.showRejected" />
+
     <!-- Select LP Tokens Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
       <template>
@@ -172,6 +175,8 @@ export default {
     return {
       ui: {
         showDialog: false,
+        showSuccess: false,
+        showRejected: false,
       },
       selectedBurnToken: {
         name: 'uDai',
@@ -319,13 +324,10 @@ export default {
           config.contracts.unboundDai
         )
         this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
+        this.ui.showSuccess = true
       } catch (error) {
-        this.$toasted.show('Transaction Rejected', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 3000,
-        })
         console.log(error)
+        this.ui.showRejected = true
       }
     },
 

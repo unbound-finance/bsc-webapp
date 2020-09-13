@@ -23,7 +23,7 @@
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Input</p>
           <p v-if="selectedToken" class="text-gray-600 text-sm">
-            Balance: {{ balance }}
+            Supplied: {{ balance }}
           </p>
         </div>
         <form class="w-full max-w-sm">
@@ -84,7 +84,7 @@
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Input</p>
           <p v-if="selectedUToken" class="text-gray-600 text-sm">
-            Balance: {{ uDaiBalance }}
+            Supplied: {{ uDaiBalance }}
           </p>
         </div>
         <form class="w-full max-w-sm">
@@ -136,13 +136,15 @@
           <div class="flex flex-col space-y-1">
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Pool Share</p>
-              <p class="font-medium text-sm dark:text-white">100%</p>
+              <p class="font-medium text-sm dark:text-white">
+                {{ liquidity.poolShare }}%
+              </p>
             </div>
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Your Positions</p>
               <p class="font-medium text-sm dark:text-white">
-                <span class="text-gray-600">DAI</span>: 100,
-                <span class="text-gray-600">uDAI</span>: 100.01
+                <span class="text-gray-600">DAI</span>: {{ liquidity.token1 }},
+                <span class="text-gray-600">uDAI</span>: {{ liquidity.token0 }}
               </p>
             </div>
           </div>
@@ -156,6 +158,9 @@
         Remove Liquidity
       </button>
     </div>
+
+    <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
+    <RejectedModal v-model="ui.showRejected" />
 
     <!-- Select Tokens Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
@@ -286,10 +291,10 @@ import Modal from '@/components/_app/Modal'
 import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
-// import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 // import UniswapRouterABI from '~/configs/abi/UniswapRouter'
 
-import { removeLiquidity } from '~/mixins/stake'
+import { removeLiquidity, getAmountOfLockedTokens } from '~/mixins/stake'
 
 import config from '~/configs/config'
 
@@ -300,6 +305,8 @@ export default {
       ui: {
         showDialog: false,
         showConfirmation: false,
+        showSuccess: false,
+        showRejected: false,
       },
       selectedToken: {
         name: 'dai',
@@ -321,6 +328,7 @@ export default {
       // isTokenApproved: '',
       txLink: '',
       uDaiBalance: '',
+      liquidity: '',
       supportedPoolTokens: [
         {
           name: 'Dai',
@@ -340,10 +348,9 @@ export default {
     },
   },
 
-  async mounted() {
-    this.balance = await this.getBalanceOfToken(this.selectedToken.address)
-    this.uDaiBalance = await this.getBalanceOfToken(this.selectedUToken.address)
+  mounted() {
     this.checkAllowances()
+    this.fetchLiquidity()
     // this.calculateLoanRatio()
     // this.mint()
   },
@@ -352,6 +359,33 @@ export default {
     selectPoolToken(poolToken) {
       this.selectedToken = poolToken
       this.ui.showDialog = false
+    },
+
+    async fetchLiquidity() {
+      this.ui.loading = true
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const userAddress = provider.getSigner().getAddress()
+
+      const poolTokenContract = new ethers.Contract(
+        config.contracts.uDaiUniswapPool,
+        UniswapLPTABI,
+        signer
+      )
+
+      try {
+        const ptBalance = await poolTokenContract.balanceOf(userAddress)
+        if (ptBalance > 0) {
+          const data = await getAmountOfLockedTokens()
+          this.liquidity = data
+
+          this.balance = data.token0
+          this.uDaiBalance = data.token1
+        }
+        this.ui.loading = false
+      } catch (error) {
+        this.ui.loading = false
+      }
     },
 
     async getBalanceOfToken(tokenAddress) {
@@ -397,17 +431,9 @@ export default {
           this.lpTokenAmount
         )
         console.log(transaction)
-        this.$notify({
-          group: 'general',
-          type: 'success',
-          title: 'Transaction Success',
-        })
+        this.ui.showSuccess = true
       } catch (error) {
-        this.$notify({
-          group: 'general',
-          type: 'error',
-          title: 'Transaction Rejected',
-        })
+        this.ui.showRejected = true
       }
     },
 

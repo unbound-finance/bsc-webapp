@@ -63,44 +63,48 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const web3 = new Web3(window.ethereum)
   const metamaskSigner = await web3.eth.getAccounts()
 
-  await web3.currentProvider.sendAsync(
-    {
-      method: 'eth_signTypedData_v3',
-      params: [metamaskSigner[0], signedData],
-      from: metamaskSigner[0],
-    },
-    async (error, signedData) => {
-      if (error || signedData.error) {
-        return console.log(error)
-      }
-      const signature = ethers.utils.splitSignature(signedData.result)
-      console.log(signature)
-      const UniswapRouter = await new ethers.Contract(
-        config.contracts.uniswapRouter,
-        UniswapRouterABI,
-        signer
-      )
-      try {
-        const removeLiquidity = await UniswapRouter.removeLiquidityWithPermit(
-          tokenA,
-          tokenB,
-          liquidity,
-          amountAMin,
-          amountBMin,
-          userAddress,
-          deadline,
-          false,
-          signature.v,
-          signature.r,
-          signature.s
+  try {
+    await web3.currentProvider.sendAsync(
+      {
+        method: 'eth_signTypedData_v3',
+        params: [metamaskSigner[0], signedData],
+        from: metamaskSigner[0],
+      },
+      async (error, signedData) => {
+        if (error || signedData.error) {
+          return console.log(error)
+        }
+        const signature = ethers.utils.splitSignature(signedData.result)
+        console.log(signature)
+        const UniswapRouter = await new ethers.Contract(
+          config.contracts.uniswapRouter,
+          UniswapRouterABI,
+          signer
         )
-        console.log(removeLiquidity)
-        return removeLiquidity.hash
-      } catch (error) {
-        console.log(error)
+        try {
+          const removeLiquidity = await UniswapRouter.removeLiquidityWithPermit(
+            tokenA,
+            tokenB,
+            liquidity,
+            amountAMin,
+            amountBMin,
+            userAddress,
+            deadline,
+            false,
+            signature.v,
+            signature.r,
+            signature.s
+          )
+          console.log(removeLiquidity)
+          return removeLiquidity.hash
+        } catch (error) {
+          console.log(error)
+        }
       }
-    }
-  )
+    )
+  } catch (error) {
+    console.log('')
+  }
   // const signature = ethers.utils.splitSignature(signedData.result)
   // console.log(signature)
   // const contract = await new ethers.Contract(
