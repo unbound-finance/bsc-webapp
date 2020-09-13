@@ -430,7 +430,7 @@ export default {
           this.lpTokenAmount,
           this.lpTokenAmount
         )
-        console.log(transaction)
+        this.txLink = transaction.hash
         this.ui.showSuccess = true
       } catch (error) {
         this.ui.showRejected = true

@@ -323,7 +323,7 @@ export default {
           rawLPTAmount,
           config.contracts.unboundDai
         )
-        this.txLink = `https://kovan.etherscan.io/tx/${approved.hash}`
+        this.txLink = approved.hash
         this.ui.showSuccess = true
       } catch (error) {
         console.log(error)
