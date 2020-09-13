@@ -112,7 +112,9 @@
           <div class="flex flex-col space-y-1">
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
-              <p class="font-medium text-sm dark:text-white">0.25%</p>
+              <p class="font-medium text-sm dark:text-white">
+                {{ (parseInt(udaiOutput) * 0.25) / 100 }} uDai
+              </p>
             </div>
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Funding Rate</p>
@@ -227,7 +229,9 @@
             <div class="flex flex-col space-y-1">
               <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-600">Fees</p>
-                <p class="font-medium text-sm dark:text-white">0.25%</p>
+                <p class="font-medium text-sm dark:text-white">
+                  {{ (parseInt(udaiOutput) * 0.25) / 100 }} uDai
+                </p>
               </div>
               <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-600">Funding Rate</p>
@@ -301,8 +305,8 @@ export default {
         this.loanRatio.totalLPTokens
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = LPTValueInDai * 0.5
-      const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      return loanAmountWithFees.toFixed(4).slice(0, -1)
+      // const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
+      return loanAmount.toFixed(4).slice(0, -1)
     },
 
     isWalletConnected() {
