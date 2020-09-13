@@ -345,9 +345,7 @@ export default {
       const userAddress = signer.getAddress()
       const getBalance = await contract.balanceOf(userAddress)
       const balance = ethers.utils.formatEther(getBalance.toString())
-      const formattedBalance =
-        Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
-      this.balance = formattedBalance
+      this.balance = parseFloat(balance).toFixed(4).slice(0, -1)
     },
 
     async calculateLoanRatio() {
@@ -380,6 +378,7 @@ export default {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
 
+      console.log(this.liquidityPoolTokenAmount.toString())
       const userAddress = await signer.getAddress()
       const nonce = await getNonce(poolTokenAddress, signer)
       const deadline = +new Date() + 5000
