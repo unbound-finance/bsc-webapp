@@ -48,7 +48,7 @@
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
-              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt="" />
+              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt />
               <span>UNI-ETH/DAI</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
@@ -117,7 +117,7 @@
             <!-- <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Funding Rate</p>
               <p class="font-medium text-sm dark:text-white">50%</p>
-            </div> -->
+            </div>-->
           </div>
         </div>
       </div>
@@ -173,9 +173,9 @@
                   >
                 </div>
                 <div>
-                  <span class="dark:text-white text-gray-800 font-medium">{{
-                    lockedLPTokenBalance
-                  }}</span>
+                  <span class="dark:text-white text-gray-800 font-medium">
+                    {{ lockedLPTokenBalance }}
+                  </span>
                 </div>
               </div>
             </a>
@@ -194,6 +194,8 @@ import { ethers } from 'ethers'
 import ERC20ABI from '~/configs/abi/ERC20'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
+import UnboundDaiABI from '~/configs/abi/UnboundDai'
+
 import config from '~/configs/config'
 
 import { getERC20Balance } from '~/mixins/ERC20'
@@ -374,6 +376,20 @@ export default {
         this.ui.showAwaiting = false
         this.txLink = unlock.hash
         this.ui.showSuccess = true
+
+        // initiate the uDAI contract to detect the event so we can update the balances
+        const uDAI = new ethers.Contract(
+          config.contracts.unboundDai,
+          UnboundDaiABI,
+          signer
+        )
+        // listen to mint event from uDAI contract
+        uDAI.on('Burn', (user, amount) => {
+          console.log(user, amount)
+          console.log('Burn event emitted, updating balance')
+          this.getLPTokenBalance()
+          this.getBalanceOfToken(this.supportedPoolTokens[0].address)
+        })
       } catch (error) {
         console.log(error)
         this.ui.showAwaiting = false

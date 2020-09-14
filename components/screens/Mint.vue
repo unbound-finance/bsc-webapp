@@ -54,7 +54,7 @@
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
-              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt="" />
+              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt />
               <span>{{ selectedPoolToken.name }}</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
@@ -173,9 +173,9 @@
                   >
                 </div>
                 <div>
-                  <span class="dark:text-white text-gray-800 font-medium">{{
-                    balance
-                  }}</span>
+                  <span class="dark:text-white text-gray-800 font-medium">
+                    {{ balance }}
+                  </span>
                 </div>
               </div>
             </a>
@@ -202,10 +202,10 @@
           <div class="flex flex-col space-y-4">
             <div class="flex w-full items-center justify-between">
               <div class="flex items-center space-x-2">
-                <img src="~/assets/pool-tokens/eth-dai.svg" width="40" alt="" />
-                <span class="text-2xl dark:text-white">{{
-                  liquidityPoolTokenAmount
-                }}</span>
+                <img src="~/assets/pool-tokens/eth-dai.svg" width="40" alt />
+                <span class="text-2xl dark:text-white">
+                  {{ liquidityPoolTokenAmount }}
+                </span>
               </div>
               <p class="text-lg font-medium dark:text-white">UNIETH-DAI</p>
             </div>
@@ -214,7 +214,7 @@
             ></i>
             <div class="flex w-full items-center justify-between">
               <div class="flex items-center space-x-2">
-                <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt="" />
+                <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt />
                 <span class="text-2xl dark:text-white">{{ udaiOutput }}</span>
               </div>
               <p class="text-lg font-medium dark:text-white">uDAI</p>
@@ -258,6 +258,7 @@ import { ethers } from 'ethers'
 import Web3 from 'web3'
 
 import ERC20ABI from '~/configs/abi/ERC20'
+import UnboundDaiABI from '~/configs/abi/UnboundDai.js'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
 
@@ -441,7 +442,22 @@ export default {
             this.txLink = mintUDai.hash
             this.ui.showSuccess = true
             console.log(mintUDai.hash)
+
+            // initiate the uDAI contract to detect the event so we can update the balances
+            const uDAI = new ethers.Contract(
+              config.contracts.unboundDai,
+              UnboundDaiABI,
+              signer
+            )
+            // listen to mint event from uDAI contract
+            uDAI.on('Mint', (user, amount) => {
+              console.log(user, amount)
+
+              console.log('Mint event emitted, updating balance')
+              this.getBalanceOfToken(config.contracts.liquidityPoolToken)
+            })
           } catch (error) {
+            console.log(error)
             this.ui.showAwaiting = false
             this.ui.showConfirmation = false
             this.ui.showRejected = true
