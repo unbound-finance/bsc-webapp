@@ -168,8 +168,12 @@
               </p>
             </div> -->
             <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-600">Estimated Earning</p>
-              <p class="font-medium text-sm dark:text-white">Coming Soon</p>
+              <p class="text-sm text-gray-600">
+                Estimated Earning (for a month)
+              </p>
+              <p class="font-medium text-sm dark:text-white">
+                {{ udaiOutput * 0.06 }}
+              </p>
             </div>
           </div>
         </div>
