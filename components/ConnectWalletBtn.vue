@@ -77,7 +77,7 @@ export default {
     return {
       address: '',
       ui: {
-        showDialog: true,
+        showDialog: false,
       },
     }
   },
