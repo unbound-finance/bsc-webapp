@@ -127,15 +127,13 @@
         class="font-medium w-full py-2 rounded-md focus:outline-none"
         :class="[
           !LPTAmount ? getDisabledClass : getActiveClass,
-          LPTAmount > lockedLPTokenBalance ? getDisabledClass : getActiveClass,
+          isSufficientBalance ? getDisabledClass : getActiveClass,
         ]"
         :disabled="shouldDisableUnlock"
         @click="burn"
       >
         <span v-if="!LPTAmount">Enter an amount</span>
-        <span v-else-if="LPTAmount > lockedLPTokenBalance"
-          >Insufficient Balance</span
-        >
+        <span v-else-if="isSufficientBalance">Insufficient Balance</span>
         <span v-else>Unlock</span>
       </button>
     </div>
@@ -256,8 +254,11 @@ export default {
     isWalletConnected() {
       return !!this.$store.state.address
     },
+    isSufficientBalance() {
+      return parseFloat(this.LPTAmount) > parseFloat(this.lockedLPTokenBalance)
+    },
     shouldDisableUnlock() {
-      return !this.LPTAmount || this.LPTAmount > this.lockedLPTokenBalance
+      return !this.LPTAmount || this.isSufficientBalance
     },
 
     getDisabledClass() {
@@ -353,6 +354,7 @@ export default {
         config.contracts.liquidityLock,
         totalSupply
       )
+      console.log(approved)
     },
 
     async burn(tokenAddress) {

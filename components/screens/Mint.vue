@@ -129,17 +129,13 @@
         class="font-medium w-full py-2 rounded-md focus:outline-none"
         :class="[
           !liquidityPoolTokenAmount ? getDisabledClass : getActiveClass,
-          liquidityPoolTokenAmount > balance
-            ? getDisabledClass
-            : getActiveClass,
+          isSufficentBalance ? getDisabledClass : getActiveClass,
         ]"
-        :disabled="shouldDisable"
+        :disabled="shouldDisableMint"
         @click="ui.showConfirmation = true"
       >
         <span v-if="!liquidityPoolTokenAmount">Enter an amount</span>
-        <span v-else-if="liquidityPoolTokenAmount > balance"
-          >Insufficient Balance</span
-        >
+        <span v-else-if="isSufficentBalance">Insufficient Balance</span>
         <span v-else>Mint</span>
       </button>
 
@@ -313,11 +309,14 @@ export default {
       return !!this.$store.state.address
     },
 
-    shouldDisable() {
+    isSufficentBalance() {
       return (
-        !this.liquidityPoolTokenAmount ||
-        this.liquidityPoolTokenAmount > this.balance
+        parseFloat(this.liquidityPoolTokenAmount) > parseFloat(this.balance)
       )
+    },
+
+    shouldDisableMint() {
+      return !this.liquidityPoolTokenAmount || this.isSufficentBalance
     },
 
     getDisabledClass() {
