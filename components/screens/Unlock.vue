@@ -15,15 +15,6 @@
         </button>
       </div>
 
-      <p
-        v-if="txLink"
-        class="p-2 border-1 bg-primary-400 rounded-full px-8 bg-opacity-25 text-light-primary dark:text-white text-gray-900"
-        style="background: #06d6a0"
-      >
-        Transaction Success.
-        <a :href="txLink" target="_blank"> View On Etherscan </a>
-      </p>
-
       <div
         class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
       >
@@ -45,7 +36,7 @@
             <button
               v-if="selectedBurnToken"
               type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
+              class="px-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
               @click="setInputMax"
             >
               Max
@@ -138,9 +129,10 @@
 
     <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
     <RejectedModal v-model="ui.showRejected" />
+    <AwaitingModal v-model="ui.showAwaiting" />
 
     <!-- Select LP Tokens Modal -->
-    <Modal :show="ui.showDialog" @close="ui.showDialog = false">
+    <Modal v-model="ui.showDialog">
       <template>
         <div class="flex flex-col space-y-4">
           <div class="flex justify-between items-center">
@@ -203,6 +195,7 @@ export default {
         showDialog: false,
         showSuccess: false,
         showRejected: false,
+        showAwaiting: false,
       },
       selectedBurnToken: {
         name: 'uDai',
@@ -333,6 +326,7 @@ export default {
     },
 
     async burn(tokenAddress) {
+      this.ui.showAwaiting = true
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
         config.contracts.liquidityLock,
@@ -340,16 +334,17 @@ export default {
         signer
       )
       const rawLPTAmount = ethers.utils.parseEther(this.LPTAmount)
-      console.log(rawLPTAmount)
       try {
         const unlock = await contract.unlockLPT(
           rawLPTAmount,
           config.contracts.unboundDai
         )
-        this.txLink = unlock.txLink
+        this.ui.showAwaiting = false
+        this.txLink = unlock.hash
         this.ui.showSuccess = true
       } catch (error) {
         console.log(error)
+        this.ui.showAwaiting = false
         this.ui.showRejected = true
       }
     },
