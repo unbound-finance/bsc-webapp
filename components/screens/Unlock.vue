@@ -41,20 +41,23 @@
             >
               Max
             </button>
+
             <button
               v-if="selectedBurnToken"
-              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
+              class="flex-shrink-0 dark:text-white transition-all duration-200 text-sm font-medium py-1 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
+              @click="ui.showDialog = !ui.showDialog"
             >
+              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt="" />
               <span>UNI-ETH/DAI</span>
-              <!-- <i class="fas fa-chevron-down pt-1"></i> -->
+              <i class="fas fa-chevron-down pt-1"></i>
             </button>
 
             <button
               v-else
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
-              @click="ui.showDialog = !ui.showDialog"
+              @click="ui.showDialog = true"
             >
               <span>Select Pool Token</span>
               <i class="fas fa-chevron-down pt-1"></i>
@@ -120,10 +123,20 @@
       </div>
 
       <button
-        class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
+        v-if="isWalletConnected"
+        class="font-medium w-full py-2 rounded-md focus:outline-none"
+        :class="[
+          !LPTAmount ? getDisabledClass : getActiveClass,
+          LPTAmount > lockedLPTokenBalance ? getDisabledClass : getActiveClass,
+        ]"
+        :disabled="shouldDisableUnlock"
         @click="burn"
       >
-        Unlock
+        <span v-if="!LPTAmount">Enter an amount</span>
+        <span v-else-if="LPTAmount > lockedLPTokenBalance"
+          >Insufficient Balance</span
+        >
+        <span v-else>Unlock</span>
       </button>
     </div>
 
@@ -136,7 +149,7 @@
       <template>
         <div class="flex flex-col space-y-4">
           <div class="flex justify-between items-center">
-            <p class="font-medium dark:text-white">Select Unbound Token</p>
+            <p class="font-medium dark:text-white">Select Locked LP Token</p>
             <button
               type="button"
               class="focus:outline-none"
@@ -149,18 +162,23 @@
           <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
             <a @click="selectPoolToken(poolToken)">
               <div
-                class="h-40 w-1/2 border border-gray-300 dark:border-gray-700 p-8 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
+                class="w-full flex items-center justify-between cursor-pointer hover:text-light-primary py-4"
               >
-                <img src="~/assets/icons/crypto/dai.svg" width="40" alt="Dai" />
-                <p class="font-medium text-center pt-2 dark:text-white">
-                  {{ poolToken.name }}
-                </p>
-                <p class="text-sm text-center dark:text-white">
-                  Balance: {{ balance }}
-                </p>
-                <p class="text-sm text-center dark:text-white">
-                  {{ poolToken.exchange }}
-                </p>
+                <div class="space-x-2 flex items-center">
+                  <img
+                    src="~/assets/pool-tokens/eth-dai.svg"
+                    width="32"
+                    alt="Dai"
+                  />
+                  <span class="font-medium dark:text-white text-sm"
+                    >{{ poolToken.name }} ({{ poolToken.exchange }})</span
+                  >
+                </div>
+                <div>
+                  <span class="dark:text-white text-gray-800 font-medium">{{
+                    lockedLPTokenBalance
+                  }}</span>
+                </div>
               </div>
             </a>
           </div>
@@ -235,6 +253,20 @@ export default {
       const ratio = this.getRatio()
       return this.LPTAmount * ratio
     },
+    isWalletConnected() {
+      return !!this.$store.state.address
+    },
+    shouldDisableUnlock() {
+      return !this.LPTAmount || this.LPTAmount > this.lockedLPTokenBalance
+    },
+
+    getDisabledClass() {
+      return 'bg-gray-500 dark:bg-gray-800 text-gray-600 cursor-not-allowed'
+    },
+
+    getActiveClass() {
+      return 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
+    },
   },
 
   mounted() {
@@ -242,7 +274,6 @@ export default {
     this.getBalanceOfToken(this.supportedPoolTokens[0].address)
     this.calculateLoanRatio()
     this.getBurnTokenBalance()
-    // this.mint()
   },
 
   methods: {
@@ -322,7 +353,6 @@ export default {
         config.contracts.liquidityLock,
         totalSupply
       )
-      console.log(approved)
     },
 
     async burn(tokenAddress) {
