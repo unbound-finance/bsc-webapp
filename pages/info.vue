@@ -75,6 +75,46 @@
         </div>
       </div>
     </div>
+
+    <div class="mt-8">
+      <p class="text-gray-900 font-medium text-lg py-4">Transaction History</p>
+      <t-table
+        :headers="txTable.headers"
+        :data="txTable.data"
+        :responsive="true"
+        :responsive-breakpoint="520"
+      >
+        <template slot="row" slot-scope="props">
+          <tr :class="props.trClass">
+            <td :class="props.tdClass">
+              {{ props.row.timeStamp }}
+            </td>
+            <td :class="props.tdClass">
+              <a
+                class="text-accent"
+                :href="`https://kovan.etherscan.io/tx/${props.row.hash}`"
+                target="_blank"
+                >{{
+                  props.row.hash.substring(0, 8) +
+                  '...' +
+                  props.row.hash.substring(props.row.hash.length - 8)
+                }}</a
+              >
+            </td>
+            <td :class="props.tdClass">
+              {{ props.row.value }}
+            </td>
+            <td :class="props.tdClass">
+              {{
+                parseInt(props.row.gasUsed * props.row.gasPrice) /
+                1000000000000000000
+              }}
+              Eth
+            </td>
+          </tr>
+        </template>
+      </t-table>
+    </div>
   </div>
 </template>
 
@@ -84,7 +124,26 @@ export default {
   data() {
     return {
       showFees: false,
+      txTable: {
+        headers: ['Date', 'Txn Hash', 'Amount', 'Txn Fees'],
+        data: [],
+      },
     }
+  },
+
+  mounted() {
+    this.getTransactions()
+  },
+
+  methods: {
+    async getTransactions() {
+      const address = await this.$store.state.address
+      console.log(address)
+      const url = `https://api-kovan.etherscan.io/api?module=account&action=txlist&address=${address}&startblock=0&endblock=99999999&page=1&offset=10&sort=desc&apikey=YourApiKeyToken`
+
+      const result = await this.$axios.get(url)
+      this.txTable.data = result.data.result
+    },
   },
 }
 </script>
