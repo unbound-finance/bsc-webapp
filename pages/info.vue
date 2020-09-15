@@ -79,7 +79,7 @@
 
     <div class="mt-8">
       <p class="text-gray-900 font-medium text-lg py-4">Transaction History</p>
-      <div v-if="ui.loading || !getWalletAddress">Loading...</div>
+      <div v-if="ui.loading || !getAddress">Loading...</div>
       <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
       <t-table
         v-else
@@ -111,9 +111,15 @@
                 }}</a
               >
             </td>
-            <td :class="props.tdClass">Mint</td>
             <td :class="props.tdClass">
-              {{ props.row.value }}
+              {{
+                props.row.smartContractFunction === functions.mint
+                  ? 'Mint'
+                  : 'Burn'
+              }}
+            </td>
+            <td :class="props.tdClass">
+              {{ props.row.amount.toFixed(2) }} UND
             </td>
             <td :class="props.tdClass">
               {{
@@ -130,6 +136,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+import { ethers } from 'ethers'
+// const txDecoder = require('ethereum-tx-decoder')
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+
 export default {
   layout: 'info',
   data() {
@@ -143,27 +154,34 @@ export default {
         headers: ['Date', 'Block', 'Txn Hash', 'Type', 'Amount', 'Txn Fees'],
         data: [],
       },
+      functions: {
+        mint: '0x04bb770d',
+        burn: '0x78208601',
+      },
+      // getAddress: this.$store.getters.getAddress,
     }
   },
 
   computed: {
-    getWalletAddress() {
-      return this.$store.state.address
-    },
+    ...mapGetters({
+      getAddress: 'getAddress',
+    }),
   },
 
-  async mounted() {
-    await this.getTransactions()
+  mounted() {
+    this.ui.loading = true
+    setTimeout(() => {
+      this.getTransactions(this.address)
+    }, 1500)
   },
 
   methods: {
-    async getTransactions() {
-      this.ui.loading = true
+    async getTransactions(address) {
       const url = 'https://api-kovan.etherscan.io/api'
       const params = {
         module: 'account',
         action: 'txlist',
-        address: this.getWalletAddress,
+        address: this.getAddress,
         startblock: '0',
         endblock: '99999999',
         page: '1',
@@ -177,8 +195,34 @@ export default {
         this.ui.errorMsg = result.data.message
       } else {
         this.ui.loading = false
-        this.txTable.data = result.data.result
+        console.log(result.data.result)
+        this.decodeTransaction(result.data.result)
       }
+    },
+
+    async decodeTransaction(etherScanData) {
+      const tempArray = []
+
+      let i
+      for (i = 0; i < etherScanData.length; i++) {
+        const transaction = await provider.getTransaction(etherScanData[i].hash)
+        const rawFunction = transaction.data.slice(0, 10)
+        const value = transaction.data.slice(10, 74)
+        const data = {
+          blockNumber: etherScanData[i].blockNumber,
+          timeStamp: etherScanData[i].blockNumber,
+          hash: etherScanData[i].hash,
+          gasPrice: etherScanData[i].gasPrice,
+          gasUsed: etherScanData[i].gasUsed,
+          amount: parseInt('0x' + value) / 1e18,
+          smartContractFunction: rawFunction,
+        }
+        tempArray.push(data)
+      }
+
+      console.log(tempArray)
+
+      this.txTable.data = tempArray
     },
   },
 }

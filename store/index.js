@@ -7,3 +7,9 @@ export const mutations = {
     state.address = address
   },
 }
+
+export const getters = {
+  getAddress: (state) => {
+    return state.address
+  },
+}

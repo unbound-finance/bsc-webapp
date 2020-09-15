@@ -99,6 +99,8 @@ export default {
           // Store provider in state
           this.$store.commit('getProvider', address)
 
+          this.$emit('connected', address)
+
           // Acccounts now exposed
         } catch (error) {
           console.log(error)
@@ -113,6 +115,7 @@ export default {
         )
         const address = await provider.getSigner().getAddress()
         this.address = address
+        this.$emit('connected', address)
         // Acccounts always exposed
       } else {
         console.log(
