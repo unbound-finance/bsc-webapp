@@ -67,6 +67,7 @@ export default {
     'nuxt-purgecss',
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
+    '@nuxtjs/dayjs',
   ],
   /*
    ** Axios module configuration
