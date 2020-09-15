@@ -97,9 +97,11 @@
         <template slot="row" slot-scope="props">
           <tr :class="props.trClass">
             <td :class="props.tdClass">
-              <p>{{ $dayjs(props.row.timestamp).format('DD MMM YYYY') }}</p>
+              <p>
+                {{ $dayjs.unix(props.row.timeStamp).format('DD MMM YYYY') }}
+              </p>
               <span class="text-gray-500">{{
-                $dayjs(props.row.timestamp).format('hh:mm:ss a')
+                $dayjs.unix(props.row.timeStamp).format('hh:mm:ss a')
               }}</span>
             </td>
             <td :class="props.tdClass">
@@ -226,7 +228,7 @@ export default {
         const value = transaction.data.slice(10, 74)
         const data = {
           blockNumber: etherScanData[i].blockNumber,
-          timeStamp: etherScanData[i].blockNumber,
+          timeStamp: etherScanData[i].timeStamp,
           hash: etherScanData[i].hash,
           gasPrice: etherScanData[i].gasPrice,
           gasUsed: etherScanData[i].gasUsed,
