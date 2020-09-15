@@ -1,7 +1,9 @@
 <template>
   <div class="md:max-w-6xl mx-auto p-4">
     <div class="flex justify-between items-center">
-      <p class="font-medium text-md md:text-xl">Unbound Statistics</p>
+      <nuxt-link to="/">
+        <p class="font-medium text-md md:text-xl">Unbound Statistics</p>
+      </nuxt-link>
       <ConnectWalletBtn />
     </div>
 
@@ -13,8 +15,10 @@
         <div class="flex flex-col">
           <p class="font-medium text-sm text-gray-600">Total Liquidity</p>
           <div class="flex items-center justify-between">
-            <p class="font-medium text-3xl text-accent">$100.5m</p>
-            <p class="text-sm text-green-500 font-medium">15.36%</p>
+            <p class="font-medium text-3xl text-accent">
+              ${{ totalLiquidity }}
+            </p>
+            <!-- <p class="text-sm text-green-500 font-medium">15.36%</p> -->
           </div>
         </div>
       </div>
@@ -25,8 +29,10 @@
         <div class="flex flex-col">
           <p class="font-medium text-sm text-gray-600">Total uDAI Minted</p>
           <div class="flex items-center justify-between">
-            <p class="font-medium text-3xl text-accent">$400.5m</p>
-            <p class="text-sm text-green-500 font-medium">8.36%</p>
+            <p class="font-medium text-3xl text-accent">
+              {{ totalMinted }} uDAI
+            </p>
+            <!-- <p class="text-sm text-green-500 font-medium">8.36%</p> -->
           </div>
         </div>
       </div>
@@ -38,7 +44,7 @@
         <div class="flex flex-col">
           <p class="font-medium text-sm text-gray-600">Total Fees</p>
           <div class="flex items-center justify-between">
-            <p class="font-medium text-3xl text-accent">$8.5m</p>
+            <p class="font-medium text-3xl text-accent">$0</p>
 
             <button class="focus:outline-none">
               <i
@@ -57,19 +63,19 @@
                 </p>
               </div>
               <div>
-                <p class="text-right text-accent font-medium">$3.4m</p>
+                <p class="text-right text-accent font-medium">$0</p>
               </div>
               <div>
                 <p class="text-gray-600 font-medium text-sm">SAFU</p>
               </div>
               <div>
-                <p class="text-right text-accent font-medium">$3.4m</p>
+                <p class="text-right text-accent font-medium">$0</p>
               </div>
               <div>
                 <p class="text-gray-600 font-medium text-sm">Team</p>
               </div>
               <div>
-                <p class="text-right text-accent font-medium">$1.7m</p>
+                <p class="text-right text-accent font-medium">$0</p>
               </div>
             </div>
           </div>
@@ -119,7 +125,7 @@
               }}
             </td>
             <td :class="props.tdClass">
-              {{ props.row.amount.toFixed(2) }} UND
+              {{ props.row.amount.toFixed(2) }} uDAI
             </td>
             <td :class="props.tdClass">
               {{
@@ -138,6 +144,11 @@
 <script>
 import { mapGetters } from 'vuex'
 import { ethers } from 'ethers'
+
+// import config from '~/configs/config'
+import { getPoolTokenReserves } from '~/mixins/stake'
+import config from '~/configs/config'
+import UnboundDai from '~/configs/abi/UnboundDai'
 // const txDecoder = require('ethereum-tx-decoder')
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 
@@ -158,6 +169,8 @@ export default {
         mint: '0x04bb770d',
         burn: '0x78208601',
       },
+      totalLiquidity: '--',
+      totalMinted: '--',
       // getAddress: this.$store.getters.getAddress,
     }
   },
@@ -170,18 +183,21 @@ export default {
 
   mounted() {
     this.ui.loading = true
-    setTimeout(() => {
-      this.getTransactions(this.address)
-    }, 1500)
+    this.getTotalLiquidity()
+    this.getTransactions()
+    this.getTotalUDAI()
   },
 
   methods: {
-    async getTransactions(address) {
+    async getTransactions() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = await provider.getSigner()
+      const address = await signer.getAddress()
       const url = 'https://api-kovan.etherscan.io/api'
       const params = {
         module: 'account',
         action: 'txlist',
-        address: this.getAddress,
+        address,
         startblock: '0',
         endblock: '99999999',
         page: '1',
@@ -223,6 +239,23 @@ export default {
       console.log(tempArray)
 
       this.txTable.data = tempArray
+    },
+
+    async getTotalLiquidity() {
+      const totalLiquidity = await getPoolTokenReserves()
+      this.totalLiquidity = (totalLiquidity.reserve1 / 1e18).toFixed(2)
+    },
+
+    async getTotalUDAI() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const udai = new ethers.Contract(
+        config.contracts.unboundDai,
+        UnboundDai,
+        signer
+      )
+      const supply = await udai.totalSupply()
+      this.totalMinted = (supply / 1e18).toFixed(2)
     },
   },
 }

@@ -343,7 +343,6 @@ export default {
 
     async getBalanceOfToken(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
-
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       const userAddress = signer.getAddress()
@@ -354,7 +353,6 @@ export default {
 
     async calculateLoanRatio() {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
-
       const signer = provider.getSigner()
       const uniswapLptAddress = config.contracts.liquidityPoolToken
       const contract = await new ethers.Contract(
