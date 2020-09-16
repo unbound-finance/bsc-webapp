@@ -63,8 +63,8 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const web3 = new Web3(window.ethereum)
   const metamaskSigner = await web3.eth.getAccounts()
 
-  try {
-    await web3.currentProvider.sendAsync(
+  const promise = new Promise(function (resolve, reject) {
+    web3.currentProvider.send(
       {
         method: 'eth_signTypedData_v3',
         params: [metamaskSigner[0], signedData],
@@ -75,7 +75,6 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
           return console.log(error)
         }
         const signature = ethers.utils.splitSignature(signedData.result)
-        console.log(signature)
         const UniswapRouter = await new ethers.Contract(
           config.contracts.uniswapRouter,
           UniswapRouterABI,
@@ -95,16 +94,15 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
             signature.r,
             signature.s
           )
-          console.log(removeLiquidity)
-          return removeLiquidity.hash
+          resolve(removeLiquidity)
         } catch (error) {
-          console.log(error)
+          reject(Error('It broke'))
         }
       }
     )
-  } catch (error) {
-    console.log('')
-  }
+  })
+
+  return promise
   // const signature = ethers.utils.splitSignature(signedData.result)
   // console.log(signature)
   // const contract = await new ethers.Contract(

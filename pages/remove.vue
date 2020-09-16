@@ -433,6 +433,7 @@ export default {
         this.txLink = transaction.hash
         this.ui.showSuccess = true
       } catch (error) {
+        console.log(error)
         this.ui.showRejected = true
       }
     },

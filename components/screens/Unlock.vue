@@ -97,7 +97,7 @@
       </div>
 
       <!-- Show fees -->
-      <div
+      <!-- <div
         v-if="LPTAmount"
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
       >
@@ -114,13 +114,13 @@
                 {{ (parseInt(udaiOutput) * 0.25) / 100 }} uDai
               </p>
             </div>
-            <!-- <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Funding Rate</p>
               <p class="font-medium text-sm dark:text-white">50%</p>
-            </div>-->
+            </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <button
         v-if="isWalletConnected"
@@ -399,8 +399,8 @@ export default {
         uDAI.on('Burn', (user, amount) => {
           console.log(user, amount)
           console.log('Burn event emitted, updating balance')
-          this.getLPTokenBalance(this.selectedPoolToken.address)
-          this.getBalanceOfToken(this.selectedPoolToken.address)
+          this.getLPTokenBalance(poolToken.address)
+          this.getBurnTokenBalance()
         })
       } catch (error) {
         console.log(error)

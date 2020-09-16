@@ -476,7 +476,7 @@ export default {
               console.log(user, amount)
 
               console.log('Mint event emitted, updating balance')
-              const balance = await this.getBalanceOfToken(llcAddress)
+              const balance = await this.getBalanceOfToken(poolTokenAddress)
               this.selectedPoolToken.balance = balance
             })
           } catch (error) {
