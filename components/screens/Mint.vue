@@ -27,7 +27,7 @@
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Supply</p>
           <p v-if="selectedPoolToken" class="text-gray-600 text-sm">
-            Balance: {{ balance }}
+            Balance: {{ selectedPoolToken.balance }}
           </p>
         </div>
         <form class="w-full max-w-sm">
@@ -174,7 +174,7 @@
                 </div>
                 <div>
                   <span class="dark:text-white text-gray-800 font-medium">
-                    {{ balance }}
+                    {{ poolToken.balance }}
                   </span>
                 </div>
               </div>
@@ -236,7 +236,9 @@
             </div>
             <button
               class="w-full mt-4 py-2 bg-light-primary dark:bg-dark-primary font-medium text-white rounded-md"
-              @click="mint(selectedPoolToken.address)"
+              @click="
+                mint(selectedPoolToken.address, selectedPoolToken.llcAddress)
+              "
             >
               Confirm Mint
             </button>
@@ -330,8 +332,7 @@ export default {
   },
 
   mounted() {
-    this.getBalanceOfToken(config.contracts.liquidityPoolToken)
-    this.calculateLoanRatio()
+    this.getBalanceOfAllPoolTokens()
     // this.mint()
   },
 
@@ -339,6 +340,7 @@ export default {
     selectPoolToken(poolToken) {
       this.selectedPoolToken = poolToken
       this.ui.showDialog = false
+      this.calculateLoanRatio(poolToken)
     },
 
     async getBalanceOfToken(tokenAddress) {
@@ -348,22 +350,44 @@ export default {
       const userAddress = signer.getAddress()
       const getBalance = await contract.balanceOf(userAddress)
       const balance = ethers.utils.formatEther(getBalance.toString())
-      this.balance = parseFloat(balance).toFixed(4).slice(0, -1)
+      const formattedBalance = parseFloat(balance).toFixed(4).slice(0, -1)
+      return formattedBalance
     },
 
-    async calculateLoanRatio() {
+    async getBalanceOfAllPoolTokens() {
+      let i
+      const poolTokens = []
+      for (i = 0; i < supportedPoolTokens.length; i++) {
+        const balance = await this.getBalanceOfToken(
+          supportedPoolTokens[i].address
+        )
+        const poolTokenObj = {
+          name: supportedPoolTokens[i].name,
+          exchange: supportedPoolTokens[i].exchange,
+          address: supportedPoolTokens[i].address,
+          llcAddress: supportedPoolTokens[i].llcAddress,
+          currencyOneLogo: supportedPoolTokens[i].currencyOneLogo,
+          currencyTwoLogo: supportedPoolTokens[i].currencyTwoLogo,
+          balance,
+        }
+        poolTokens.push(poolTokenObj)
+        console.log(poolTokens)
+        this.supportedPoolTokens = poolTokens
+      }
+    },
+
+    async calculateLoanRatio(selectedPoolToken) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const uniswapLptAddress = config.contracts.liquidityPoolToken
       const contract = await new ethers.Contract(
-        uniswapLptAddress,
+        selectedPoolToken.address,
         UniswapLPTABI,
         signer
       )
       const reserve = await contract.getReserves()
       const totalLPTokens = await contract.totalSupply()
       const token0 = await contract.token0()
-      if (token0.toLowerCase() === config.contracts.dai) {
+      if (token0.toLowerCase() === selectedPoolToken.stablecoin) {
         const totalDai = reserve[0].toString() * 2
         this.loanRatio.totalDai = totalDai
         this.loanRatio.totalLPTokens = totalLPTokens.toString()
@@ -375,7 +399,7 @@ export default {
       // total value locked in the smart contract in terms of Dai
     },
 
-    async mint(poolTokenAddress) {
+    async mint(poolTokenAddress, llcAddress) {
       this.ui.showAwaiting = true
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
@@ -390,7 +414,7 @@ export default {
 
       const EIP712Signature = await getEIP712Signature(
         poolTokenAddress,
-        config.contracts.liquidityLock,
+        llcAddress,
         userAddress,
         amount,
         nonce,
@@ -412,7 +436,7 @@ export default {
           }
           const signature = ethers.utils.splitSignature(signedData.result)
           const UnboundLLCContract = await new ethers.Contract(
-            config.contracts.liquidityLock,
+            llcAddress,
             UnboundLLCABI,
             signer
           )
@@ -448,11 +472,12 @@ export default {
               signer
             )
             // listen to mint event from uDAI contract
-            uDAI.on('Mint', (user, amount) => {
+            uDAI.on('Mint', async (user, amount) => {
               console.log(user, amount)
 
               console.log('Mint event emitted, updating balance')
-              this.getBalanceOfToken(config.contracts.liquidityPoolToken)
+              const balance = await this.getBalanceOfToken(llcAddress)
+              this.selectedPoolToken.balance = balance
             })
           } catch (error) {
             console.log(error)
