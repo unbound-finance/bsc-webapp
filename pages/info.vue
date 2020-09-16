@@ -30,7 +30,7 @@
           <p class="font-medium text-sm text-gray-600">Total uDAI Minted</p>
           <div class="flex items-center justify-between">
             <p class="font-medium text-3xl text-accent">
-              {{ totalMinted }} uDAI
+              {{ totalMinted }} UND
             </p>
             <!-- <p class="text-sm text-green-500 font-medium">8.36%</p> -->
           </div>
@@ -84,7 +84,36 @@
     </div>
 
     <div class="mt-8">
-      <p class="text-gray-900 font-medium text-lg py-4">Transaction History</p>
+      <div class="w-full flex items-center justify-between">
+        <p class="text-gray-900 font-medium text-lg py-4">
+          Transaction History
+        </p>
+        <div v-if="!ui.loading" class="flex items-center space-x-4">
+          <button
+            class="focus:outline-none"
+            type="button"
+            :disabled="ui.page === 1 ? true : false"
+            @click="prevPage"
+          >
+            <i
+              class="fas fa-arrow-left text-sm"
+              :class="
+                ui.page == 1
+                  ? 'text-gray-500 cursor-not-allowed'
+                  : 'text-accent'
+              "
+            ></i>
+          </button>
+          <span class="text-sm">Page {{ ui.page }}</span>
+          <button
+            class="focus:outline-none text-accent"
+            type="button"
+            @click="nextPage"
+          >
+            <i class="fas fa-arrow-right text-sm"></i>
+          </button>
+        </div>
+      </div>
       <div v-if="ui.loading || !getAddress">Loading...</div>
       <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
       <t-table
@@ -127,13 +156,10 @@
               }}
             </td>
             <td :class="props.tdClass">
-              {{ props.row.amount.toFixed(2) }} uDAI
+              {{ props.row.amount.toFixed(2) }} UND
             </td>
             <td :class="props.tdClass">
-              {{
-                parseInt(props.row.gasUsed * props.row.gasPrice) /
-                1000000000000000000
-              }}
+              {{ parseInt(props.row.gasUsed * props.row.gasPrice) / 1e18 }}
               ETH
             </td>
           </tr>
@@ -161,6 +187,7 @@ export default {
       ui: {
         loading: false,
         errorMsg: null,
+        page: 1,
       },
       showFees: false,
       txTable: {
@@ -173,7 +200,6 @@ export default {
       },
       totalLiquidity: '--',
       totalMinted: '--',
-      // getAddress: this.$store.getters.getAddress,
     }
   },
 
@@ -191,7 +217,20 @@ export default {
   },
 
   methods: {
+    nextPage() {
+      this.ui.page++
+      this.getTransactions()
+    },
+
+    prevPage() {
+      this.ui.page--
+      this.getTransactions()
+    },
+
     async getTransactions() {
+      this.ui.errorMsg = null
+      this.ui.loading = true
+
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
@@ -202,19 +241,18 @@ export default {
         address,
         startblock: '0',
         endblock: '99999999',
-        page: '1',
+        page: this.ui.page,
         offset: '10',
         sort: 'desc',
-        apikey: '',
+        apikey: 'HUWMR5VJHDQ7EEZYEUWQAAHBNMURE1R1CH',
       }
       const result = await this.$axios.get(url, { params })
       if (result.data.status === '0') {
         this.ui.loading = false
         this.ui.errorMsg = result.data.message
       } else {
+        await this.decodeTransaction(result.data.result)
         this.ui.loading = false
-        console.log(result.data.result)
-        this.decodeTransaction(result.data.result)
       }
     },
 
@@ -237,9 +275,6 @@ export default {
         }
         tempArray.push(data)
       }
-
-      console.log(tempArray)
-
       this.txTable.data = tempArray
     },
 
