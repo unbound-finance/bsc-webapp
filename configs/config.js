@@ -10,4 +10,6 @@ export default {
     uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
   },
   chainId: 42,
+  safuFund: '0xcc729a114aa8f572971d4d85B21e661E265Df20C',
+  devFund: '0xeA6439DdaB48bF67e8e067b124Cf16d5bFBA8CDB',
 }

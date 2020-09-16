@@ -64,7 +64,15 @@
         <div class="flex flex-col">
           <p class="font-medium text-sm text-gray-600">Total Fees</p>
           <div class="flex items-center justify-between">
-            <p class="font-medium text-3xl text-accent">$0</p>
+            <p class="font-medium text-3xl text-accent">
+              $
+              {{
+                (
+                  parseFloat(collectedFees.safu) +
+                  parseFloat(collectedFees.team)
+                ).toFixed(3)
+              }}
+            </p>
 
             <button class="focus:outline-none">
               <i
@@ -91,13 +99,17 @@
                 <p class="text-gray-600 font-medium text-sm">SAFU</p>
               </div>
               <div>
-                <p class="text-right text-accent font-medium">$0</p>
+                <p class="text-right text-accent font-medium">
+                  ${{ collectedFees.safu }}
+                </p>
               </div>
               <div>
                 <p class="text-gray-600 font-medium text-sm">Team</p>
               </div>
               <div>
-                <p class="text-right text-accent font-medium">$0</p>
+                <p class="text-right text-accent font-medium">
+                  ${{ collectedFees.team }}
+                </p>
               </div>
             </div>
           </div>
@@ -224,6 +236,10 @@ export default {
       },
       totalLiquidity: '--',
       totalMinted: '--',
+      collectedFees: {
+        safu: '',
+        team: '',
+      },
     }
   },
 
@@ -238,6 +254,7 @@ export default {
     this.getTotalLiquidity()
     this.getTransactions()
     this.getTotalUBD()
+    this.getCollectedFees()
   },
 
   methods: {
@@ -253,6 +270,20 @@ export default {
     prevPage() {
       this.ui.page--
       this.getTransactions()
+    },
+
+    async getCollectedFees() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const UBD = new ethers.Contract(
+        config.contracts.unboundDai,
+        UnboundDai,
+        signer
+      )
+      const safu = await UBD.balanceOf(config.safuFund)
+      const team = await UBD.balanceOf(config.devFund)
+      this.collectedFees.safu = (safu.toString() / 1e18).toFixed(3)
+      this.collectedFees.team = (team.toString() / 1e18).toFixed(3)
     },
 
     async getTransactions() {
