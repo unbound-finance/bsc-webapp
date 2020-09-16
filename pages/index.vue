@@ -55,8 +55,7 @@ export default {
           title: 'Earn',
           route: '/earn',
           icon: 'earn',
-          description:
-            'Stake Unbound Tokens to Keep Earning on Autopilot (soon)',
+          description: 'Stake Unbound Tokens to Keep Earning on Autopilot',
           isDisabled: false,
         },
       ],

@@ -47,7 +47,7 @@
         :class="showFees ? '' : 'border'"
       >
         <div class="flex flex-col">
-          <p class="font-medium text-sm text-gray-600">Total uDAI Minted</p>
+          <p class="font-medium text-sm text-gray-600">Total UBD Minted</p>
           <div class="flex items-center justify-between">
             <p class="font-medium text-3xl text-accent">
               {{ totalMinted }} UND
@@ -237,7 +237,7 @@ export default {
     this.ui.loading = true
     this.getTotalLiquidity()
     this.getTransactions()
-    this.getTotalUDAI()
+    this.getTotalUBD()
   },
 
   methods: {
@@ -311,15 +311,15 @@ export default {
       this.totalLiquidity = (totalLiquidity.reserve1 / 1e18).toFixed(2)
     },
 
-    async getTotalUDAI() {
+    async getTotalUBD() {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const udai = new ethers.Contract(
+      const UBD = new ethers.Contract(
         config.contracts.unboundDai,
         UnboundDai,
         signer
       )
-      const supply = await udai.totalSupply()
+      const supply = await UBD.totalSupply()
       this.totalMinted = (supply / 1e18).toFixed(2)
     },
   },

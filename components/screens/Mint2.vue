@@ -58,7 +58,7 @@
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="udaiOutput"
+              v-model="UBDOutput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -68,7 +68,7 @@
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
             >
-              <span>UDAI</span>
+              <span>UBD</span>
               <!-- <i class="fas fa-chevron-down pt-1"></i> -->
             </button>
           </div>
@@ -137,7 +137,7 @@ const config = {
   dai: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
   eth: '0x6468Cb5b76200428A514125BfA5a08Cf2E4b7f9D',
   lpToken: '0x1443398Aa8E16E0F289B12ddCf666eeC4215bF46',
-  uDai: '0x88b2d1c22f5bace62dccd488c07872c6f9c486f5',
+  UBD: '0x88b2d1c22f5bace62dccd488c07872c6f9c486f5',
   llc: '0x769fd7De5d4E6e8fc22800Acc3Ad5236B5847332',
 }
 
@@ -171,7 +171,7 @@ export default {
   },
 
   computed: {
-    udaiOutput() {
+    UBDOutput() {
       // Liquidity pool token value in dai
       const LPTValueInDai =
         (this.loanRatio.totalDai * this.poolTokenInput) /
@@ -261,7 +261,7 @@ export default {
           console.log(window.ethereum)
 
           try {
-            const mintUDai = await contract.lockLPT(
+            const mintUBD = await contract.lockLPT(
               LPTAmt,
               tokenNum,
               extraTime,
@@ -269,7 +269,7 @@ export default {
               splitSig.r,
               splitSig.s
             )
-            console.log(mintUDai)
+            console.log(mintUBD)
           } catch (error) {
             console.log(error)
           }
@@ -301,7 +301,7 @@ export default {
       //     from: signer,
       //   })
 
-      //   // const mintUDai = await contract.lockLPT(
+      //   // const mintUBD = await contract.lockLPT(
       //   //   LPTAmt,
       //   //   tokenNum,
       //   //   extraTime,

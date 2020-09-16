@@ -13,7 +13,7 @@ export default [
       },
       {
         internalType: 'address',
-        name: 'uDai',
+        name: 'UBD',
         type: 'address',
       },
       {
@@ -137,7 +137,7 @@ export default [
   },
   {
     inputs: [],
-    name: '_trackedRewardUdai',
+    name: '_trackedRewardUBD',
     outputs: [
       {
         internalType: 'uint256',
@@ -173,7 +173,7 @@ export default [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'uDai',
+        name: 'UBD',
         type: 'uint256',
       },
       {
@@ -196,7 +196,7 @@ export default [
       },
       {
         internalType: 'uint256',
-        name: 'uDaiMin',
+        name: 'UBDMin',
         type: 'uint256',
       },
     ],

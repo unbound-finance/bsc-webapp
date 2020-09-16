@@ -81,7 +81,7 @@
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="udaiOutput"
+              v-model="UBDOutput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -91,7 +91,7 @@
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
             >
-              <span>UDAI</span>
+              <span>UBD</span>
               <!-- <i class="fas fa-chevron-down pt-1"></i> -->
             </button>
           </div>
@@ -113,7 +113,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(udaiOutput) * 0.25) / 100 }} uDai
+                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UBD
               </p>
             </div>
             <div class="flex items-center justify-between">
@@ -215,9 +215,9 @@
             <div class="flex w-full items-center justify-between">
               <div class="flex items-center space-x-2">
                 <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt />
-                <span class="text-2xl dark:text-white">{{ udaiOutput }}</span>
+                <span class="text-2xl dark:text-white">{{ UBDOutput }}</span>
               </div>
-              <p class="text-lg font-medium dark:text-white">uDAI</p>
+              <p class="text-lg font-medium dark:text-white">UBD</p>
             </div>
           </div>
 
@@ -226,7 +226,7 @@
               <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-600">Fees</p>
                 <p class="font-medium text-sm dark:text-white">
-                  {{ (parseInt(udaiOutput) * 0.25) / 100 }} uDai
+                  {{ (parseInt(UBDOutput) * 0.25) / 100 }} UBD
                 </p>
               </div>
               <div class="flex items-center justify-between">
@@ -297,7 +297,7 @@ export default {
   },
 
   computed: {
-    udaiOutput() {
+    UBDOutput() {
       // Liquidity pool token value in dai
       const LPTValueInDai =
         (this.loanRatio.totalDai * this.liquidityPoolTokenAmount) /
@@ -442,14 +442,14 @@ export default {
           )
           console.log({
             amount,
-            uDai: config.contracts.unboundDai,
+            UBD: config.contracts.unboundDai,
             deadline,
             sigV: signature.v,
             sigR: signature.r,
             sigS: signature.s,
           })
           try {
-            const mintUDai = await UnboundLLCContract.lockLPTWithPermit(
+            const mintUBD = await UnboundLLCContract.lockLPTWithPermit(
               amount,
               config.contracts.unboundDai,
               deadline,
@@ -461,18 +461,18 @@ export default {
             this.ui.showAwaiting = false
             // show success screen
             this.ui.showConfirmation = false
-            this.txLink = mintUDai.hash
+            this.txLink = mintUBD.hash
             this.ui.showSuccess = true
-            console.log(mintUDai.hash)
+            console.log(mintUBD.hash)
 
-            // initiate the uDAI contract to detect the event so we can update the balances
-            const uDAI = new ethers.Contract(
+            // initiate the UBD contract to detect the event so we can update the balances
+            const UBD = new ethers.Contract(
               config.contracts.unboundDai,
               UnboundDaiABI,
               signer
             )
-            // listen to mint event from uDAI contract
-            uDAI.on('Mint', async (user, amount) => {
+            // listen to mint event from UBD contract
+            UBD.on('Mint', async (user, amount) => {
               console.log(user, amount)
 
               console.log('Mint event emitted, updating balance')

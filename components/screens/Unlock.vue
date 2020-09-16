@@ -73,12 +73,12 @@
       >
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Burn</p>
-          <p class="text-gray-600 text-sm">Balance: {{ uDaiBalance }}</p>
+          <p class="text-gray-600 text-sm">Balance: {{ UBDBalance }}</p>
         </div>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="udaiOutput"
+              v-model="UBDOutput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -111,7 +111,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(udaiOutput) * 0.25) / 100 }} uDai
+                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UBD
               </p>
             </div>
             <div class="flex items-center justify-between">
@@ -218,7 +218,7 @@ export default {
       },
       selectedPoolToken: '',
       selectedBurnToken: {
-        name: 'uDai',
+        name: 'UBD',
         exchange: 'Uniswap',
         address: config.contracts.unboundDai,
         currencyOneLogo:
@@ -231,7 +231,7 @@ export default {
       lockedLPTokenBalance: '--.--',
       txLink: '',
       burnTokenAmount: '',
-      uDaiBalance: '',
+      UBDBalance: '',
       loanRatio: {
         totalDai: '',
         totalLPTokens: '',
@@ -242,7 +242,7 @@ export default {
   },
 
   computed: {
-    udaiOutput() {
+    UBDOutput() {
       const ratio = this.getRatio()
       return this.LPTAmount * ratio
     },
@@ -389,14 +389,14 @@ export default {
         this.txLink = unlock.hash
         this.ui.showSuccess = true
 
-        // initiate the uDAI contract to detect the event so we can update the balances
-        const uDAI = new ethers.Contract(
+        // initiate the UBD contract to detect the event so we can update the balances
+        const UBD = new ethers.Contract(
           config.contracts.unboundDai,
           UnboundDaiABI,
           signer
         )
-        // listen to mint event from uDAI contract
-        uDAI.on('Burn', (user, amount) => {
+        // listen to mint event from UBD contract
+        UBD.on('Burn', (user, amount) => {
           console.log(user, amount)
           console.log('Burn event emitted, updating balance')
           this.getLPTokenBalance(poolToken.address)
@@ -412,7 +412,7 @@ export default {
     async getBurnTokenBalance() {
       const balance = await getERC20Balance(config.contracts.unboundDai)
       console.log(balance)
-      this.uDaiBalance = parseFloat(balance.formatted).toFixed(4).slice(0, -1)
+      this.UBDBalance = parseFloat(balance.formatted).toFixed(4).slice(0, -1)
     },
 
     setInputMax() {

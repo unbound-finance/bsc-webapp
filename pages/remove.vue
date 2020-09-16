@@ -84,13 +84,13 @@
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Input</p>
           <p v-if="selectedUToken" class="text-gray-600 text-sm">
-            Supplied: {{ uDaiBalance }}
+            Supplied: {{ UBDBalance }}
           </p>
         </div>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="udaiOutput"
+              v-model="UBDOutput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -144,7 +144,7 @@
               <p class="text-sm text-gray-600">Your Positions</p>
               <p class="font-medium text-sm dark:text-white">
                 <span class="text-gray-600">DAI</span>: {{ liquidity.token1 }},
-                <span class="text-gray-600">uDAI</span>: {{ liquidity.token0 }}
+                <span class="text-gray-600">UBD</span>: {{ liquidity.token0 }}
               </p>
             </div>
           </div>
@@ -255,9 +255,9 @@
             <div class="flex w-full items-center justify-between">
               <div class="flex items-center space-x-2">
                 <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt="" />
-                <span class="text-2xl dark:text-white">{{ udaiOutput }}</span>
+                <span class="text-2xl dark:text-white">{{ UBDOutput }}</span>
               </div>
-              <p class="text-lg font-medium dark:text-white">uDAI</p>
+              <p class="text-lg font-medium dark:text-white">UBD</p>
             </div>
           </div>
 
@@ -317,7 +317,7 @@ export default {
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
       },
       selectedUToken: {
-        name: 'uDai',
+        name: 'UBD',
         address: config.contracts.unboundDai,
         allowance: '',
         tokenIcon:
@@ -327,7 +327,7 @@ export default {
       lpTokenAmount: '0',
       // isTokenApproved: '',
       txLink: '',
-      uDaiBalance: '',
+      UBDBalance: '',
       liquidity: '',
       supportedPoolTokens: [
         {
@@ -343,7 +343,7 @@ export default {
   },
 
   computed: {
-    udaiOutput() {
+    UBDOutput() {
       return this.lpTokenAmount
     },
   },
@@ -368,7 +368,7 @@ export default {
       const userAddress = provider.getSigner().getAddress()
 
       const poolTokenContract = new ethers.Contract(
-        config.contracts.uDaiUniswapPool,
+        config.contracts.UBDUniswapPool,
         UniswapLPTABI,
         signer
       )
@@ -380,7 +380,7 @@ export default {
           this.liquidity = data
 
           this.balance = data.token0
-          this.uDaiBalance = data.token1
+          this.UBDBalance = data.token1
         }
         this.ui.loading = false
       } catch (error) {
@@ -453,11 +453,11 @@ export default {
     },
 
     async checkAllowances() {
-      const uDaiAllowance = await this.getAllowance(config.contracts.unboundDai)
+      const UBDAllowance = await this.getAllowance(config.contracts.unboundDai)
       const daiAllowance = await this.getAllowance(config.contracts.dai)
       this.selectedToken.allowance = daiAllowance.toString()
-      this.selectedUToken.allowance = uDaiAllowance.toString()
-      console.log(uDaiAllowance.toString(), daiAllowance.toString())
+      this.selectedUToken.allowance = UBDAllowance.toString()
+      console.log(UBDAllowance.toString(), daiAllowance.toString())
     },
 
     setInputMax() {
