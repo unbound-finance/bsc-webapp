@@ -20,8 +20,8 @@
       >
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Unlock</p>
-          <p class="text-gray-600 text-sm">
-            Locked: {{ lockedLPTokenBalance }}
+          <p v-if="selectedPoolToken" class="text-gray-600 text-sm">
+            Locked: {{ selectedPoolToken.balance }}
           </p>
         </div>
         <form class="w-full max-w-sm">
@@ -34,7 +34,7 @@
             />
 
             <button
-              v-if="selectedBurnToken"
+              v-if="selectedPoolToken"
               type="button"
               class="px-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
               @click="setInputMax"
@@ -43,13 +43,13 @@
             </button>
 
             <button
-              v-if="selectedBurnToken"
+              v-if="selectedPoolToken"
               class="flex-shrink-0 dark:text-white transition-all duration-200 text-sm font-medium py-1 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
               <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt />
-              <span>UNI-ETH/DAI</span>
+              <span>{{ selectedPoolToken.name }}</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
 
@@ -130,7 +130,7 @@
           isSufficientBalance ? getDisabledClass : getActiveClass,
         ]"
         :disabled="shouldDisableUnlock"
-        @click="burn"
+        @click="unlock(selectedPoolToken)"
       >
         <span v-if="!LPTAmount">Enter an amount</span>
         <span v-else-if="isSufficientBalance">Insufficient Balance</span>
@@ -174,7 +174,7 @@
                 </div>
                 <div>
                   <span class="dark:text-white text-gray-800 font-medium">
-                    {{ lockedLPTokenBalance }}
+                    {{ poolToken.balance }}
                   </span>
                 </div>
               </div>
@@ -197,6 +197,7 @@ import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
 import UnboundDaiABI from '~/configs/abi/UnboundDai'
 
 import config from '~/configs/config'
+import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
 import { getERC20Balance } from '~/mixins/ERC20'
 // import { getERC20Balance } from '~/mixins/ERC20'
@@ -215,6 +216,7 @@ export default {
         showRejected: false,
         showAwaiting: false,
       },
+      selectedPoolToken: '',
       selectedBurnToken: {
         name: 'uDai',
         exchange: 'Uniswap',
@@ -224,7 +226,7 @@ export default {
         currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
       },
       LPTAmount: '',
-      selectedMintToken: '',
+      selectedLPToken: '',
       balance: '--.--',
       lockedLPTokenBalance: '--.--',
       txLink: '',
@@ -235,16 +237,7 @@ export default {
         totalLPTokens: '',
         rating: '50',
       },
-      supportedPoolTokens: [
-        {
-          name: 'UNI-ETH/DAI',
-          exchange: 'Uniswap',
-          address: config.contracts.liquidityPoolToken,
-          currencyOneLogo:
-            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-          currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-        },
-      ],
+      supportedPoolTokens,
     }
   },
 
@@ -274,15 +267,15 @@ export default {
 
   mounted() {
     this.getLPTokenBalance()
-    this.getBalanceOfToken(this.supportedPoolTokens[0].address)
-    this.calculateLoanRatio()
+    this.getAllLokedTokens()
     this.getBurnTokenBalance()
   },
 
   methods: {
     selectPoolToken(poolToken) {
-      this.selectedBurnToken = poolToken
+      this.selectedPoolToken = poolToken
       this.ui.showDialog = false
+      this.calculateLoanRatio(poolToken)
     },
 
     async getBalanceOfToken(tokenAddress) {
@@ -293,25 +286,44 @@ export default {
       const balance = ethers.utils.formatEther(getBalance.toString())
       const formattedBalance =
         Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
-      this.balance = formattedBalance
+      return formattedBalance
     },
 
-    async getLPTokenBalance() {
+    async getAllLokedTokens() {
+      let i
+      const poolTokens = []
+      for (i = 0; i < supportedPoolTokens.length; i++) {
+        const balance = await this.getLPTokenBalance(
+          supportedPoolTokens[i].llcAddress
+        )
+        const poolTokenObj = {
+          name: supportedPoolTokens[i].name,
+          exchange: supportedPoolTokens[i].exchange,
+          address: supportedPoolTokens[i].address,
+          llcAddress: supportedPoolTokens[i].llcAddress,
+          currencyOneLogo: supportedPoolTokens[i].currencyOneLogo,
+          currencyTwoLogo: supportedPoolTokens[i].currencyTwoLogo,
+          balance,
+        }
+        poolTokens.push(poolTokenObj)
+        console.log(poolTokens)
+        this.supportedPoolTokens = poolTokens
+      }
+    },
+
+    async getLPTokenBalance(address) {
       const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        config.contracts.liquidityLock,
-        UnboundLLCABI,
-        signer
-      )
+      const contract = await new ethers.Contract(address, UnboundLLCABI, signer)
       const userAddress = signer.getAddress()
-      const getBalance = await contract._tokensLocked(userAddress)
-      const balance = ethers.utils.formatEther(getBalance.toString())
-      this.lockedLPTokenBalance = parseFloat(balance).toFixed(4).slice(0, -1)
+      const getLocked = await contract._tokensLocked(userAddress)
+      const locked = ethers.utils.formatEther(getLocked.toString())
+      const formatted = parseFloat(locked).toFixed(4).slice(0, -1)
+      return formatted
     },
 
-    async calculateLoanRatio() {
+    async calculateLoanRatio(poolToken) {
       const signer = provider.getSigner()
-      const uniswapLptAddress = config.contracts.liquidityPoolToken
+      const uniswapLptAddress = poolToken.address
       const contract = await new ethers.Contract(
         uniswapLptAddress,
         UniswapLPTABI,
@@ -321,7 +333,7 @@ export default {
       const totalLPTokens = await contract.totalSupply()
       const token0 = await contract.token0()
       // total value locked in the smart contract in terms of Dai
-      if (token0.toLowerCase() === config.contracts.dai) {
+      if (token0.toLowerCase() === poolToken.stablecoin) {
         const totalDai = reserve[0].toString() * 2
         this.loanRatio.totalDai = totalDai
         this.loanRatio.totalLPTokens = totalLPTokens.toString()
@@ -359,11 +371,11 @@ export default {
       console.log(approved)
     },
 
-    async burn(tokenAddress) {
+    async unlock(poolToken) {
       this.ui.showAwaiting = true
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        config.contracts.liquidityLock,
+        poolToken.llcAddress,
         UnboundLLCABI,
         signer
       )
@@ -387,8 +399,8 @@ export default {
         uDAI.on('Burn', (user, amount) => {
           console.log(user, amount)
           console.log('Burn event emitted, updating balance')
-          this.getLPTokenBalance()
-          this.getBalanceOfToken(this.supportedPoolTokens[0].address)
+          this.getLPTokenBalance(this.selectedPoolToken.address)
+          this.getBalanceOfToken(this.selectedPoolToken.address)
         })
       } catch (error) {
         console.log(error)
