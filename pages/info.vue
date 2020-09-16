@@ -2,14 +2,34 @@
   <div class="md:max-w-6xl mx-auto p-4">
     <div class="flex justify-between items-center">
       <nuxt-link to="/">
-        <p class="font-medium text-md md:text-xl">Unbound Statistics</p>
+        <p class="font-medium text-md md:text-xl dark:text-gray-200">
+          Unbound Statistics
+        </p>
       </nuxt-link>
-      <ConnectWalletBtn />
+      <div class="flex items-center space-x-4">
+        <ConnectWalletBtn />
+
+        <button
+          class="p-3 rounded bg-gray-300 focus:outline-none"
+          @click="toggleMode"
+        >
+          <img
+            class="text-light-primary"
+            :src="
+              require(`~/assets/icons/${
+                this.$colorMode.value === 'light' ? 'moon' : 'sun'
+              }.svg`)
+            "
+            width="18"
+            alt="mode"
+          />
+        </button>
+      </div>
     </div>
 
     <div class="mt-8 w-full grid grid-cols-1 md:grid-cols-3 gap-2">
       <div
-        class="w-full border-gray-200 rounded p-4"
+        class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
         :class="showFees ? '' : 'border'"
       >
         <div class="flex flex-col">
@@ -23,7 +43,7 @@
         </div>
       </div>
       <div
-        class="w-full border-gray-200 rounded p-4"
+        class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
         :class="showFees ? '' : 'border'"
       >
         <div class="flex flex-col">
@@ -37,7 +57,7 @@
         </div>
       </div>
       <div
-        class="w-full border-gray-200 rounded p-4 cursor-pointer"
+        class="w-full border-gray-200 dark:border-gray-800 rounded p-4 cursor-pointer"
         :class="showFees ? 'shadow-xl rounded-lg' : 'border'"
         @click="showFees = !showFees"
       >
@@ -55,7 +75,9 @@
           </div>
 
           <div v-if="showFees" class="transition-all duration-200">
-            <div class="mt-4 border-b border-gray-200 w-full"></div>
+            <div
+              class="mt-4 border-b border-gray-200 dark:border-gray-800 w-full"
+            ></div>
             <div class="mt-4 grid grid-cols-2 px-2">
               <div>
                 <p class="text-gray-600 font-medium text-sm">
@@ -85,7 +107,7 @@
 
     <div class="mt-8">
       <div class="w-full flex items-center justify-between">
-        <p class="text-gray-900 font-medium text-lg py-4">
+        <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
           Transaction History
         </p>
         <div v-if="!ui.loading" class="flex items-center space-x-4">
@@ -99,12 +121,12 @@
               class="fas fa-arrow-left text-sm"
               :class="
                 ui.page == 1
-                  ? 'text-gray-500 cursor-not-allowed'
+                  ? 'text-gray-500 dark:text-gray-700 cursor-not-allowed'
                   : 'text-accent'
               "
             ></i>
           </button>
-          <span class="text-sm">Page {{ ui.page }}</span>
+          <span class="text-sm dark:text-gray-600">Page {{ ui.page }}</span>
           <button
             class="focus:outline-none text-accent"
             type="button"
@@ -114,7 +136,9 @@
           </button>
         </div>
       </div>
-      <div v-if="ui.loading || !getAddress">Loading...</div>
+      <div v-if="ui.loading || !getAddress" class="dark:text-gray-600">
+        Loading...
+      </div>
       <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
       <t-table
         v-else
@@ -129,7 +153,7 @@
               <p>
                 {{ $dayjs.unix(props.row.timeStamp).format('DD MMM YYYY') }}
               </p>
-              <span class="text-gray-500">{{
+              <span class="text-gray-500 dark:text-gray-700">{{
                 $dayjs.unix(props.row.timeStamp).format('hh:mm:ss a')
               }}</span>
             </td>
@@ -217,6 +241,10 @@ export default {
   },
 
   methods: {
+    toggleMode() {
+      this.$colorMode.preference =
+        this.$colorMode.value === 'light' ? 'dark' : 'light'
+    },
     nextPage() {
       this.ui.page++
       this.getTransactions()
