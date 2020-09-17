@@ -157,28 +157,42 @@
             </button>
           </div>
 
-          <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
-            <a @click="selectPoolToken(poolToken)">
-              <div
-                class="w-full flex items-center justify-between cursor-pointer hover:text-light-primary py-4"
-              >
-                <div class="space-x-2 flex items-center">
-                  <img
-                    src="~/assets/pool-tokens/eth-dai.svg"
-                    width="32"
-                    alt="Dai"
-                  />
-                  <span class="font-medium dark:text-white text-sm"
-                    >{{ poolToken.name }} ({{ poolToken.exchange }})</span
-                  >
+          <div class="pt-4">
+            <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
+              <a @click="selectPoolToken(poolToken)">
+                <div
+                  class="w-full flex items-center justify-between cursor-pointer hover:text-light-primary py-2"
+                >
+                  <div class="space-x-2 flex items-center">
+                    <div class="relative flex w-12">
+                      <div class="flex items-center self-center">
+                        <img
+                          class="rounded-full"
+                          :src="poolToken.currencyOneLogo"
+                          style="z-index: 2"
+                          width="24"
+                        />
+                      </div>
+                      <div class="absolute" style="left: 16px">
+                        <img
+                          class="rounded-full"
+                          :src="poolToken.currencyTwoLogo"
+                          style="width: 24px; height: 24px"
+                        />
+                      </div>
+                    </div>
+                    <span class="font-medium dark:text-white text-sm"
+                      >{{ poolToken.name }} ({{ poolToken.exchange }})</span
+                    >
+                  </div>
+                  <div>
+                    <span class="dark:text-white text-gray-800 font-medium">
+                      {{ poolToken.balance }}
+                    </span>
+                  </div>
                 </div>
-                <div>
-                  <span class="dark:text-white text-gray-800 font-medium">
-                    {{ poolToken.balance }}
-                  </span>
-                </div>
-              </div>
-            </a>
+              </a>
+            </div>
           </div>
         </div>
       </template>
