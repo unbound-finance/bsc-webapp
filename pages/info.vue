@@ -117,6 +117,29 @@
       </div>
     </div>
 
+    <!-- Transaction Table Filter -->
+    <div class="mt-8">
+      <div class="w-full flex items-center justify-between">
+        <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
+          Your Liquidity
+        </p>
+      </div>
+      <div v-if="ui.liqLoading || !getAddress" class="dark:text-gray-600">
+        Loading...
+      </div>
+      <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
+      <t-table
+        v-else
+        :headers="liquidityTable.headers"
+        :data="liquidityTable.data"
+        :responsive="true"
+        :responsive-breakpoint="520"
+      >
+        <template slot="row"> </template>
+      </t-table>
+    </div>
+
+    <!-- Transaction History Table -->
     <div class="mt-8">
       <div class="w-full flex items-center justify-between">
         <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
@@ -222,12 +245,17 @@ export default {
     return {
       ui: {
         loading: false,
+        liqLoading: false,
         errorMsg: null,
         page: 1,
       },
       showFees: false,
       txTable: {
         headers: ['Date', 'Block', 'Txn Hash', 'Type', 'Amount', 'Txn Fees'],
+        data: [],
+      },
+      liquidityTable: {
+        headers: ['Date', 'Staked Tokens', 'Pool Share', 'Your Earnings', ''],
         data: [],
       },
       functions: {
