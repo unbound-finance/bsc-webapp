@@ -26,7 +26,7 @@
     </div>
 
     <p class="text-gray-900 dark:text-gray-200 font-medium py-4 mt-4">
-      Your Liquidity
+      Staking
     </p>
 
     <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -87,7 +87,7 @@
           <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
           <div class="flex items-center justify-between">
             <p class="font-medium text-3xl text-accent">
-              {{ liquidity ? liquidity.poolShare : '--' }}%
+              {{ liquidity ? liquidity.poolShare.toFixed(3) : '--' }}%
             </p>
           </div>
         </div>
