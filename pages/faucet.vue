@@ -29,6 +29,7 @@
         </p>
         <button
           class="py-2 px-6 bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800 mt-8 font-medium rounded-sm focus:outline-none"
+          @click="signInWithGithub"
         >
           Login with Github
         </button>
@@ -44,6 +45,31 @@ export default {
     return {
       isAuthenticated: false,
     }
+  },
+  mounted() {
+    console.log(process.env.GITHUB_CLIENT_ID)
+  },
+  methods: {
+    toQuery(params, delimiter = '&') {
+      const keys = Object.keys(params)
+      return keys.reduce((str, key, index) => {
+        let query = `${str}${key}=${params[key]}`
+        if (index < keys.length - 1) {
+          query += delimiter
+        }
+
+        return query
+      }, '')
+    },
+    async signInWithGithub() {
+      const search = await this.toQuery({
+        client_id: process.env.GITHUB_CLIENT_ID,
+        redirect_uri: process.env.GITHUB_CALLBACK_URI,
+        scope: 'user:email',
+      })
+
+      window.open(`https://github.com/login/oauth/authorize?${search}`)
+    },
   },
 }
 </script>
