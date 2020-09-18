@@ -2,9 +2,7 @@
   <div class="md:max-w-6xl mx-auto p-4">
     <div class="flex justify-between items-center">
       <nuxt-link to="/">
-        <p class="font-medium text-md md:text-xl dark:text-gray-200">
-          Unbound Statistics
-        </p>
+        <p class="font-bold text-md md:text-2xl text-accent">unbound</p>
       </nuxt-link>
       <div class="flex items-center space-x-4">
         <ConnectWalletBtn />
@@ -27,7 +25,11 @@
       </div>
     </div>
 
-    <div class="mt-8 w-full grid grid-cols-1 md:grid-cols-3 gap-2">
+    <p class="text-gray-900 dark:text-gray-200 font-medium py-4 mt-4">
+      Your Liquidity
+    </p>
+
+    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-2">
       <div
         class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
         :class="showFees ? '' : 'border'"
@@ -36,33 +38,66 @@
           <p class="font-medium text-sm text-gray-600">Total Liquidity</p>
           <div class="flex items-center justify-between">
             <p class="font-medium text-3xl text-accent">
-              ${{ totalLiquidity }}
+              ${{
+                liquidity
+                  ? Number(liquidity.token0 + liquidity.token1).toFixed(2)
+                  : '--'
+              }}
             </p>
-            <!-- <p class="text-sm text-green-500 font-medium">15.36%</p> -->
+            <button
+              class="focus:outline-none"
+              @click="showLiquidity = !showLiquidity"
+            >
+              <i
+                class="fas text-gray-600 px-4"
+                :class="showLiquidity ? 'fa-chevron-up' : 'fa-chevron-down'"
+              ></i>
+            </button>
+          </div>
+          <div v-if="showLiquidity" class="transition-all duration-200">
+            <div
+              class="mt-4 border-b border-gray-200 dark:border-gray-800 w-full"
+            ></div>
+            <div class="mt-4 grid grid-cols-2 px-2">
+              <div>
+                <p class="text-gray-600 font-medium text-sm">Pooled DAI</p>
+              </div>
+              <div>
+                <p class="text-right text-accent font-medium">
+                  {{ Number(liquidity.token0).toFixed(2) }}
+                </p>
+              </div>
+              <div>
+                <p class="text-gray-600 font-medium text-sm">Pooled UBD</p>
+              </div>
+              <div>
+                <p class="text-right text-accent font-medium">
+                  {{ Number(liquidity.token1).toFixed(2) }}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div
         class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
-        :class="showFees ? '' : 'border'"
+        :class="showLiquidity ? '' : 'border'"
       >
         <div class="flex flex-col">
-          <p class="font-medium text-sm text-gray-600">Total UBD Minted</p>
+          <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
           <div class="flex items-center justify-between">
             <p class="font-medium text-3xl text-accent">
-              {{ totalMinted }} UND
+              {{ liquidity ? liquidity.poolShare : '--' }}%
             </p>
-            <!-- <p class="text-sm text-green-500 font-medium">8.36%</p> -->
           </div>
         </div>
       </div>
       <div
-        class="w-full border-gray-200 dark:border-gray-800 rounded p-4 cursor-pointer"
-        :class="showFees ? 'shadow-xl rounded-lg' : 'border'"
-        @click="showFees = !showFees"
+        class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
+        :class="showLiquidity ? '' : 'border'"
       >
         <div class="flex flex-col">
-          <p class="font-medium text-sm text-gray-600">Total Fees</p>
+          <p class="font-medium text-sm text-gray-600">Total Fees Earned</p>
           <div class="flex items-center justify-between">
             <p class="font-medium text-3xl text-accent">
               $
@@ -74,15 +109,15 @@
               }}
             </p>
 
-            <button class="focus:outline-none">
+            <!-- <button class="focus:outline-none">
               <i
                 class="fas text-gray-600 px-4"
                 :class="showFees ? 'fa-chevron-up' : 'fa-chevron-down'"
               ></i>
-            </button>
+            </button> -->
           </div>
 
-          <div v-if="showFees" class="transition-all duration-200">
+          <!-- <div v-if="showFees" class="transition-all duration-200">
             <div
               class="mt-4 border-b border-gray-200 dark:border-gray-800 w-full"
             ></div>
@@ -112,7 +147,7 @@
                 </p>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -121,20 +156,14 @@
     <div class="mt-8">
       <div class="w-full flex items-center justify-between">
         <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
-          Your Liquidity
+          Your Locked Assets
         </p>
       </div>
       <div v-if="ui.liqLoading || !getAddress" class="dark:text-gray-600">
         Loading...
       </div>
       <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
-      <t-table
-        v-else
-        :headers="liquidityTable.headers"
-        :data="liquidityTable.data"
-        :responsive="true"
-        :responsive-breakpoint="520"
-      >
+      <t-table v-else :headers="LPTTable.headers" :data="LPTTable.data">
         <template slot="row"> </template>
       </t-table>
     </div>
@@ -175,13 +204,7 @@
         Loading...
       </div>
       <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
-      <t-table
-        v-else
-        :headers="txTable.headers"
-        :data="txTable.data"
-        :responsive="true"
-        :responsive-breakpoint="520"
-      >
+      <t-table v-else :headers="txTable.headers" :data="txTable.data">
         <template slot="row" slot-scope="props">
           <tr :class="props.trClass">
             <td :class="props.tdClass">
@@ -233,7 +256,8 @@ import { mapGetters } from 'vuex'
 import { ethers } from 'ethers'
 
 // import config from '~/configs/config'
-import { getPoolTokenReserves } from '~/mixins/stake'
+import { getPoolTokenReserves, getAmountOfLockedTokens } from '~/mixins/stake'
+import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
 import UnboundDai from '~/configs/abi/UnboundDai'
 // const txDecoder = require('ethereum-tx-decoder')
@@ -250,18 +274,27 @@ export default {
         page: 1,
       },
       showFees: false,
+      showLiquidity: false,
       txTable: {
         headers: ['Date', 'Block', 'Txn Hash', 'Type', 'Amount', 'Txn Fees'],
         data: [],
       },
-      liquidityTable: {
-        headers: ['Date', 'Staked Tokens', 'Pool Share', 'Your Earnings', ''],
-        data: [],
+      LPTTable: {
+        headers: ['LP Tokens', 'Locked LPT', 'UBD Minted', 'LTV'],
+        data: [
+          {
+            lptName: 'UNI-ETH/DAI',
+            locked: 100,
+            minted: 50,
+            ltv: 40,
+          },
+        ],
       },
       functions: {
         mint: '0x04bb770d',
         burn: '0x78208601',
       },
+      liquidity: null,
       totalLiquidity: '--',
       totalMinted: '--',
       collectedFees: {
@@ -283,6 +316,7 @@ export default {
     this.getTransactions()
     this.getTotalUBD()
     this.getCollectedFees()
+    this.fetchLiquidity()
   },
 
   methods: {
@@ -380,6 +414,26 @@ export default {
       )
       const supply = await UBD.totalSupply()
       this.totalMinted = (supply / 1e18).toFixed(2)
+    },
+
+    async fetchLiquidity() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const userAddress = provider.getSigner().getAddress()
+
+      const poolTokenContract = new ethers.Contract(
+        config.contracts.UBDUniswapPool,
+        UniswapLPTABI,
+        signer
+      )
+
+      try {
+        const lptBalance = await poolTokenContract.balanceOf(userAddress)
+        if (lptBalance > 0) {
+          const data = await getAmountOfLockedTokens()
+          this.liquidity = data
+        }
+      } catch (error) {}
     },
   },
 }
