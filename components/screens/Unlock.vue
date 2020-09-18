@@ -386,6 +386,7 @@ export default {
     },
 
     async unlock(poolToken) {
+      console.log('address', poolToken.llcAddress)
       this.ui.showAwaiting = true
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(

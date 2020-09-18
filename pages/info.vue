@@ -257,9 +257,12 @@ import { ethers } from 'ethers'
 
 // import config from '~/configs/config'
 import { getPoolTokenReserves, getAmountOfLockedTokens } from '~/mixins/stake'
+import { getBalanceOfToken, checkLoan } from '~/mixins/info'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
 import UnboundDai from '~/configs/abi/UnboundDai'
+
+import supportedPoolTokens from '~/configs/supportedPoolTokens'
 // const txDecoder = require('ethereum-tx-decoder')
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 
@@ -280,15 +283,8 @@ export default {
         data: [],
       },
       LPTTable: {
-        headers: ['LP Tokens', 'Locked LPT', 'UBD Minted', 'LTV'],
-        data: [
-          {
-            lptName: 'UNI-ETH/DAI',
-            locked: 100,
-            minted: 50,
-            ltv: 40,
-          },
-        ],
+        headers: ['LP Token Name', 'Locked LPT', 'UBD Minted', 'LTV'],
+        data: [],
       },
       functions: {
         mint: '0x04bb770d',
@@ -301,6 +297,7 @@ export default {
         safu: '',
         team: '',
       },
+      supportedPoolTokens,
     }
   },
 
@@ -317,6 +314,7 @@ export default {
     this.getTotalUBD()
     this.getCollectedFees()
     this.fetchLiquidity()
+    this.getPoolTokens()
   },
 
   methods: {
@@ -434,6 +432,26 @@ export default {
           this.liquidity = data
         }
       } catch (error) {}
+    },
+
+    async getPoolTokens() {
+      let i
+      const poolTokens = []
+      for (i = 0; i < supportedPoolTokens.length; i++) {
+        const lockedLPT = await getBalanceOfToken(
+          supportedPoolTokens[i].address
+        )
+        const loan = await checkLoan(config.contracts.unboundDai)
+        // const und = lockedLPT.toString() /
+        const poolTokenObj = {
+          lptName: supportedPoolTokens[i].name,
+          locked: lockedLPT.toString(),
+          minted: loan.toString(),
+          ltv: '40',
+        }
+        poolTokens.push(poolTokenObj)
+        this.LPTTable.data = poolTokens
+      }
     },
   },
 }
