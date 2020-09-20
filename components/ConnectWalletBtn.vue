@@ -35,6 +35,11 @@
           >
             <div class="flex justify-between items-center">
               <p class="text-sm text-gray-600">Connected with Metamask</p>
+              <div
+                class="text-gray-600 dark:text-white text-xs bg-gray-200 dark:bg-gray-800 py-1 px-4 rounded-full"
+              >
+                {{ network }}{{ network !== 'main' ? ' testnet' : 'net' }}
+              </div>
               <!-- <button
                 type="button"
                 class="focus:outline-none px-2 py-1 rounded text-sm bg-light-primary dark:bg-dark-primary bg-opacity-25 text-light-primary dark:text-white"
@@ -53,7 +58,7 @@
 
             <div class="mt-2">
               <a
-                :href="`https://etherscan.io/address/${address}`"
+                :href="`https://${network}.etherscan.io/address/${address}`"
                 target="_blank"
                 class="flex items-center space-x-1 hover:underline"
               >
@@ -65,26 +70,115 @@
         </div>
       </template>
     </Modal>
+
+    <!-- Change Network Modal -->
+    <Modal v-model="ui.showChgNetDialog">
+      <template>
+        <div class="flex flex-col space-y-4">
+          <div class="flex justify-between items-center">
+            <p class="font-medium dark:text-white">Change Your Network</p>
+            <button
+              type="button"
+              class="focus:outline-none"
+              @click="ui.showChgNetDialog = false"
+            >
+              <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
+            </button>
+          </div>
+
+          <div>
+            <p class="dark:text-gray-200 text-sm">
+              We've detected that you need to switch your wallet's network from
+              <span class="font-medium text-accent">
+                {{ config.dev ? network : '' }}
+                {{ network === 'main' ? 'net' : 'testnet' }}</span
+              >
+              to
+              <span class="font-medium text-accent">{{
+                config.prod ? 'mainnet' : 'kovan testnet'
+              }}</span>
+              network for this Dapp.
+            </p>
+          </div>
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
 import { ethers } from 'ethers'
 import Web3 from 'web3'
+import config from '../nuxt.config'
 
 export default {
   data() {
     return {
+      config,
       address: '',
       ui: {
         showDialog: false,
+        showChgNetDialog: false,
       },
+      network: null,
     }
   },
+
   mounted() {
     this.connectMetamask()
+    this.getNetwork()
+    this.reloadOnNetChange()
+    this.reloadOnAccChange()
   },
+
   methods: {
+    reloadOnNetChange() {
+      if (window.ethereum || window.web3) {
+        const ethereum = window.ethereum || window.web3
+
+        // Silence the metamask warning 🤫
+        ethereum.autoRefreshOnNetworkChange = false
+
+        // Reload browser tab when newtork changed
+        ethereum.on('chainChanged', (chainId) => {
+          window.location.reload()
+        })
+      }
+    },
+
+    reloadOnAccChange() {
+      if (window.ethereum || window.web3) {
+        const ethereum = window.ethereum || window.web3
+
+        // Silence the metamask warning 🤫
+        ethereum.autoRefreshOnNetworkChange = false
+
+        // Reload browser tab when account changed
+        ethereum.on('accountsChanged', (accounts) => {
+          window.location.reload()
+        })
+      }
+    },
+
+    async getNetwork() {
+      if (window.ethereum || window.web3) {
+        const web3 = new Web3(window.ethereum || window.web3)
+        const network = await web3.eth.net.getNetworkType()
+        this.$store.commit('getNetwork', network)
+        this.network = network
+
+        if (config.dev) {
+          if (this.network !== 'kovan') {
+            this.ui.showChgNetDialog = true
+          }
+        } else if (config.prod) {
+          if (this.network !== 'main') {
+            this.ui.showChgNetDialog = true
+          }
+        }
+      }
+    },
+
     async connectMetamask() {
       if (window.ethereum) {
         try {
@@ -93,6 +187,7 @@ export default {
           const provider = await new ethers.providers.Web3Provider(
             window.ethereum
           )
+
           const address = await provider.getSigner().getAddress()
           this.address = address
 
@@ -113,6 +208,7 @@ export default {
         const provider = await new ethers.providers.Web3Provider(
           window.ethereum
         )
+        console.log(this.getNetwork())
         const address = await provider.getSigner().getAddress()
         this.address = address
         this.$emit('connected', address)
