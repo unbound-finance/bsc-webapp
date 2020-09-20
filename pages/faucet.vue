@@ -31,7 +31,7 @@
           class="py-2 px-6 bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800 mt-8 font-medium rounded-sm focus:outline-none"
           @click="signInWithGithub"
         >
-          Login with Github
+          {{ ui.loading ? 'Loading...' : 'Login with Github' }}
         </button>
       </div>
     </div>
@@ -39,17 +39,29 @@
 </template>
 
 <script>
+import env from '../.env.js'
 export default {
   layout: 'info',
   data() {
     return {
       isAuthenticated: false,
+      ui: {
+        loading: false,
+      },
     }
   },
-  mounted() {
-    console.log(process.env.GITHUB_CLIENT_ID)
+  computed: {
+    code() {
+      return this.$route.query.code
+    },
   },
+
+  mounted() {
+    if (this.code) this.getAccessToken()
+  },
+
   methods: {
+    // JSON Object to query
     toQuery(params, delimiter = '&') {
       const keys = Object.keys(params)
       return keys.reduce((str, key, index) => {
@@ -57,18 +69,39 @@ export default {
         if (index < keys.length - 1) {
           query += delimiter
         }
-
         return query
       }, '')
     },
     async signInWithGithub() {
       const search = await this.toQuery({
-        client_id: process.env.GITHUB_CLIENT_ID,
-        redirect_uri: process.env.GITHUB_CALLBACK_URI,
+        client_id: env.GITHUB_CLIENT_ID,
+        redirect_uri: env.GITHUB_CALLBACK_URI,
         scope: 'user:email',
       })
 
-      window.open(`https://github.com/login/oauth/authorize?${search}`)
+      window.open(`https://github.com/login/oauth/authorize?${search}`, '_self')
+    },
+
+    async getAccessToken() {
+      // Get Access Token from Github
+
+      const data = JSON.stringify({
+        client_id: '2a402e657970a7da677c',
+        client_secret: '9679f79aa1dec599e8d8f9e1076870ea6d162e0f',
+        code: this.code,
+      })
+
+      const config = {
+        method: 'post',
+        url: 'https://unbound-faucet-serverless.vercel.app/api/release',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data,
+      }
+
+      const result = await this.$axios(config)
+      console.log(result)
     },
   },
 }
