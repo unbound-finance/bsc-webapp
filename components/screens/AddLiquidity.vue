@@ -178,22 +178,24 @@
           </div>
         </div>
       </div>
-
       <button
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
         :class="[
           !lpTokenAmount ? getDisabledClass : getActiveClass,
           isSufficentBalance ? getDisabledClass : getActiveClass,
-          !selectedToken.allowance ? getDisabledClass : getActiveClass,
-          !selectedUToken.allowance ? getDisabledClass : getActiveClass,
+          selectedToken.allowance == 0 ? getDisabledClass : getActiveClass,
+          selectedUToken.allowance == 0 ? getDisabledClass : getActiveClass,
         ]"
         :disabled="shouldDisableAddLiquidity"
         @click="addLiquidity"
       >
         <span v-if="!lpTokenAmount">Enter an amount</span>
         <span v-else-if="isSufficentBalance">Insufficient Liquidity</span>
-        <span v-else-if="!selectedToken.allowance || !selectedUToken.allowance"
+        <span
+          v-else-if="
+            selectedToken.allowance == 0 || selectedUToken.allowance == 0
+          "
           >Please Approve Tokens</span
         >
         <span v-else>Add Liquidity</span>
@@ -352,7 +354,7 @@ export default {
         showRejected: false,
       },
       selectedToken: {
-        name: 'dai',
+        name: 'Dai',
         exchange: 'Uniswap',
         address: config.contracts.dai,
         allowance: '',
@@ -447,19 +449,15 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(config.contracts.uniswapRouter, totalSupply)
-        this.$toasted.show('Token approveed Successfully', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 5000,
-        })
+        const approve = await contract.approve(
+          config.contracts.uniswapRouter,
+          totalSupply
+        )
+        this.ui.showRejected = true
+        this.txLink = approve.hash
         this.checkAllowances()
       } catch (error) {
-        this.$toasted.show('Transaction Rejected', {
-          theme: 'bubble',
-          position: 'top-center',
-          duration: 5000,
-        })
+        this.ui.showRejected = true
       }
     },
 
