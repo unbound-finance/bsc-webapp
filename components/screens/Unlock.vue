@@ -73,12 +73,12 @@
       >
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Burn</p>
-          <p class="text-gray-600 text-sm">Balance: {{ UBDBalance }}</p>
+          <p class="text-gray-600 text-sm">Balance: {{ UNDBalance }}</p>
         </div>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="UBDOutput"
+              v-model="UNDOutput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -111,7 +111,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UND
+                {{ (parseInt(UNDOutput) * 0.25) / 100 }} UND
               </p>
             </div>
             <div class="flex items-center justify-between">
@@ -243,7 +243,7 @@ export default {
       balance: '--.--',
       lockedLPTokenBalance: '--.--',
       txLink: '',
-      UBDBalance: '',
+      UNDBalance: '',
       supportedPoolTokens,
       loanRatioPerLPT: '',
       llc: {
@@ -254,7 +254,7 @@ export default {
   },
 
   computed: {
-    UBDOutput() {
+    UNDOutput() {
       return this.LPTAmount * this.loanRatioPerLPT
     },
     isWalletConnected() {
@@ -422,7 +422,7 @@ export default {
 
     async getBurnTokenBalance() {
       const balance = await getTokenBalance(config.contracts.unboundDai)
-      this.UBDBalance = balance.toFixed
+      this.UNDBalance = balance.toFixed
     },
 
     setInputMax() {

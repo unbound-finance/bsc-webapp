@@ -81,7 +81,7 @@
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="UBDOutput"
+              v-model="UNDOutput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -122,7 +122,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UND
+                {{ (parseInt(UNDOutput) * 0.25) / 100 }} UND
               </p>
             </div>
             <div class="flex items-center justify-between">
@@ -240,7 +240,7 @@
             <div class="flex w-full items-center justify-between">
               <div class="flex items-center space-x-2">
                 <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt />
-                <span class="text-2xl dark:text-white">{{ UBDOutput }}</span>
+                <span class="text-2xl dark:text-white">{{ UNDOutput }}</span>
               </div>
               <p class="text-lg font-medium dark:text-white">UND</p>
             </div>
@@ -251,7 +251,7 @@
               <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-600">Fees</p>
                 <p class="font-medium text-sm dark:text-white">
-                  {{ (parseInt(UBDOutput) * 0.25) / 100 }} UND
+                  {{ (parseInt(UNDOutput) * 0.25) / 100 }} UND
                 </p>
               </div>
               <div class="flex items-center justify-between">
@@ -323,7 +323,7 @@ export default {
   },
 
   computed: {
-    UBDOutput() {
+    UNDOutput() {
       const loanRatioPerLPT = this.LPTAmount * this.loanRatioPerLPT
       return loanRatioPerLPT.toFixed(4).slice(0, -1)
     },
@@ -448,7 +448,7 @@ export default {
             signer
           )
           try {
-            const mintUBD = await UnboundLLCContract.lockLPTWithPermit(
+            const mintUND = await UnboundLLCContract.lockLPTWithPermit(
               amount,
               config.contracts.unboundDai,
               deadline,
@@ -460,7 +460,7 @@ export default {
             this.ui.showAwaiting = false
             // show success screen
             this.ui.showConfirmation = false
-            this.txLink = mintUBD.hash
+            this.txLink = mintUND.hash
             this.ui.showSuccess = true
 
             // initiate the UND contract to detect the event so we can update the balances

@@ -41,7 +41,7 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 
 const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const userAddress = await signer.getAddress()
-  const nonce = await getNonce(config.contracts.UBDUniswapPool, signer)
+  const nonce = await getNonce(config.contracts.UNDUniswapPool, signer)
   const deadline = +new Date() + 10000
   const formatAmountA = ethers.utils.parseEther(amountA).toString()
   const formatAmountB = ethers.utils.parseEther(amountB).toString()
@@ -52,7 +52,7 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const amountBMin = (formatAmountB - (formatAmountB * 10) / 100).toString()
 
   const signedData = await getEIP712Signature(
-    config.contracts.UBDUniswapPool,
+    config.contracts.UNDUniswapPool,
     config.contracts.uniswapRouter,
     userAddress,
     liquidity,
@@ -143,7 +143,7 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 const getPoolTokenBalance = async () => {
   const userAddress = signer.getAddress()
   const poolTokenContract = await new ethers.Contract(
-    config.contracts.UBDUniswapPool,
+    config.contracts.UNDUniswapPool,
     UniswapLPTABI,
     signer
   )
@@ -153,7 +153,7 @@ const getPoolTokenBalance = async () => {
 
 const getPoolTokenReserves = async () => {
   const poolTokenContract = new ethers.Contract(
-    config.contracts.UBDUniswapPool,
+    config.contracts.UNDUniswapPool,
     UniswapLPTABI,
     signer
   )
@@ -166,7 +166,7 @@ const getPoolTokenReserves = async () => {
 
 const getPoolTokenTotalSupply = async () => {
   const poolTokenContract = new ethers.Contract(
-    config.contracts.UBDUniswapPool,
+    config.contracts.UNDUniswapPool,
     UniswapLPTABI,
     signer
   )

@@ -313,7 +313,7 @@ export default {
     this.ui.loading = true
     this.getTotalLiquidity()
     this.getTransactions()
-    this.getTotalUBD()
+    this.getTotalUND()
     this.getCollectedFees()
     this.fetchLiquidity()
     this.getPoolTokens()
@@ -409,7 +409,7 @@ export default {
       this.totalLiquidity = (totalLiquidity.reserve1 / 1e18).toFixed(2)
     },
 
-    async getTotalUBD() {
+    async getTotalUND() {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const UND = new ethers.Contract(
@@ -427,7 +427,7 @@ export default {
       const userAddress = provider.getSigner().getAddress()
 
       const poolTokenContract = new ethers.Contract(
-        config.contracts.UBDUniswapPool,
+        config.contracts.UNDUniswapPool,
         UniswapLPTABI,
         signer
       )

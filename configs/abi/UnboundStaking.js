@@ -137,7 +137,7 @@ export default [
   },
   {
     inputs: [],
-    name: '_trackedRewardUBD',
+    name: '_trackedRewardUND',
     outputs: [
       {
         internalType: 'uint256',
@@ -196,7 +196,7 @@ export default [
       },
       {
         internalType: 'uint256',
-        name: 'UBDMin',
+        name: 'UNDMin',
         type: 'uint256',
       },
     ],

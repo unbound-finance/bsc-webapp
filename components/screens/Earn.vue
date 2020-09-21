@@ -145,7 +145,7 @@ export default {
       const userAddress = provider.getSigner().getAddress()
 
       const poolTokenContract = new ethers.Contract(
-        config.contracts.UBDUniswapPool,
+        config.contracts.UNDUniswapPool,
         UniswapLPTABI,
         signer
       )

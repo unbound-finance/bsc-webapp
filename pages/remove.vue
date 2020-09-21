@@ -84,13 +84,13 @@
         <div class="flex items-center justify-between">
           <p class="text-sm text-gray-700 font-medium">Input</p>
           <p v-if="selectedUToken" class="text-gray-600 text-sm">
-            Supplied: {{ UBDBalance }}
+            Supplied: {{ UNDBalance }}
           </p>
         </div>
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="UBDOutput"
+              v-model="UNDOutput"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -255,7 +255,7 @@
             <div class="flex w-full items-center justify-between">
               <div class="flex items-center space-x-2">
                 <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt="" />
-                <span class="text-2xl dark:text-white">{{ UBDOutput }}</span>
+                <span class="text-2xl dark:text-white">{{ UNDOutput }}</span>
               </div>
               <p class="text-lg font-medium dark:text-white">UND</p>
             </div>
@@ -327,7 +327,7 @@ export default {
       lpTokenAmount: '0',
       // isTokenApproved: '',
       txLink: '',
-      UBDBalance: '',
+      UNDBalance: '',
       liquidity: '',
       supportedPoolTokens: [
         {
@@ -343,7 +343,7 @@ export default {
   },
 
   computed: {
-    UBDOutput() {
+    UNDOutput() {
       return this.lpTokenAmount
     },
   },
@@ -368,7 +368,7 @@ export default {
       const userAddress = provider.getSigner().getAddress()
 
       const poolTokenContract = new ethers.Contract(
-        config.contracts.UBDUniswapPool,
+        config.contracts.UNDUniswapPool,
         UniswapLPTABI,
         signer
       )
@@ -380,7 +380,7 @@ export default {
           this.liquidity = data
 
           this.balance = data.token0
-          this.UBDBalance = data.token1
+          this.UNDBalance = data.token1
         }
         this.ui.loading = false
       } catch (error) {
@@ -453,11 +453,11 @@ export default {
     },
 
     async checkAllowances() {
-      const UBDAllowance = await this.getAllowance(config.contracts.unboundDai)
+      const UNDAllowance = await this.getAllowance(config.contracts.unboundDai)
       const daiAllowance = await this.getAllowance(config.contracts.dai)
       this.selectedToken.allowance = daiAllowance.toString()
-      this.selectedUToken.allowance = UBDAllowance.toString()
-      console.log(UBDAllowance.toString(), daiAllowance.toString())
+      this.selectedUToken.allowance = UNDAllowance.toString()
+      console.log(UNDAllowance.toString(), daiAllowance.toString())
     },
 
     setInputMax() {
