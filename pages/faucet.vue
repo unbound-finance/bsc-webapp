@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import env from '../.env.js'
 export default {
   layout: 'info',
   data() {
@@ -74,9 +73,9 @@ export default {
     },
     async signInWithGithub() {
       const search = await this.toQuery({
-        client_id: env.GITHUB_CLIENT_ID,
-        redirect_uri: env.GITHUB_CALLBACK_URI,
-        scope: 'user:email',
+        // client_id: env.GITHUB_CLIENT_ID,
+        // redirect_uri: env.GITHUB_CALLBACK_URI,
+        // scope: 'user:email',
       })
 
       window.open(`https://github.com/login/oauth/authorize?${search}`, '_self')
