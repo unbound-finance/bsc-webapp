@@ -152,7 +152,8 @@ export default {
 
       try {
         const ptBalance = await poolTokenContract.balanceOf(userAddress)
-        if (ptBalance > 0) {
+        console.log(ptBalance.toString())
+        if (ptBalance.toString() > 0) {
           const data = await getAmountOfLockedTokens()
           this.liquidity = data
         }
