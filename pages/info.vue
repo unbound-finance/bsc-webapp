@@ -257,7 +257,9 @@ import { ethers } from 'ethers'
 
 // import config from '~/configs/config'
 import { getPoolTokenReserves, getAmountOfLockedTokens } from '~/mixins/stake'
-import { getBalanceOfToken, checkLoan } from '~/mixins/info'
+import { getLockedLPT, checkLoan } from '~/mixins/info'
+import { getLLC } from '~/mixins/valuator'
+
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
 import UnboundDai from '~/configs/abi/UnboundDai'
@@ -297,6 +299,8 @@ export default {
         safu: '',
         team: '',
       },
+      totalLockedLPT: '',
+      totalLocked: '',
       supportedPoolTokens,
     }
   },
@@ -437,21 +441,27 @@ export default {
     async getPoolTokens() {
       let i
       const poolTokens = []
+      const totalLoan = await checkLoan(config.contracts.unboundDai)
+      let totalLockedLPT = 0
       for (i = 0; i < supportedPoolTokens.length; i++) {
-        const lockedLPT = await getBalanceOfToken(
-          supportedPoolTokens[i].address
-        )
-        const loan = await checkLoan(config.contracts.unboundDai)
+        const lockedLPT = await getLockedLPT(supportedPoolTokens[i].llcAddress)
+        const llc = await getLLC(supportedPoolTokens[i].address)
+
+        totalLockedLPT += parseFloat(lockedLPT)
+        // get average loan amount per uDAI
         // const und = lockedLPT.toString() /
         const poolTokenObj = {
           lptName: supportedPoolTokens[i].name,
-          locked: lockedLPT.toString(),
-          minted: loan.toString(),
-          ltv: '40',
+          locked: lockedLPT,
+          minted: '100',
+          ltv: llc.loanRate,
         }
         poolTokens.push(poolTokenObj)
         this.LPTTable.data = poolTokens
       }
+
+      this.totalLockedLPT = totalLockedLPT
+      this.totalLoan = totalLoan.toString()
     },
   },
 }
