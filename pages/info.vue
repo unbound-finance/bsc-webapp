@@ -384,19 +384,24 @@ export default {
       for (i = 0; i < etherScanData.length; i++) {
         const transaction = await provider.getTransaction(etherScanData[i].hash)
         const rawFunction = transaction.data.slice(0, 10)
-        const value = transaction.data.slice(10, 74)
-        const data = {
-          blockNumber: etherScanData[i].blockNumber,
-          timeStamp: etherScanData[i].timeStamp,
-          hash: etherScanData[i].hash,
-          gasPrice: etherScanData[i].gasPrice,
-          gasUsed: etherScanData[i].gasUsed,
-          amount: parseInt('0x' + value) / 1e18,
-          smartContractFunction: rawFunction,
+        if (
+          rawFunction === this.functions.mint ||
+          rawFunction === this.functions.burn
+        ) {
+          const value = transaction.data.slice(10, 74)
+          const data = {
+            blockNumber: etherScanData[i].blockNumber,
+            timeStamp: etherScanData[i].timeStamp,
+            hash: etherScanData[i].hash,
+            gasPrice: etherScanData[i].gasPrice,
+            gasUsed: etherScanData[i].gasUsed,
+            amount: parseInt('0x' + value) / 1e18,
+            smartContractFunction: rawFunction,
+          }
+          tempArray.push(data)
         }
-        tempArray.push(data)
+        this.txTable.data = tempArray
       }
-      this.txTable.data = tempArray
     },
 
     async getTotalLiquidity() {
