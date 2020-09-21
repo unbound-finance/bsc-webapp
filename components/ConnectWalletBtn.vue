@@ -90,13 +90,11 @@
             <p class="dark:text-gray-200 text-sm">
               We've detected that you need to switch your wallet's network from
               <span class="font-medium text-accent">
-                {{ config.dev ? network : '' }}
+                {{ network }}
                 {{ network === 'main' ? 'net' : 'testnet' }}</span
               >
               to
-              <span class="font-medium text-accent">{{
-                config.prod ? 'mainnet' : 'kovan testnet'
-              }}</span>
+              <span class="font-medium text-accent">kovan testnet</span>
               network for this Dapp.
             </p>
           </div>
@@ -167,14 +165,8 @@ export default {
         this.$store.commit('getNetwork', network)
         this.network = network
 
-        if (config.dev) {
-          if (this.network !== 'kovan') {
-            this.ui.showChgNetDialog = true
-          }
-        } else if (config.prod) {
-          if (this.network !== 'main') {
-            this.ui.showChgNetDialog = true
-          }
+        if (this.network !== 'kovan') {
+          this.ui.showChgNetDialog = true
         }
       }
     },
