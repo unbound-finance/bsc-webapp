@@ -68,7 +68,7 @@
                 </p>
               </div>
               <div>
-                <p class="text-gray-600 font-medium text-sm">Pooled UBD</p>
+                <p class="text-gray-600 font-medium text-sm">Pooled UND</p>
               </div>
               <div>
                 <p class="text-right text-accent font-medium">
@@ -285,7 +285,7 @@ export default {
         data: [],
       },
       LPTTable: {
-        headers: ['LP Token Name', 'Locked LPT', 'UBD Minted', 'LTV'],
+        headers: ['LP Token Name', 'Locked LPT', 'UND Minted', 'LTV'],
         data: [],
       },
       functions: {
@@ -337,13 +337,13 @@ export default {
     async getCollectedFees() {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const UBD = new ethers.Contract(
+      const UND = new ethers.Contract(
         config.contracts.unboundDai,
         UnboundDai,
         signer
       )
-      const safu = await UBD.balanceOf(config.safuFund)
-      const team = await UBD.balanceOf(config.devFund)
+      const safu = await UND.balanceOf(config.safuFund)
+      const team = await UND.balanceOf(config.devFund)
       this.collectedFees.safu = (safu.toString() / 1e18).toFixed(3)
       this.collectedFees.team = (team.toString() / 1e18).toFixed(3)
     },
@@ -412,12 +412,12 @@ export default {
     async getTotalUBD() {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const UBD = new ethers.Contract(
+      const UND = new ethers.Contract(
         config.contracts.unboundDai,
         UnboundDai,
         signer
       )
-      const supply = await UBD.totalSupply()
+      const supply = await UND.totalSupply()
       this.totalMinted = (supply / 1e18).toFixed(2)
     },
 

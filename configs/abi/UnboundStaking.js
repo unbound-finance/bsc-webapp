@@ -13,7 +13,7 @@ export default [
       },
       {
         internalType: 'address',
-        name: 'UBD',
+        name: 'UND',
         type: 'address',
       },
       {
@@ -173,7 +173,7 @@ export default [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'UBD',
+        name: 'UND',
         type: 'uint256',
       },
       {

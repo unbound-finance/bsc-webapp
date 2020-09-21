@@ -144,7 +144,7 @@
               <p class="text-sm text-gray-600">Your Positions</p>
               <p class="font-medium text-sm dark:text-white">
                 <span class="text-gray-600">DAI</span>: {{ liquidity.token1 }},
-                <span class="text-gray-600">UBD</span>: {{ liquidity.token0 }}
+                <span class="text-gray-600">UND</span>: {{ liquidity.token0 }}
               </p>
             </div>
           </div>
@@ -257,7 +257,7 @@
                 <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt="" />
                 <span class="text-2xl dark:text-white">{{ UBDOutput }}</span>
               </div>
-              <p class="text-lg font-medium dark:text-white">UBD</p>
+              <p class="text-lg font-medium dark:text-white">UND</p>
             </div>
           </div>
 
@@ -317,7 +317,7 @@ export default {
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
       },
       selectedUToken: {
-        name: 'UBD',
+        name: 'UND',
         address: config.contracts.unboundDai,
         allowance: '',
         tokenIcon:

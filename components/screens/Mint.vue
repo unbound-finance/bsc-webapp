@@ -91,7 +91,7 @@
               class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
               type="button"
             >
-              <span>UBD</span>
+              <span>UND</span>
               <!-- <i class="fas fa-chevron-down pt-1"></i> -->
             </button>
           </div>
@@ -122,7 +122,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UBD
+                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UND
               </p>
             </div>
             <div class="flex items-center justify-between">
@@ -242,7 +242,7 @@
                 <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt />
                 <span class="text-2xl dark:text-white">{{ UBDOutput }}</span>
               </div>
-              <p class="text-lg font-medium dark:text-white">UBD</p>
+              <p class="text-lg font-medium dark:text-white">UND</p>
             </div>
           </div>
 
@@ -251,7 +251,7 @@
               <div class="flex items-center justify-between">
                 <p class="text-sm text-gray-600">Fees</p>
                 <p class="font-medium text-sm dark:text-white">
-                  {{ (parseInt(UBDOutput) * 0.25) / 100 }} UBD
+                  {{ (parseInt(UBDOutput) * 0.25) / 100 }} UND
                 </p>
               </div>
               <div class="flex items-center justify-between">
@@ -463,14 +463,14 @@ export default {
             this.txLink = mintUBD.hash
             this.ui.showSuccess = true
 
-            // initiate the UBD contract to detect the event so we can update the balances
-            const UBD = new ethers.Contract(
+            // initiate the UND contract to detect the event so we can update the balances
+            const UND = new ethers.Contract(
               config.contracts.unboundDai,
               UnboundDaiABI,
               signer
             )
-            // listen to mint event from UBD contract
-            UBD.on('Mint', async (user, amount) => {
+            // listen to mint event from UND contract
+            UND.on('Mint', async (user, amount) => {
               const balance = await getTokenBalance(poolTokenAddress)
               this.selectedPoolToken.balance = balance.toFixed
             })

@@ -40,7 +40,7 @@
               width="24"
               alt="LP token logo"
             />
-            <p class="font-medium dark:text-white">Dai / UBD</p>
+            <p class="font-medium dark:text-white">Dai / UND</p>
           </div>
 
           <button class="focus:outline-none" @click="ui.active = !ui.active">
@@ -62,7 +62,7 @@
           </div>
           <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
             <div class="w-1/2">
-              <p>Pooled UBD</p>
+              <p>Pooled UND</p>
             </div>
             <div class="w-1/2 text-right">
               <p>{{ liquidity.token1 }}</p>

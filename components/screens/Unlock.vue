@@ -111,7 +111,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UBD
+                {{ (parseInt(UBDOutput) * 0.25) / 100 }} UND
               </p>
             </div>
             <div class="flex items-center justify-between">
@@ -232,7 +232,7 @@ export default {
       },
       selectedPoolToken: '',
       selectedBurnToken: {
-        name: 'UBD',
+        name: 'UND',
         exchange: 'Uniswap',
         address: config.contracts.unboundDai,
         currencyOneLogo:
@@ -401,14 +401,14 @@ export default {
         this.txLink = unlock.hash
         this.ui.showSuccess = true
 
-        // initiate the UBD contract to detect the event so we can update the balances
-        const UBD = new ethers.Contract(
+        // initiate the UND contract to detect the event so we can update the balances
+        const UND = new ethers.Contract(
           config.contracts.unboundDai,
           UnboundDaiABI,
           signer
         )
-        // listen to mint event from UBD contract
-        UBD.on('Burn', async (user, amount) => {
+        // listen to mint event from UND contract
+        UND.on('Burn', async (user, amount) => {
           const LPTBalance = await this.getLockedLPT(poolToken.address)
           this.selectedPoolToken.balance = LPTBalance
           this.getBurnTokenBalance()
