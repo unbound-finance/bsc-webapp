@@ -54,7 +54,7 @@
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
-              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt />
+              <!-- <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt /> -->
               <span>{{ selectedPoolToken.name }}</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
@@ -97,6 +97,15 @@
           </div>
         </form>
       </div>
+      <div
+        v-if="LPTAmount"
+        class="w-full flex items-center justify-between px-2"
+      >
+        <p class="text-sm text-gray-600">Price Per LP Token</p>
+        <p class="font-medium text-sm dark:text-white">
+          {{ LPTAmount * LPTPrice }} DAI
+        </p>
+      </div>
 
       <!-- Show fees -->
       <div
@@ -110,12 +119,6 @@
         </p>
         <div class="bg-white dark:bg-dark-bg rounded-lg p-4">
           <div class="flex flex-col space-y-1">
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-600">Price Per LP Token</p>
-              <p class="font-medium text-sm dark:text-white">
-                {{ LPTAmount * LPTPrice }} DAI
-              </p>
-            </div>
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">

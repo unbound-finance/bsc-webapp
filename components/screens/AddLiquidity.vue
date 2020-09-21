@@ -180,11 +180,26 @@
       </div>
 
       <button
-        class="bg-light-primary text-light-primary font-medium dark:bg-dark-primary bg-opacity-25 dark:text-white w-full py-2 rounded-md focus:outline-none"
+        v-if="isWalletConnected"
+        class="font-medium w-full py-2 rounded-md focus:outline-none"
+        :class="[
+          !lpTokenAmount ? getDisabledClass : getActiveClass,
+          isSufficentBalance ? getDisabledClass : getActiveClass,
+          !selectedToken.allowance ? getDisabledClass : getActiveClass,
+          !selectedUToken.allowance ? getDisabledClass : getActiveClass,
+        ]"
+        :disabled="shouldDisableAddLiquidity"
         @click="addLiquidity"
       >
-        Add Liquidity
+        <span v-if="!lpTokenAmount">Enter an amount</span>
+        <span v-else-if="isSufficentBalance">Insufficient Liquidity</span>
+        <span v-else-if="!selectedToken.allowance || !selectedUToken.allowance"
+          >Please Approve Tokens</span
+        >
+        <span v-else>Add Liquidity</span>
       </button>
+
+      <ConnectWalletBtn v-else class="w-full" />
     </div>
 
     <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
@@ -352,7 +367,7 @@ export default {
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
       },
       balance: '--.--',
-      lpTokenAmount: '0',
+      lpTokenAmount: '',
       // isTokenApproved: '',
       txLink: '',
       UBDBalance: '',
@@ -372,6 +387,31 @@ export default {
   computed: {
     UBDOutput() {
       return this.lpTokenAmount
+    },
+
+    isWalletConnected() {
+      return !!this.$store.state.address
+    },
+
+    isSufficentBalance() {
+      return parseFloat(this.lpTokenAmount) > parseFloat(this.balance)
+    },
+
+    shouldDisableAddLiquidity() {
+      return (
+        !this.lpTokenAmount ||
+        this.isSufficentBalance ||
+        !this.selectedToken.allowance ||
+        !this.selectedUToken.allowance
+      )
+    },
+
+    getDisabledClass() {
+      return 'bg-gray-500 dark:bg-gray-800 text-gray-600 cursor-not-allowed'
+    },
+
+    getActiveClass() {
+      return 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
     },
   },
 

@@ -48,7 +48,7 @@
               type="button"
               @click="ui.showDialog = !ui.showDialog"
             >
-              <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt />
+              <!-- <img src="~/assets/pool-tokens/eth-dai.svg" width="24" alt /> -->
               <span>{{ selectedPoolToken.name }}</span>
               <i class="fas fa-chevron-down pt-1"></i>
             </button>
