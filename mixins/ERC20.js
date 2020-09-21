@@ -5,7 +5,7 @@ import ERC20ABI from '~/configs/abi/ERC20'
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
 
-const getERC20Balance = async (tokenAddress) => {
+const getTokenBalance = async (tokenAddress) => {
   const userAddress = signer.getAddress()
   const poolTokenContract = await new ethers.Contract(
     tokenAddress,
@@ -13,13 +13,14 @@ const getERC20Balance = async (tokenAddress) => {
     signer
   )
   const raw = await poolTokenContract.balanceOf(userAddress)
-
   const formatted = ethers.utils.formatEther(raw.toString())
+  const toFixed = parseFloat(formatted).toFixed(4).slice(0, -1)
 
   return {
     raw,
     formatted,
+    toFixed,
   }
 }
 
-export { getERC20Balance }
+export { getTokenBalance }

@@ -1,4 +1,6 @@
 export default {
+  dev: process.env.NODE_ENV !== 'production',
+  prod: process.env.NODE_ENV === 'production',
   /*
    ** Nuxt rendering mode
    ** See https://nuxtjs.org/api/configuration-mode
@@ -68,6 +70,7 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/pwa',
     '@nuxtjs/dayjs',
+    '@nuxtjs/dotenv',
   ],
   /*
    ** Axios module configuration
