@@ -130,7 +130,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -144,7 +143,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -158,7 +156,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -172,7 +169,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -186,7 +182,19 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
+  },
+  {
+    inputs: [],
+    name: '_owner',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
@@ -200,7 +208,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -214,7 +221,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -228,7 +234,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -242,7 +247,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -256,7 +260,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -270,7 +273,19 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
+  },
+  {
+    inputs: [],
+    name: '_valuator',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
@@ -290,7 +305,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -304,7 +318,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -318,7 +331,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -332,7 +344,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -346,7 +357,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -360,7 +370,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [
@@ -380,7 +389,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [
@@ -506,7 +514,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [
@@ -597,6 +604,11 @@ export default [
         name: 'fee',
         type: 'uint256',
       },
+      {
+        internalType: 'address',
+        name: 'LLCAddr',
+        type: 'address',
+      },
     ],
     name: '_mint',
     outputs: [],
@@ -616,9 +628,9 @@ export default [
         type: 'uint256',
       },
       {
-        internalType: 'uint256',
-        name: 'fee',
-        type: 'uint256',
+        internalType: 'address',
+        name: 'LLCAddr',
+        type: 'address',
       },
     ],
     name: '_burn',
@@ -633,6 +645,11 @@ export default [
         name: 'user',
         type: 'address',
       },
+      {
+        internalType: 'address',
+        name: 'lockLocation',
+        type: 'address',
+      },
     ],
     name: 'checkLoan',
     outputs: [
@@ -644,7 +661,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [
@@ -736,7 +752,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [

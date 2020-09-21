@@ -299,8 +299,6 @@ export default {
         safu: '',
         team: '',
       },
-      totalLockedLPT: '',
-      totalLocked: '',
       supportedPoolTokens,
     }
   },
@@ -441,27 +439,29 @@ export default {
     async getPoolTokens() {
       let i
       const poolTokens = []
-      const totalLoan = await checkLoan(config.contracts.unboundDai)
-      let totalLockedLPT = 0
       for (i = 0; i < supportedPoolTokens.length; i++) {
-        const lockedLPT = await getLockedLPT(supportedPoolTokens[i].llcAddress)
-        const llc = await getLLC(supportedPoolTokens[i].address)
+        try {
+          const lockedLPT = await getLockedLPT(
+            supportedPoolTokens[i].llcAddress
+          )
+          const llc = await getLLC(supportedPoolTokens[i].llcAddress)
+          const loan = await checkLoan(supportedPoolTokens[i].llcAddress)
 
-        totalLockedLPT += parseFloat(lockedLPT)
-        // get average loan amount per uDAI
-        // const und = lockedLPT.toString() /
-        const poolTokenObj = {
-          lptName: supportedPoolTokens[i].name,
-          locked: lockedLPT,
-          minted: '100',
-          ltv: llc.loanRate,
+          // get average loan amount per uDAI
+          // const und = lockedLPT.toString() /
+          const poolTokenObj = {
+            lptName: supportedPoolTokens[i].name,
+            locked: lockedLPT,
+            minted: loan,
+            ltv: 100 / llc.loanRate,
+          }
+
+          poolTokens.push(poolTokenObj)
+          this.LPTTable.data = poolTokens
+        } catch (error) {
+          console.log(error)
         }
-        poolTokens.push(poolTokenObj)
-        this.LPTTable.data = poolTokens
       }
-
-      this.totalLockedLPT = totalLockedLPT
-      this.totalLoan = totalLoan.toString()
     },
   },
 }

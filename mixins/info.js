@@ -17,14 +17,14 @@ const getBalanceOfToken = async (tokenAddress) => {
   return formattedBalance
 }
 
-const checkLoan = async () => {
+const checkLoan = async (LLCAddress) => {
   const contract = await new ethers.Contract(
     config.contracts.unboundDai,
     UnboundDollarABI,
     signer
   )
   const userAddress = signer.getAddress()
-  const getBalance = await contract.checkLoan(userAddress)
+  const getBalance = await contract.checkLoan(userAddress, LLCAddress)
   const balance = ethers.utils.formatEther(getBalance.toString())
   const formattedBalance = parseFloat(balance).toFixed(4).slice(0, -1)
   return formattedBalance
