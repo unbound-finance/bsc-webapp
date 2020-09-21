@@ -176,7 +176,7 @@ const getPoolTokenTotalSupply = async () => {
 
 const getAmountOfLockedTokens = async () => {
   const poolTokenTotalSupply = await getPoolTokenTotalSupply()
-  const poolTokenBalance = await getPoolTokenTotalSupply()
+  const poolTokenBalance = await getPoolTokenBalance()
   const poolTokenReserves = await getPoolTokenReserves()
   const poolTokenRatio =
     poolTokenBalance.toString() / poolTokenTotalSupply.toString()

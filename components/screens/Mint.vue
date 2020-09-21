@@ -33,7 +33,7 @@
         <form class="w-full max-w-sm">
           <div class="flex items-center py-2">
             <input
-              v-model="liquidityPoolTokenAmount"
+              v-model="LPTAmount"
               class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
               type="number"
               placeholder="0.0"
@@ -100,7 +100,7 @@
 
       <!-- Show fees -->
       <div
-        v-if="liquidityPoolTokenAmount"
+        v-if="LPTAmount"
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
       >
         <p
@@ -111,6 +111,12 @@
         <div class="bg-white dark:bg-dark-bg rounded-lg p-4">
           <div class="flex flex-col space-y-1">
             <div class="flex items-center justify-between">
+              <p class="text-sm text-gray-600">Price Per LP Token</p>
+              <p class="font-medium text-sm dark:text-white">
+                {{ LPTAmount * LPTPrice }} DAI
+              </p>
+            </div>
+            <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
                 {{ (parseInt(UBDOutput) * 0.25) / 100 }} UBD
@@ -118,7 +124,9 @@
             </div>
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Funding Rate</p>
-              <p class="font-medium text-sm dark:text-white">50%</p>
+              <p class="font-medium text-sm dark:text-white">
+                {{ 100 / llc.loanRate }}%
+              </p>
             </div>
           </div>
         </div>
@@ -128,13 +136,13 @@
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
         :class="[
-          !liquidityPoolTokenAmount ? getDisabledClass : getActiveClass,
+          !LPTAmount ? getDisabledClass : getActiveClass,
           isSufficentBalance ? getDisabledClass : getActiveClass,
         ]"
         :disabled="shouldDisableMint"
         @click="ui.showConfirmation = true"
       >
-        <span v-if="!liquidityPoolTokenAmount">Enter an amount</span>
+        <span v-if="!LPTAmount">Enter an amount</span>
         <span v-else-if="isSufficentBalance">Insufficient Balance</span>
         <span v-else>Mint</span>
       </button>
@@ -218,7 +226,7 @@
               <div class="flex items-center space-x-2">
                 <img src="~/assets/pool-tokens/eth-dai.svg" width="40" alt />
                 <span class="text-2xl dark:text-white">
-                  {{ liquidityPoolTokenAmount }}
+                  {{ LPTAmount }}
                 </span>
               </div>
               <p class="text-lg font-medium dark:text-white">UNIETH-DAI</p>
@@ -273,7 +281,6 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 
-import ERC20ABI from '~/configs/abi/ERC20'
 import UnboundDaiABI from '~/configs/abi/UnboundDai.js'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
@@ -285,6 +292,8 @@ import config from '~/configs/config'
 
 // import signature from '~/mixins/signature'
 import { getNonce, getEIP712Signature } from '~/mixins/crypto'
+import { getTokenBalance } from '~/mixins/ERC20'
+import { getLLC } from '~/mixins/valuator'
 
 export default {
   data() {
@@ -297,29 +306,23 @@ export default {
         showAwaiting: false,
       },
       selectedPoolToken: '',
-      selectedMintToken: '',
       balance: '--.--',
-      liquidityPoolTokenAmount: '',
-      loanRatio: {
-        totalDai: '',
-        totalLPTokens: '',
-        rating: '50',
-      },
+      LPTAmount: '',
+      LPTPrice: '',
+      loanRatioPerLPT: '',
       txLink: '',
       supportedPoolTokens,
+      llc: {
+        loanRate: '',
+        fee: '',
+      },
     }
   },
 
   computed: {
     UBDOutput() {
-      // Liquidity pool token value in dai
-      const LPTValueInDai =
-        (this.loanRatio.totalDai * this.liquidityPoolTokenAmount) /
-        this.loanRatio.totalLPTokens
-      // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
-      const loanAmount = LPTValueInDai * 0.5
-      // const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      return loanAmount.toFixed(4).slice(0, -1)
+      const loanRatioPerLPT = this.LPTAmount * this.loanRatioPerLPT
+      return loanRatioPerLPT.toFixed(4).slice(0, -1)
     },
 
     isWalletConnected() {
@@ -327,13 +330,11 @@ export default {
     },
 
     isSufficentBalance() {
-      return (
-        parseFloat(this.liquidityPoolTokenAmount) > parseFloat(this.balance)
-      )
+      return parseFloat(this.LPTAmount) > parseFloat(this.balance)
     },
 
     shouldDisableMint() {
-      return !this.liquidityPoolTokenAmount || this.isSufficentBalance
+      return !this.LPTAmount || this.isSufficentBalance
     },
 
     getDisabledClass() {
@@ -346,35 +347,21 @@ export default {
   },
 
   mounted() {
-    this.getBalanceOfAllPoolTokens()
-    // this.mint()
+    this.getSupportedPoolTokens()
   },
 
   methods: {
     selectPoolToken(poolToken) {
       this.selectedPoolToken = poolToken
       this.ui.showDialog = false
-      this.calculateLoanRatio(poolToken)
+      this.getLoanRatioPerLPT(poolToken)
     },
 
-    async getBalanceOfToken(tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
-      const userAddress = signer.getAddress()
-      const getBalance = await contract.balanceOf(userAddress)
-      const balance = ethers.utils.formatEther(getBalance.toString())
-      const formattedBalance = parseFloat(balance).toFixed(4).slice(0, -1)
-      return formattedBalance
-    },
-
-    async getBalanceOfAllPoolTokens() {
+    async getSupportedPoolTokens() {
       let i
       const poolTokens = []
       for (i = 0; i < supportedPoolTokens.length; i++) {
-        const balance = await this.getBalanceOfToken(
-          supportedPoolTokens[i].address
-        )
+        const balance = await getTokenBalance(supportedPoolTokens[i].address)
         const poolTokenObj = {
           name: supportedPoolTokens[i].name,
           exchange: supportedPoolTokens[i].exchange,
@@ -382,35 +369,41 @@ export default {
           llcAddress: supportedPoolTokens[i].llcAddress,
           currencyOneLogo: supportedPoolTokens[i].currencyOneLogo,
           currencyTwoLogo: supportedPoolTokens[i].currencyTwoLogo,
-          balance,
+          stablecoin: supportedPoolTokens[i].stablecoin,
+          balance: balance.toFixed,
         }
         poolTokens.push(poolTokenObj)
-        console.log(poolTokens)
         this.supportedPoolTokens = poolTokens
       }
     },
 
-    async calculateLoanRatio(selectedPoolToken) {
+    async getLoanRatioPerLPT(poolToken) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
-        selectedPoolToken.address,
+        poolToken.address,
         UniswapLPTABI,
         signer
       )
       const reserve = await contract.getReserves()
-      const totalLPTokens = await contract.totalSupply()
+      const LPTTotalSupply = await contract.totalSupply()
       const token0 = await contract.token0()
-      if (token0.toLowerCase() === selectedPoolToken.stablecoin) {
-        const totalDai = reserve[0].toString() * 2
-        this.loanRatio.totalDai = totalDai
-        this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      const llc = await getLLC(poolToken.llcAddress)
+      this.llc.loanRate = llc.loanRate
+      this.llc.fee = llc.fee
+      if (token0.toLowerCase() === poolToken.stablecoin) {
+        const totalValueInDai = reserve[0].toString() * 2
+        this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
+        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
+          .toFixed(4)
+          .slice(0, -1)
       } else {
-        const totalDai = reserve[1].toString() * 2
-        this.loanRatio.totalDai = totalDai
-        this.loanRatio.totalLPTokens = totalLPTokens.toString()
+        const totalValueInDai = reserve[1].toString() * 2
+        this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
+        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
+          .toFixed(4)
+          .slice(0, -1)
       }
-      // total value locked in the smart contract in terms of Dai
     },
 
     async mint(poolTokenAddress, llcAddress) {
@@ -418,13 +411,10 @@ export default {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
 
-      console.log(this.liquidityPoolTokenAmount.toString())
       const userAddress = await signer.getAddress()
       const nonce = await getNonce(poolTokenAddress, signer)
       const deadline = +new Date() + 5000
-      const amount = ethers.utils
-        .parseEther(this.liquidityPoolTokenAmount)
-        .toString()
+      const amount = ethers.utils.parseEther(this.LPTAmount).toString()
 
       const EIP712Signature = await getEIP712Signature(
         poolTokenAddress,
@@ -454,14 +444,6 @@ export default {
             UnboundLLCABI,
             signer
           )
-          console.log({
-            amount,
-            UBD: config.contracts.unboundDai,
-            deadline,
-            sigV: signature.v,
-            sigR: signature.r,
-            sigS: signature.s,
-          })
           try {
             const mintUBD = await UnboundLLCContract.lockLPTWithPermit(
               amount,
@@ -477,7 +459,6 @@ export default {
             this.ui.showConfirmation = false
             this.txLink = mintUBD.hash
             this.ui.showSuccess = true
-            console.log(mintUBD.hash)
 
             // initiate the UBD contract to detect the event so we can update the balances
             const UBD = new ethers.Contract(
@@ -487,14 +468,10 @@ export default {
             )
             // listen to mint event from UBD contract
             UBD.on('Mint', async (user, amount) => {
-              console.log(user, amount)
-
-              console.log('Mint event emitted, updating balance')
-              const balance = await this.getBalanceOfToken(poolTokenAddress)
-              this.selectedPoolToken.balance = balance
+              const balance = await getTokenBalance(poolTokenAddress)
+              this.selectedPoolToken.balance = balance.toFixed
             })
           } catch (error) {
-            console.log(error)
             this.ui.showAwaiting = false
             this.ui.showConfirmation = false
             this.ui.showRejected = true
@@ -504,7 +481,7 @@ export default {
     },
 
     setInputMax() {
-      this.liquidityPoolTokenAmount = this.balance
+      this.LPTAmount = this.selectedPoolToken.balance
     },
   },
 }
