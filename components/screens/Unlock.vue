@@ -261,7 +261,9 @@ export default {
       return !!this.$store.state.address
     },
     isSufficientBalance() {
-      return parseFloat(this.LPTAmount) > parseFloat(this.lockedLPTokenBalance)
+      return (
+        parseFloat(this.LPTAmount) > parseFloat(this.selectedPoolToken.balance)
+      )
     },
     shouldDisableUnlock() {
       return !this.LPTAmount || this.isSufficientBalance
