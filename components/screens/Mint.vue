@@ -102,9 +102,7 @@
         class="w-full flex items-center justify-between px-2"
       >
         <p class="text-sm text-gray-600">Price Per LP Token</p>
-        <p class="font-medium text-sm dark:text-white">
-          {{ LPTAmount * LPTPrice }} DAI
-        </p>
+        <p class="font-medium text-sm dark:text-white">{{ LPTPrice }} DAI</p>
       </div>
 
       <!-- Show fees -->
