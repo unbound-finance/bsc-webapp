@@ -2,7 +2,7 @@
   <div>
     <button
       v-if="address"
-      class="px-6 py-2 bg-white dark:bg-gray-900 dark:text-white rounded border border-gray-300 dark:border-gray-800 focus:outline-none"
+      class="py-1 px-4 bg-white dark:bg-gray-900 dark:text-white rounded-lg border border-gray-300 dark:border-gray-800 focus:outline-none"
       @click="ui.showDialog = true"
     >
       {{ address.substring(0, 15) + '...' }}

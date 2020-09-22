@@ -1,9 +1,14 @@
 <template>
-  <div class="flex justify-between items-center p-4">
-    <div>
-      <p class="font-bold text-2xl text-light-primary dark:text-dark-primary">
+  <div class="flex justify-between items-center py-4 px-8">
+    <div class="flex items-center space-x-6">
+      <!-- <p class="font-bold text-2xl text-light-primary dark:text-dark-primary">
         unbound
-      </p>
+      </p> -->
+      <img class="rounded-sm" src="~/assets/logo.png" width="28" alt="logo" />
+      <nuxt-link to="/info" class="font-medium dark:text-white">
+        Dashboard
+      </nuxt-link>
+      <nuxt-link to="/unb" class="font-medium dark:text-white"> UNB </nuxt-link>
     </div>
 
     <div class="flex items-center space-x-4">
@@ -11,7 +16,7 @@
 
       <!-- Toggle Button for Light/Dark Mode -->
       <button
-        class="p-3 rounded bg-gray-300 focus:outline-none"
+        class="w-8 h-8 flex items-center justify-center rounded bg-gray-300 focus:outline-none"
         @click="toggleMode"
       >
         <img
@@ -21,7 +26,7 @@
               this.$colorMode.value === 'light' ? 'moon' : 'sun'
             }.svg`)
           "
-          width="18"
+          width="12"
           alt="mode"
         />
       </button>
