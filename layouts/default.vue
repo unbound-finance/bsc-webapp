@@ -2,8 +2,9 @@
   <div class="w-full min-h-screen">
     <notifications group="general" position="top center" />
     <Navbar />
+
     <div class="max-w-6xl mx-auto">
-      <div class="w-full mt-8 flex justify-center px-4">
+      <div class="w-full h-full flex justify-center px-4">
         <div
           class="w-full md:w-2/5 bg-white dark:bg-dark-bg rounded-lg my-4 md:my-8 p-4"
         >
