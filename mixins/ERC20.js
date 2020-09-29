@@ -23,4 +23,10 @@ const getTokenBalance = async (tokenAddress) => {
   }
 }
 
-export { getTokenBalance }
+const getDecimals = async (tokenAddress) => {
+  const token = new ethers.Contract(tokenAddress, ERC20ABI, signer)
+  const decimals = await token.decimals()
+  return decimals.toString()
+}
+
+export { getTokenBalance, getDecimals }

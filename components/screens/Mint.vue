@@ -293,7 +293,7 @@ import config from '~/configs/config'
 
 // import signature from '~/mixins/signature'
 import { getNonce, getEIP712Signature } from '~/mixins/crypto'
-import { getTokenBalance } from '~/mixins/ERC20'
+import { getTokenBalance, getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
 
 export default {
@@ -389,17 +389,48 @@ export default {
       const reserve = await contract.getReserves()
       const LPTTotalSupply = await contract.totalSupply()
       const token0 = await contract.token0()
+      const token1 = await contract.token1()
       const llc = await getLLC(poolToken.llcAddress)
       this.llc.loanRate = llc.loanRate
       this.llc.fee = llc.fee
       if (token0.toLowerCase() === poolToken.stablecoin) {
-        const totalValueInDai = reserve[0].toString() * 2
+        const stablecoinDecimal = await getDecimals(token0)
+        let difference
+        let totalValueInDai
+        totalValueInDai = reserve[0].toString() * 2
+        // first case: tokenDecimal is smaller than 18
+        // for stablecoins with less than 18 decimals
+        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
+          // calculate amount of decimals under 18
+          difference = 18 - stablecoinDecimal
+          totalValueInDai = totalValueInDai * 10 ** difference
+        } else if (stablecoinDecimal > '18') {
+          // caclulate amount of decimals over 18
+          difference = stablecoinDecimal - 18
+          // removes decimals to match 18
+          totalValueInDai = totalValueInDai / 10 ** difference
+        }
         this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
         this.LPTPrice = (totalValueInDai / LPTTotalSupply)
           .toFixed(4)
           .slice(0, -1)
       } else {
-        const totalValueInDai = reserve[1].toString() * 2
+        const stablecoinDecimal = await getDecimals(token1)
+        let difference
+        let totalValueInDai
+        // first case: tokenDecimal is smaller than 18
+        // for stablecoins with less than 18 decimals
+        totalValueInDai = reserve[1].toString() * 2
+        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
+          // calculate amount of decimals under 18
+          difference = 18 - stablecoinDecimal
+          totalValueInDai = totalValueInDai * 10 ** difference
+        } else if (stablecoinDecimal > '18') {
+          // caclulate amount of decimals over 18
+          difference = stablecoinDecimal - 18
+          // removes decimals to match 18
+          totalValueInDai = totalValueInDai / 10 ** difference
+        }
         this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
         this.LPTPrice = (totalValueInDai / LPTTotalSupply)
           .toFixed(4)
