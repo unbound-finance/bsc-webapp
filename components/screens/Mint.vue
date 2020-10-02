@@ -323,6 +323,7 @@ export default {
   computed: {
     UNDOutput() {
       const loanRatioPerLPT = this.LPTAmount * this.loanRatioPerLPT
+      console.log(this.loanRatioPerLPT)
       return loanRatioPerLPT.toFixed(4).slice(0, -1)
     },
 
@@ -398,6 +399,7 @@ export default {
         let difference
         let totalValueInDai
         totalValueInDai = reserve[0].toString() * 2
+        console.log(totalValueInDai)
         // first case: tokenDecimal is smaller than 18
         // for stablecoins with less than 18 decimals
         if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
@@ -431,6 +433,10 @@ export default {
           // removes decimals to match 18
           totalValueInDai = totalValueInDai / 10 ** difference
         }
+        console.log('totalValueInDai', totalValueInDai)
+        console.log('LPTTotalSupply', LPTTotalSupply)
+        console.log('loanRate', llc.loanRate)
+
         this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
         this.LPTPrice = (totalValueInDai / LPTTotalSupply)
           .toFixed(4)
