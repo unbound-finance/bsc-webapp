@@ -212,7 +212,7 @@ import UnboundDaiABI from '~/configs/abi/UnboundDai'
 import config from '~/configs/config'
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
-import { getTokenBalance } from '~/mixins/ERC20'
+import { getTokenBalance, getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
 // import { getTokenBalance } from '~/mixins/ERC20'
 
@@ -319,7 +319,7 @@ export default {
       const userAddress = signer.getAddress()
       const getLocked = await contract._tokensLocked(userAddress)
       const locked = ethers.utils.formatEther(getLocked.toString())
-      const formatted = parseFloat(locked).toFixed(4).slice(0, -1)
+      const formatted = parseFloat(locked).toFixed(8).slice(0, -1)
       return formatted
     },
 
@@ -332,22 +332,71 @@ export default {
         signer
       )
       const reserve = await contract.getReserves()
-      const totalLPTokens = await contract.totalSupply()
+      const LPTTotalSupply = await contract.totalSupply()
       const token0 = await contract.token0()
-      const llcDetails = await getLLC(poolToken.llcAddress)
+      const token1 = await contract.token1()
+      const llc = await getLLC(poolToken.llcAddress)
       if (token0.toLowerCase() === poolToken.stablecoin) {
-        const totalDai = reserve[0].toString() * 2
-        this.loanRatio.totalDai = totalDai
-        this.loanRatio.totalLPTokens = totalLPTokens.toString()
-        this.loanRatio.ratio = llcDetails.loanRate
-        this.loanRatio.fee = llcDetails.fee
+        const stablecoinDecimal = await getDecimals(token0)
+        let difference
+        let totalValueInDai
+        totalValueInDai = reserve[0].toString() * 2
+        console.log(totalValueInDai)
+        // first case: tokenDecimal is smaller than 18
+        // for stablecoins with less than 18 decimals
+        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
+          // calculate amount of decimals under 18
+          difference = 18 - stablecoinDecimal
+          totalValueInDai = totalValueInDai * 10 ** difference
+        } else if (stablecoinDecimal > '18') {
+          // caclulate amount of decimals over 18
+          difference = stablecoinDecimal - 18
+          // removes decimals to match 18
+          totalValueInDai = totalValueInDai / 10 ** difference
+        }
+        this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
+        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
+          .toFixed(8)
+          .slice(0, -1)
       } else {
-        const totalDai = reserve[1].toString() * 2
-        this.loanRatio.totalDai = totalDai
-        this.loanRatio.totalLPTokens = totalLPTokens.toString()
-        this.loanRatio.ratio = llcDetails.loanRate
-        this.loanRatio.fee = llcDetails.fee
+        const stablecoinDecimal = await getDecimals(token1)
+        let difference
+        let totalValueInDai
+        // first case: tokenDecimal is smaller than 18
+        // for stablecoins with less than 18 decimals
+        totalValueInDai = reserve[1].toString() * 2
+        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
+          // calculate amount of decimals under 18
+          difference = 18 - stablecoinDecimal
+          totalValueInDai = totalValueInDai * 10 ** difference
+        } else if (stablecoinDecimal > '18') {
+          // caclulate amount of decimals over 18
+          difference = stablecoinDecimal - 18
+          // removes decimals to match 18
+          totalValueInDai = totalValueInDai / 10 ** difference
+        }
+        console.log('totalValueInDai', totalValueInDai)
+        console.log('LPTTotalSupply', LPTTotalSupply)
+        console.log('loanRate', llc.loanRate)
+
+        this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
+        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
+          .toFixed(8)
+          .slice(0, -1)
       }
+      // if (token0.toLowerCase() === poolToken.stablecoin) {
+      //   const totalDai = reserve[0].toString() * 2
+      //   this.loanRatio.totalDai = totalDai
+      //   this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      //   this.loanRatio.ratio = llcDetails.loanRate
+      //   this.loanRatio.fee = llcDetails.fee
+      // } else {
+      //   const totalDai = reserve[1].toString() * 2
+      //   this.loanRatio.totalDai = totalDai
+      //   this.loanRatio.totalLPTokens = totalLPTokens.toString()
+      //   this.loanRatio.ratio = llcDetails.loanRate
+      //   this.loanRatio.fee = llcDetails.fee
+      // }
     },
 
     getRatio() {
@@ -357,7 +406,7 @@ export default {
       // Since, we're supporting AAA tokens at the moment we'll hardcoding the AAA rate: 50%
       const loanAmount = (LPTValueInDai * 50) / 100
       const loanAmountWithFees = loanAmount - (loanAmount * 0.25) / 100
-      const ratio = parseFloat(loanAmountWithFees).toFixed(4).slice(0, -1)
+      const ratio = parseFloat(loanAmountWithFees).toFixed(8).slice(0, -1)
       return ratio
     },
 
@@ -372,15 +421,55 @@ export default {
       const reserve = await contract.getReserves()
       const LPTTotalSupply = await contract.totalSupply()
       const token0 = await contract.token0()
+      const token1 = await contract.token1()
       const llc = await getLLC(poolToken.llcAddress)
-      this.llc.loanRate = llc.loanRate
-      this.llc.fee = llc.fee
       if (token0.toLowerCase() === poolToken.stablecoin) {
-        const totalValueInDai = reserve[0].toString() * 2
+        const stablecoinDecimal = await getDecimals(token0)
+        let difference
+        let totalValueInDai
+        totalValueInDai = reserve[0].toString() * 2
+        console.log(totalValueInDai)
+        // first case: tokenDecimal is smaller than 18
+        // for stablecoins with less than 18 decimals
+        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
+          // calculate amount of decimals under 18
+          difference = 18 - stablecoinDecimal
+          totalValueInDai = totalValueInDai * 10 ** difference
+        } else if (stablecoinDecimal > '18') {
+          // caclulate amount of decimals over 18
+          difference = stablecoinDecimal - 18
+          // removes decimals to match 18
+          totalValueInDai = totalValueInDai / 10 ** difference
+        }
         this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
+        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
+          .toFixed(8)
+          .slice(0, -1)
       } else {
-        const totalValueInDai = reserve[1].toString() * 2
+        const stablecoinDecimal = await getDecimals(token1)
+        let difference
+        let totalValueInDai
+        // first case: tokenDecimal is smaller than 18
+        // for stablecoins with less than 18 decimals
+        totalValueInDai = reserve[1].toString() * 2
+        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
+          // calculate amount of decimals under 18
+          difference = 18 - stablecoinDecimal
+          totalValueInDai = totalValueInDai * 10 ** difference
+        } else if (stablecoinDecimal > '18') {
+          // caclulate amount of decimals over 18
+          difference = stablecoinDecimal - 18
+          // removes decimals to match 18
+          totalValueInDai = totalValueInDai / 10 ** difference
+        }
+        console.log('totalValueInDai', totalValueInDai)
+        console.log('LPTTotalSupply', LPTTotalSupply)
+        console.log('loanRate', llc.loanRate)
+
         this.loanRatioPerLPT = totalValueInDai / LPTTotalSupply / llc.loanRate
+        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
+          .toFixed(8)
+          .slice(0, -1)
       }
     },
 
