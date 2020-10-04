@@ -8,11 +8,19 @@
         placeholder="Pair Address"
       />
       <input
-        v-model="calcData.stablecoinAmt"
-        class="mt-4 appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
+        v-model="calcData.stablecoinAddress"
+        class="appearance-none mt-4 block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
         type="text"
-        placeholder="Amount Invested"
+        placeholder="Stablecoin Address"
       />
+      <div class="flex items-center space-x-4 mt-4">
+        <input
+          v-model="calcData.ltv"
+          class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
+          type="text"
+          placeholder="LTV"
+        />
+      </div>
       <div class="flex items-center space-x-4 mt-4">
         <input
           v-model="calcData.lossPercentage"
@@ -65,7 +73,7 @@
 </template>
 
 <script>
-import Axios from 'axios'
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -74,6 +82,8 @@ export default {
         stablecoinAmt: '',
         lossPercentage: '',
         days: '',
+        ltv: '',
+        stablecoinAddress: '',
       },
       calcResult: null,
     }
@@ -81,13 +91,14 @@ export default {
   methods: {
     async calculate() {
       try {
-        const result = await Axios.post(
-          'https://unbound-liquidation-check.vercel.app/api/getNetValue',
-          this.calcData,
-          {
+        const result = await axios({
+          method: 'post',
+          url: 'https://unbound-liquidation-check.vercel.app/api/getNetValue',
+          data: this.calcData,
+          headers: {
             'Content-Type': 'application/json',
-          }
-        )
+          },
+        })
         console.log(result)
       } catch (error) {
         console.log(error)
