@@ -124,20 +124,20 @@
         <p class="text-sm text-gray-600">Current Pair Value</p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.assetValue).toFixed(4) }}
+          {{ Number(calcResult.assetValue).toFixed(4) * 2 }}
         </p>
       </div>
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Pair Liquidation Price</p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.breakEvenPrice).toFixed(4) }}
+          {{ Number(calcResult.breakEvenPriceWithFees).toFixed(4) * 2 }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Loan Amount</p>
+        <p class="text-sm text-gray-600">Liquidation Percentage</p>
         <p class="text-sm font-medium">
-          ${{ Number(calcResult.loanAmount).toFixed(4) }}
+          - {{ 100 - Number(calcResult.breakEvenPricePercentage).toFixed(4) }}%
         </p>
       </div>
     </div>
