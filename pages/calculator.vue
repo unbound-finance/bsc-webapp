@@ -77,30 +77,19 @@
           </div>
         </div>
       </div>
-      <div class="mt-4">
-        <label class="block text-sm leading-5 font-medium text-gray-700 p-1">
-          LTV
-        </label>
-        <input
-          v-model="calcData.ltv"
-          class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
-          type="text"
-          placeholder="30"
-        />
-      </div>
       <div class="flex items-center space-x-4 mt-4">
         <div>
           <label class="block text-sm leading-5 font-medium text-gray-700 p-1">
-            Price Change (%)
+            LTV
           </label>
           <input
-            v-model="calcData.lossPercentage"
+            v-model="calcData.ltv"
             class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
             type="text"
-            placeholder="-50"
+            placeholder="30"
+            required
           />
         </div>
-
         <div>
           <label class="block text-sm leading-5 font-medium text-gray-700 p-1">
             Duration (days)
@@ -110,6 +99,7 @@
             class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
             type="text"
             placeholder="30"
+            required
           />
         </div>
       </div>
@@ -117,33 +107,37 @@
         type="submit"
         class="rounded-md text-white bg-dark-primary text-sm w-full py-2 font-medium mt-4 focus:outline-none"
       >
-        Calculate
+        <loader v-if="ui.loading" />
+        <span v-else>Calculate</span>
       </button>
     </form>
 
     <div v-if="calcResult" class="mt-4">
-      <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Pool Share</p>
+      <p class="text-sm font-medium">
+        {{
+          calcResult.liquidate
+            ? 'Your position will get liquidate 😔'
+            : 'Great! Your position will not get liquidate 😃'
+        }}
+      </p>
+      <div class="flex items-center justify-between mt-4">
+        <p class="text-sm text-gray-600">Current Pair Value</p>
         <p class="text-sm font-medium">
-          {{ Number(calcResult.poolShare).toFixed(4) }}%
+          $
+          {{ Number(calcResult.assetValue).toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Impermanent Loss</p>
+        <p class="text-sm text-gray-600">Pair Liquidation Price</p>
         <p class="text-sm font-medium">
-          {{ Number(calcResult.implLoss).toFixed(4) }}%
+          $
+          {{ Number(calcResult.breakEvenPrice).toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Fees Earned</p>
+        <p class="text-sm text-gray-600">Loan Amount</p>
         <p class="text-sm font-medium">
-          ${{ Number(calcResult.feesEarned).toFixed(4) }}
-        </p>
-      </div>
-      <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Net Value</p>
-        <p class="text-sm font-medium">
-          ${{ Number(calcResult.netValue).toFixed(4) }}
+          ${{ Number(calcResult.loanAmount).toFixed(4) }}
         </p>
       </div>
     </div>
@@ -159,6 +153,7 @@ export default {
     return {
       ui: {
         dropModal: false,
+        loading: false,
       },
       pairs,
       selectedPair: {
@@ -185,6 +180,7 @@ export default {
       this.ui.dropModal = false
     },
     async calculate() {
+      this.ui.loading = true
       try {
         const result = await axios({
           method: 'post',
@@ -199,9 +195,11 @@ export default {
             'Content-Type': 'application/json',
           },
         })
-        console.log(result)
+        this.calcResult = result.data
+        this.ui.loading = false
       } catch (error) {
         console.log(error)
+        this.ui.loading = false
       }
     },
   },
