@@ -121,14 +121,14 @@
         }}
       </p> -->
       <div class="flex items-center justify-between mt-4">
-        <p class="text-sm text-gray-600">Volatile Asset Value</p>
+        <p class="text-sm text-gray-600">Current ETH Price</p>
         <p class="text-sm font-medium">
           $
           {{ Number(calcResult.assetValue).toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Break Even Price</p>
+        <p class="text-sm text-gray-600">ETH Break Even Price</p>
         <p class="text-sm font-medium">
           $
           {{ Number(calcResult.breakEvenPrice).toFixed(4) }}
@@ -156,7 +156,15 @@
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Net Break Even Price Percentage</p>
         <p class="text-sm font-medium">
-          - {{ 100 - calcResult.breakEvenPricePercentage }}%
+          -
+          {{
+            100 -
+            (
+              (parseFloat(calcResult.breakEvenPriceWithFees) /
+                parseFloat(calcResult.assetValue)) *
+              100
+            ).toFixed(4)
+          }}%
         </p>
       </div>
       <!-- <div class="flex items-center justify-between">
