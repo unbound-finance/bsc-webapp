@@ -113,33 +113,66 @@
     </form>
 
     <div v-if="calcResult" class="mt-4">
-      <p class="text-sm font-medium">
+      <!-- <p class="text-sm font-medium">
         {{
           calcResult.liquidate
             ? 'Your position will get liquidate 😔'
             : 'Great! Your position will not get liquidate 😃'
         }}
-      </p>
+      </p> -->
       <div class="flex items-center justify-between mt-4">
-        <p class="text-sm text-gray-600">Current Pair Value</p>
+        <p class="text-sm text-gray-600">Volatile Asset Value</p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.assetValue).toFixed(4) * 2 }}
+          {{ Number(calcResult.assetValue).toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Pair Liquidation Price</p>
+        <p class="text-sm text-gray-600">Break Even Price</p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.breakEvenPriceWithFees).toFixed(4) * 2 }}
+          {{ Number(calcResult.breakEvenPrice).toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Liquidation Percentage</p>
+        <p class="text-sm text-gray-600">Fees Earned</p>
         <p class="text-sm font-medium">
-          - {{ 100 - Number(calcResult.breakEvenPricePercentage).toFixed(4) }}%
+          $
+          {{
+            (
+              calcResult.breakEvenPrice - calcResult.breakEvenPriceWithFees
+            ).toFixed(4)
+          }}
         </p>
       </div>
+
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-600">Net Break Even Price</p>
+        <p class="text-sm font-medium">
+          $
+          {{ Number(calcResult.breakEvenPriceWithFees).toFixed(4) }}
+        </p>
+      </div>
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-600">Net Break Even Price Percentage</p>
+        <p class="text-sm font-medium">
+          - {{ 100 - calcResult.breakEvenPricePercentage }}%
+        </p>
+      </div>
+      <!-- <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-600">Total Pool Value</p>
+        <p class="text-sm font-medium">
+          $
+          {{ Number(calcResult.totalPoolValue / 1e18).toFixed(4) }}
+        </p>
+      </div>
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-600">Total Fees Earned</p>
+        <p class="text-sm font-medium">
+          $
+          {{ Number(calcResult.totalFees).toFixed(4) * 2 }}
+        </p>
+      </div> -->
     </div>
   </div>
 </template>
@@ -195,6 +228,7 @@ export default {
             'Content-Type': 'application/json',
           },
         })
+        console.log(result.data)
         this.calcResult = result.data
         this.ui.loading = false
       } catch (error) {
