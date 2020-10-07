@@ -28,4 +28,24 @@ export default [
     currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     stablecoin: '0x6b175474e89094c44da98b954eedeac495271d0f',
   },
+  {
+    name: 'DAI-WBTC',
+    exchange: 'Uniswap',
+    address: '0x231b7589426ffe1b75405526fc32ac09d44364c4',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png',
+    stablecoin: '0x6b175474e89094c44da98b954eedeac495271d0f',
+  },
+  {
+    name: 'DAI-LEND',
+    exchange: 'Uniswap',
+    address: '0xb603c2b5ab4ee7932103b42f8dd899c8721dd25e',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x80fB784B7eD66730e8b1DBd9820aFD29931aab03/logo.png',
+    stablecoin: '0x6b175474e89094c44da98b954eedeac495271d0f',
+  },
 ]
