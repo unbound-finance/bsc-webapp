@@ -113,13 +113,22 @@
             >
               Max
             </button>
-            <button
-              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
-              type="button"
+            <a
+              :href="
+                selectedUToken.name == 'UND'
+                  ? 'https://kovan.etherscan.io/address/0x644dfd5a2cee335ea3b30e565e05ee188f173f49'
+                  : '#'
+              "
+              target="_blank"
             >
-              <span>{{ selectedUToken.name }}</span>
-              <!-- <i class="fas fa-chevron-down pt-1"></i> -->
-            </button>
+              <button
+                class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
+                type="button"
+              >
+                <span>{{ selectedUToken.name }}</span>
+                <!-- <i class="fas fa-chevron-down pt-1"></i> -->
+              </button>
+            </a>
           </div>
         </form>
       </div>
@@ -206,6 +215,7 @@
 
     <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
     <RejectedModal v-model="ui.showRejected" />
+    <AwaitingModal v-model="ui.showAwaiting" />
 
     <!-- Select Tokens Modal -->
     <Modal :show="ui.showDialog" @close="ui.showDialog = false">
@@ -352,6 +362,7 @@ export default {
         showConfirmation: false,
         showSuccess: false,
         showRejected: false,
+        showAwaiting: false,
       },
       selectedToken: {
         name: 'Dai',
@@ -462,6 +473,7 @@ export default {
     },
 
     async addLiquidity() {
+      this.ui.showAwaiting = true
       try {
         const transaction = await addLiquidity(
           config.contracts.dai,
@@ -471,8 +483,10 @@ export default {
         )
         console.log(transaction)
         this.txLink = transaction.hash
+        this.ui.showAwaiting = false
         this.ui.showSuccess = true
       } catch (error) {
+        this.ui.showAwaiting = false
         this.ui.showRejected = true
       }
     },
