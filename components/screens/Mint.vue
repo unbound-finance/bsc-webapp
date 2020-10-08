@@ -87,13 +87,18 @@
               placeholder="0.0"
               readonly
             />
-            <button
-              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
-              type="button"
+            <a
+              href="https://kovan.etherscan.io/address/0x644dfd5a2cee335ea3b30e565e05ee188f173f49"
+              target="_blank"
             >
-              <span>UND</span>
-              <!-- <i class="fas fa-chevron-down pt-1"></i> -->
-            </button>
+              <button
+                class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
+                type="button"
+              >
+                <span>UND</span>
+                <!-- <i class="fas fa-chevron-down pt-1"></i> -->
+              </button>
+            </a>
           </div>
         </form>
       </div>

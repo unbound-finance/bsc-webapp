@@ -5,10 +5,16 @@
         unbound
       </p> -->
       <img class="rounded-sm" src="~/assets/logo.png" width="28" alt="logo" />
-      <nuxt-link to="/info" class="font-medium dark:text-white">
+      <nuxt-link to="/" class="font-medium dark:text-white">
         Dashboard
       </nuxt-link>
       <nuxt-link to="/unb" class="font-medium dark:text-white"> UNB </nuxt-link>
+      <nuxt-link to="/calculator" class="font-medium dark:text-white">
+        Calculator
+      </nuxt-link>
+      <nuxt-link to="/info" class="font-medium dark:text-white">
+        Account
+      </nuxt-link>
     </div>
 
     <div class="flex items-center space-x-4">

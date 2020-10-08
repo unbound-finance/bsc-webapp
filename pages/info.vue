@@ -1,123 +1,101 @@
 <template>
-  <div class="md:max-w-6xl mx-auto p-4">
-    <div class="flex justify-between items-center">
-      <nuxt-link to="/">
-        <p class="font-bold text-md md:text-2xl text-accent">unbound</p>
-      </nuxt-link>
-      <div class="flex items-center space-x-4">
-        <ConnectWalletBtn />
+  <div class="w-full">
+    <Navbar />
 
-        <button
-          class="p-3 rounded bg-gray-300 focus:outline-none"
-          @click="toggleMode"
+    <div class="md:max-w-6xl mx-auto p-4">
+      <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4 mt-4">
+        Staking
+      </p>
+
+      <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
+          :class="showFees ? '' : 'border'"
         >
-          <img
-            class="text-light-primary"
-            :src="
-              require(`~/assets/icons/${
-                this.$colorMode.value === 'light' ? 'moon' : 'sun'
-              }.svg`)
-            "
-            width="18"
-            alt="mode"
-          />
-        </button>
-      </div>
-    </div>
-
-    <p class="text-gray-900 dark:text-gray-200 font-medium py-4 mt-4">
-      Staking
-    </p>
-
-    <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-2">
-      <div
-        class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
-        :class="showFees ? '' : 'border'"
-      >
-        <div class="flex flex-col">
-          <p class="font-medium text-sm text-gray-600">Total Liquidity</p>
-          <div class="flex items-center justify-between">
-            <p class="font-medium text-3xl text-accent">
-              ${{
-                liquidity
-                  ? Number(liquidity.token0 + liquidity.token1).toFixed(2)
-                  : '--'
-              }}
-            </p>
-            <button
-              class="focus:outline-none"
-              @click="showLiquidity = !showLiquidity"
-            >
-              <i
-                class="fas text-gray-600 px-4"
-                :class="showLiquidity ? 'fa-chevron-up' : 'fa-chevron-down'"
-              ></i>
-            </button>
-          </div>
-          <div v-if="showLiquidity" class="transition-all duration-200">
-            <div
-              class="mt-4 border-b border-gray-200 dark:border-gray-800 w-full"
-            ></div>
-            <div class="mt-4 grid grid-cols-2 px-2">
-              <div>
-                <p class="text-gray-600 font-medium text-sm">Pooled DAI</p>
-              </div>
-              <div>
-                <p class="text-right text-accent font-medium">
-                  {{ Number(liquidity.token0).toFixed(2) }}
-                </p>
-              </div>
-              <div>
-                <p class="text-gray-600 font-medium text-sm">Pooled UND</p>
-              </div>
-              <div>
-                <p class="text-right text-accent font-medium">
-                  {{ Number(liquidity.token1).toFixed(2) }}
-                </p>
+          <div class="flex flex-col">
+            <p class="font-medium text-sm text-gray-600">Total Liquidity</p>
+            <div class="flex items-center justify-between">
+              <p class="font-medium text-3xl text-accent">
+                ${{
+                  liquidity
+                    ? Number(liquidity.token0 + liquidity.token1).toFixed(2)
+                    : '--'
+                }}
+              </p>
+              <button
+                class="focus:outline-none"
+                @click="showLiquidity = !showLiquidity"
+              >
+                <i
+                  class="fas text-gray-600 px-4"
+                  :class="showLiquidity ? 'fa-chevron-up' : 'fa-chevron-down'"
+                ></i>
+              </button>
+            </div>
+            <div v-if="showLiquidity" class="transition-all duration-200">
+              <div
+                class="mt-4 border-b border-gray-200 dark:border-gray-800 w-full"
+              ></div>
+              <div class="mt-4 grid grid-cols-2 px-2">
+                <div>
+                  <p class="text-gray-600 font-medium text-sm">Pooled DAI</p>
+                </div>
+                <div>
+                  <p class="text-right text-accent font-medium">
+                    {{ Number(liquidity.token0).toFixed(2) }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-600 font-medium text-sm">Pooled UND</p>
+                </div>
+                <div>
+                  <p class="text-right text-accent font-medium">
+                    {{ Number(liquidity.token1).toFixed(2) }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div
-        class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
-        :class="showLiquidity ? '' : 'border'"
-      >
-        <div class="flex flex-col">
-          <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
-          <div class="flex items-center justify-between">
-            <p class="font-medium text-3xl text-accent">
-              {{ liquidity ? liquidity.poolShare.toFixed(3) : '--' }}%
-            </p>
+        <div
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
+          :class="showLiquidity ? '' : 'border'"
+        >
+          <div class="flex flex-col">
+            <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
+            <div class="flex items-center justify-between">
+              <p class="font-medium text-3xl text-accent">
+                {{ liquidity ? liquidity.poolShare.toFixed(3) : '--' }}%
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-      <div
-        class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
-        :class="showLiquidity ? '' : 'border'"
-      >
-        <div class="flex flex-col">
-          <p class="font-medium text-sm text-gray-600">Total Fees Earned</p>
-          <div class="flex items-center justify-between">
-            <p class="font-medium text-3xl text-accent">
-              $
-              {{
-                (
-                  parseFloat(collectedFees.safu) +
-                  parseFloat(collectedFees.team)
-                ).toFixed(3)
-              }}
-            </p>
+        <div
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
+          :class="showLiquidity ? '' : 'border'"
+        >
+          <div class="flex flex-col">
+            <p class="font-medium text-sm text-gray-600">Total Fees Earned</p>
+            <div class="flex items-center justify-between">
+              <p class="font-medium text-3xl text-accent">
+                $
+                {{
+                  (
+                    parseFloat(collectedFees.safu) +
+                    parseFloat(collectedFees.team)
+                  ).toFixed(3)
+                }}
+              </p>
 
-            <!-- <button class="focus:outline-none">
+              <!-- <button class="focus:outline-none">
               <i
                 class="fas text-gray-600 px-4"
                 :class="showFees ? 'fa-chevron-up' : 'fa-chevron-down'"
               ></i>
             </button> -->
-          </div>
+            </div>
 
-          <!-- <div v-if="showFees" class="transition-all duration-200">
+            <!-- <div v-if="showFees" class="transition-all duration-200">
             <div
               class="mt-4 border-b border-gray-200 dark:border-gray-800 w-full"
             ></div>
@@ -148,105 +126,106 @@
               </div>
             </div>
           </div> -->
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Transaction Table Filter -->
-    <div class="mt-8">
-      <div class="w-full flex items-center justify-between">
-        <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
-          Your Locked Assets
-        </p>
-      </div>
-      <div v-if="ui.liqLoading || !getAddress" class="dark:text-gray-600">
-        Loading...
-      </div>
-      <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
-      <t-table v-else :headers="LPTTable.headers" :data="LPTTable.data">
-        <template slot="row"> </template>
-      </t-table>
-    </div>
-
-    <!-- Transaction History Table -->
-    <div class="mt-8">
-      <div class="w-full flex items-center justify-between">
-        <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
-          Transaction History
-        </p>
-        <div v-if="!ui.loading" class="flex items-center space-x-4">
-          <button
-            class="focus:outline-none"
-            type="button"
-            :disabled="ui.page === 1 ? true : false"
-            @click="prevPage"
-          >
-            <i
-              class="fas fa-arrow-left text-sm"
-              :class="
-                ui.page == 1
-                  ? 'text-gray-500 dark:text-gray-700 cursor-not-allowed'
-                  : 'text-accent'
-              "
-            ></i>
-          </button>
-          <span class="text-sm dark:text-gray-600">Page {{ ui.page }}</span>
-          <button
-            class="focus:outline-none text-accent"
-            type="button"
-            @click="nextPage"
-          >
-            <i class="fas fa-arrow-right text-sm"></i>
-          </button>
+      <!-- Transaction Table Filter -->
+      <div class="mt-8">
+        <div class="w-full flex items-center justify-between">
+          <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
+            Your Locked Assets
+          </p>
         </div>
+        <div v-if="ui.liqLoading || !getAddress" class="dark:text-gray-600">
+          Loading...
+        </div>
+        <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
+        <t-table v-else :headers="LPTTable.headers" :data="LPTTable.data">
+          <template slot="row"> </template>
+        </t-table>
       </div>
-      <div v-if="ui.loading || !getAddress" class="dark:text-gray-600">
-        Loading...
+
+      <!-- Transaction History Table -->
+      <div class="mt-8">
+        <div class="w-full flex items-center justify-between">
+          <p class="text-gray-900 dark:text-gray-200 font-medium text-lg py-4">
+            Transaction History
+          </p>
+          <div v-if="!ui.loading" class="flex items-center space-x-4">
+            <button
+              class="focus:outline-none"
+              type="button"
+              :disabled="ui.page === 1 ? true : false"
+              @click="prevPage"
+            >
+              <i
+                class="fas fa-arrow-left text-sm"
+                :class="
+                  ui.page == 1
+                    ? 'text-gray-500 dark:text-gray-700 cursor-not-allowed'
+                    : 'text-accent'
+                "
+              ></i>
+            </button>
+            <span class="text-sm dark:text-gray-600">Page {{ ui.page }}</span>
+            <button
+              class="focus:outline-none text-accent"
+              type="button"
+              @click="nextPage"
+            >
+              <i class="fas fa-arrow-right text-sm"></i>
+            </button>
+          </div>
+        </div>
+        <div v-if="ui.loading || !getAddress" class="dark:text-gray-600">
+          Loading...
+        </div>
+        <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
+        <t-table v-else :headers="txTable.headers" :data="txTable.data">
+          <template slot="row" slot-scope="props">
+            <tr :class="props.trClass">
+              <td :class="props.tdClass">
+                <p>
+                  {{ $dayjs.unix(props.row.timeStamp).format('DD MMM YYYY') }}
+                </p>
+                <span class="text-gray-500 dark:text-gray-700">{{
+                  $dayjs.unix(props.row.timeStamp).format('hh:mm:ss a')
+                }}</span>
+              </td>
+              <td :class="props.tdClass">
+                {{ props.row.blockNumber }}
+              </td>
+              <td :class="props.tdClass">
+                <a
+                  class="text-accent"
+                  :href="`https://kovan.etherscan.io/tx/${props.row.hash}`"
+                  target="_blank"
+                  >{{
+                    props.row.hash.substring(0, 16) +
+                    '...' +
+                    props.row.hash.substring(props.row.hash.length - 16)
+                  }}</a
+                >
+              </td>
+              <td :class="props.tdClass">
+                {{
+                  props.row.smartContractFunction === functions.mint
+                    ? 'Mint'
+                    : 'Burn'
+                }}
+              </td>
+              <td :class="props.tdClass">
+                {{ props.row.amount.toFixed(2) }} UND
+              </td>
+              <td :class="props.tdClass">
+                {{ parseInt(props.row.gasUsed * props.row.gasPrice) / 1e18 }}
+                ETH
+              </td>
+            </tr>
+          </template>
+        </t-table>
       </div>
-      <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
-      <t-table v-else :headers="txTable.headers" :data="txTable.data">
-        <template slot="row" slot-scope="props">
-          <tr :class="props.trClass">
-            <td :class="props.tdClass">
-              <p>
-                {{ $dayjs.unix(props.row.timeStamp).format('DD MMM YYYY') }}
-              </p>
-              <span class="text-gray-500 dark:text-gray-700">{{
-                $dayjs.unix(props.row.timeStamp).format('hh:mm:ss a')
-              }}</span>
-            </td>
-            <td :class="props.tdClass">
-              {{ props.row.blockNumber }}
-            </td>
-            <td :class="props.tdClass">
-              <a
-                class="text-accent"
-                :href="`https://kovan.etherscan.io/tx/${props.row.hash}`"
-                target="_blank"
-                >{{
-                  props.row.hash.substring(0, 16) +
-                  '...' +
-                  props.row.hash.substring(props.row.hash.length - 16)
-                }}</a
-              >
-            </td>
-            <td :class="props.tdClass">
-              {{
-                props.row.smartContractFunction === functions.mint
-                  ? 'Mint'
-                  : 'Burn'
-              }}
-            </td>
-            <td :class="props.tdClass">
-              {{ props.row.amount.toFixed(2) }} UND
-            </td>
-            <td :class="props.tdClass">
-              {{ parseInt(props.row.gasUsed * props.row.gasPrice) / 1e18 }}
-              ETH
-            </td>
-          </tr>
-        </template>
-      </t-table>
     </div>
   </div>
 </template>

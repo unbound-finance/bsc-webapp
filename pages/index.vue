@@ -41,14 +41,14 @@ export default {
           title: 'Mint',
           route: '/mint',
           icon: 'mint',
-          description: 'Mint ETH/DAI by Locking Uniswap Pool Tokens.',
+          description: 'Mint UND by Locking Uniswap Pool Tokens.',
           isDisabled: false,
         },
         {
           title: 'Unlock',
           route: '/unlock',
           icon: 'burn',
-          description: 'Get Back Uniswap Pool Tokens.',
+          description: 'Get Back Uniswap Pool Tokens by burning UND.',
           isDisabled: false,
         },
         {
