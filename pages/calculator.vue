@@ -121,27 +121,33 @@
         }}
       </p> -->
       <div class="flex items-center justify-between mt-4">
-        <p class="text-sm text-gray-600">Current ETH Price</p>
+        <p class="text-sm text-gray-600">
+          Current {{ selectedPair.asset }} Price
+        </p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.assetValue).toFixed(4) }}
+          {{ Number(calcResult.assetValue).toFixed(2) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">ETH Break Even Price</p>
+        <p class="text-sm text-gray-600">
+          {{ selectedPair.asset }} Break Even Price
+        </p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.breakEvenPrice).toFixed(4) }}
+          {{ Number(calcResult.breakEvenPrice).toFixed(2) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-600">Fees Earned</p>
+        <p class="text-sm text-gray-600">
+          Fees Earned per {{ selectedPair.asset }}
+        </p>
         <p class="text-sm font-medium">
           $
           {{
             (
               calcResult.breakEvenPrice - calcResult.breakEvenPriceWithFees
-            ).toFixed(4)
+            ).toFixed(2)
           }}
         </p>
       </div>
@@ -150,7 +156,7 @@
         <p class="text-sm text-gray-600">Net Break Even Price</p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.breakEvenPriceWithFees).toFixed(4) }}
+          {{ calcResult.breakEvenPriceWithFees.toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
@@ -204,8 +210,9 @@ export default {
         currencyOneLogo:
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png',
         currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-
         stablecoin: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+        assetAddress: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+        asset: 'ETH',
       },
       calcData: {
         lossPercentage: '',
@@ -214,6 +221,12 @@ export default {
       },
       calcResult: null,
     }
+  },
+
+  watch: {
+    selectedPair(a) {
+      this.calcResult = null
+    },
   },
   methods: {
     selectPair(pair) {
@@ -229,6 +242,7 @@ export default {
           data: {
             pair: this.selectedPair.address,
             stablecoinAddress: this.selectedPair.stablecoin,
+            assetAddress: this.selectedPair.assetAddress,
             loanPercentage: this.calcData.ltv,
             days: this.calcData.days,
           },
@@ -236,16 +250,12 @@ export default {
             'Content-Type': 'application/json',
           },
         })
-        console.log(result.data)
         this.calcResult = result.data
         this.ui.loading = false
       } catch (error) {
-        console.log(error)
         this.ui.loading = false
       }
     },
   },
 }
 </script>
-
-<style></style>

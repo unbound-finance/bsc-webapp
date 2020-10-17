@@ -17,7 +17,7 @@
 
 <script>
 export default {
-  name: 'modal',
+  name: 'Modal',
   props: {
     value: Boolean,
   },
@@ -77,7 +77,7 @@ export default {
 
 .modal-transition-enter .modal-container,
 .modal-transition-leave-active .modal-container {
-  -webkit-transform: scale(1.1);
-  transform: scale(1.1);
+  -webkit-transform: scale(0.9);
+  transform: scale(0.9);
 }
 </style>

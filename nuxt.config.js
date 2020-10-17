@@ -1,11 +1,8 @@
 export default {
   dev: process.env.NODE_ENV !== 'production',
   prod: process.env.NODE_ENV === 'production',
-  /*
-   ** Nuxt rendering mode
-   ** See https://nuxtjs.org/api/configuration-mode
-   */
-  mode: 'spa',
+
+  ssr: false,
   /*
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target
@@ -23,7 +20,7 @@ export default {
       {
         hid: 'description',
         name: 'description',
-        content: process.env.npm_package_description || '',
+        content: 'The DeFi Treasury For Liquidity Pool Tokens',
       },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
@@ -45,6 +42,7 @@ export default {
     '@/plugins/vue-toasted.js',
     '@/plugins/notification.js',
     '@/plugins/vue-tailwind.js',
+    '@/plugins/vue-tooltip.js',
   ],
   /*
    ** Auto import components

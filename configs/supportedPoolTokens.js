@@ -1,32 +1,71 @@
 export default [
   {
-    name: 'UNI-ETH/USDC',
+    name: 'ETH/USDC',
     exchange: 'Uniswap',
     address: '0x50a11aeedd7aa644c4ca0734f61c8741afdf7415',
-    llcAddress: '0x7fB7379D7cea25d021313DeC42484C38148784F9',
+    llcAddress: '0x4c7fbE208615FcaF572eCC9509217C6dF52243fc',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
-
     stablecoin: '0x3e557CD138033126986527917009450efC785ccf',
+    uToken: {
+      address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
+      symbol: 'UND',
+    },
   },
   {
-    name: 'UNI-ETH/DAI',
+    name: 'ETH/DAI',
     exchange: 'Uniswap',
     address: '0x266480906fd0aa3edd7ff64f466ea9684b792179',
-    llcAddress: '0x87c358D85B84Bf1448DB1a1285c597dD9c350eBa',
+    llcAddress: '0xBCad91504416c968fD1b0ed2E10e3bC91E65af8c',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     stablecoin: '0xc30d0164fb4c013db62e32d48f81bed92735d97a',
+    uToken: {
+      address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
+      symbol: 'UND',
+    },
   },
   {
-    name: 'UNI-USDC/DAI',
+    name: 'USDC/DAI',
     exchange: 'Uniswap',
     address: '0x8775b999470c94fdda221401f8c702b380368fff',
-    llcAddress: '0xa5Dd41085264cDFA2C5899882Dc71921E0c9d705',
+    llcAddress: '0x3b25046878d4f0163F53fB71Bf30895E054869Db',
     currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     currencyTwoLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     stablecoin: '0xc30d0164Fb4c013dB62E32d48f81BeD92735d97a',
+    uToken: {
+      address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
+      symbol: 'UND',
+    },
+  },
+  {
+    name: 'LINK/ETH',
+    exchange: 'Uniswap',
+    address: '0x8ba299718f99d51754a1e44c2b6992fb739e30a3',
+    llcAddress: '0x06a1Ae5e8eD0476B2E4E50F2dc4e9277C712cF00',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x514910771AF9Ca656af840dff83E8264EcF986CA/logo.png',
+    currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+    stablecoin: '0x09D9a16a6083a75aEfF476BD021A50aA683A29d1',
+    uToken: {
+      address: '0xcB0Aa6Eb5424db37CD96e3CFdE1D03ED56BE4b90',
+      symbol: 'uETH',
+    },
+  },
+  {
+    name: 'WBTC/ETH',
+    exchange: 'Uniswap',
+    address: '0xbff74af0dc7a66ad5c250bf95459ba1b8228a6e9',
+    llcAddress: '0x507a50C534e4aB0E4edE9a87DCe21d00A6a382Fb',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png',
+    currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+    stablecoin: '0x09D9a16a6083a75aEfF476BD021A50aA683A29d1',
+    uToken: {
+      address: '0xcB0Aa6Eb5424db37CD96e3CFdE1D03ED56BE4b90',
+      symbol: 'uETH',
+    },
   },
 ]

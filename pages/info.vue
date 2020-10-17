@@ -19,7 +19,7 @@
                 ${{
                   liquidity
                     ? Number(liquidity.token0 + liquidity.token1).toFixed(2)
-                    : '--'
+                    : '0'
                 }}
               </p>
               <button
@@ -65,7 +65,7 @@
             <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
             <div class="flex items-center justify-between">
               <p class="font-medium text-3xl text-accent">
-                {{ liquidity ? liquidity.poolShare.toFixed(3) : '--' }}%
+                {{ liquidity ? liquidity.poolShare.toFixed(3) : '0' }}%
               </p>
             </div>
           </div>
@@ -237,7 +237,6 @@ import { ethers } from 'ethers'
 // import config from '~/configs/config'
 import { getPoolTokenReserves, getAmountOfLockedTokens } from '~/mixins/stake'
 import { getLockedLPT, checkLoan } from '~/mixins/info'
-import { getLLC } from '~/mixins/valuator'
 
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
@@ -264,7 +263,7 @@ export default {
         data: [],
       },
       LPTTable: {
-        headers: ['LP Token Name', 'Locked LPT', 'UND Minted', 'LTV'],
+        headers: ['LP Token Name', 'Locked LPT', 'Token Minted'],
         data: [],
       },
       functions: {
@@ -272,8 +271,8 @@ export default {
         burn: '0x78208601',
       },
       liquidity: null,
-      totalLiquidity: '--',
-      totalMinted: '--',
+      totalLiquidity: '0',
+      totalMinted: '0',
       collectedFees: {
         safu: '',
         team: '',
@@ -428,16 +427,17 @@ export default {
           const lockedLPT = await getLockedLPT(
             supportedPoolTokens[i].llcAddress
           )
-          const llc = await getLLC(supportedPoolTokens[i].llcAddress)
-          const loan = await checkLoan(supportedPoolTokens[i].llcAddress)
-
+          // const llc = await getLLC(supportedPoolTokens[i].llcAddress)
+          const loan = await checkLoan(
+            supportedPoolTokens[i].llcAddress,
+            supportedPoolTokens[i].uToken.address
+          )
           // get average loan amount per uDAI
           // const und = lockedLPT.toString() /
           const poolTokenObj = {
             lptName: supportedPoolTokens[i].name,
             locked: lockedLPT,
-            minted: loan,
-            ltv: 100 / llc.loanRate,
+            minted: loan + ' ' + supportedPoolTokens[i].uToken.symbol,
           }
 
           poolTokens.push(poolTokenObj)

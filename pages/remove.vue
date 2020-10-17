@@ -17,112 +17,73 @@
         </button>
       </div>
 
-      <div
-        class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
-      >
-        <div class="flex items-center justify-between">
-          <p class="text-sm text-gray-700 font-medium">Input</p>
-          <p v-if="selectedToken" class="text-gray-600 text-sm">
-            Supplied: {{ balance }}
+      <input-field v-model="lpTokenAmount" label="Input">
+        <template v-slot:showBalance>
+          <p v-if="selectedToken" class="text-xs text-gray-500">
+            Balance:
+            <span class="font-mono text-gray-900 font-medium">{{
+              Number(balance).toFixed(4)
+            }}</span>
           </p>
-        </div>
-        <form class="w-full max-w-sm">
-          <div class="flex items-center py-2">
-            <input
-              v-model="lpTokenAmount"
-              class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
-              type="number"
-              placeholder="0.0"
-              :disabled="!selectedToken"
-            />
-
-            <button
-              v-if="selectedToken.allowance == 0 && selectedToken"
-              type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-              @click="approve(selectedToken.address)"
-            >
-              Approve
-            </button>
-
-            <button
-              v-else-if="selectedToken.allowance !== 0 && selectedToken"
-              type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-              @click="setInputMax"
-            >
-              Max
-            </button>
-            <button
-              v-if="selectedToken"
-              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
-              type="button"
-              @click="ui.showDialog = !ui.showDialog"
-            >
-              <span>{{ selectedToken.name }}</span>
-              <i class="fas fa-chevron-down pt-1"></i>
-            </button>
-
-            <button
-              v-else
-              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
-              type="button"
-              @click="ui.showDialog = !ui.showDialog"
-            >
-              <span>Select Pool Token</span>
-              <i class="fas fa-chevron-down pt-1"></i>
-            </button>
+        </template>
+        <template v-slot:append>
+          <div class="flex flex-col">
+            <div class="flex items-center space-x-2 focus:outline-none">
+              <button
+                v-if="selectedToken.allowance == 0 && selectedToken"
+                type="button"
+                class="px-2 py-1 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
+                @click="approve(selectedToken.address)"
+              >
+                Approve
+              </button>
+              <div class="flex items-center">
+                <img :src="selectedToken.tokenIcon" width="20" alt="dai logo" />
+                <div class="flex items-center p-1">
+                  <p class="text-gray-900 font-semibold text-right">DAI</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
+        </template>
+      </input-field>
 
       <i class="fas fa-plus text-gray-800 text-sm dark:text-gray-500"></i>
 
-      <div
-        class="w-full p-2 px-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+      <input-field
+        :value="(Number(UNDOutput) && UNDOutput) || ''"
+        label="Input"
+        :readonly="true"
       >
-        <div class="flex items-center justify-between">
-          <p class="text-sm text-gray-700 font-medium">Input</p>
-          <p v-if="selectedUToken" class="text-gray-600 text-sm">
-            Supplied: {{ UNDBalance }}
+        <template v-slot:showBalance>
+          <p v-if="selectedUToken" class="text-xs text-gray-500">
+            Supplied:
+            <span class="font-mono text-gray-900 font-medium">{{
+              Number(UNDBalance).toFixed(4)
+            }}</span>
           </p>
-        </div>
-        <form class="w-full max-w-sm">
-          <div class="flex items-center py-2">
-            <input
-              v-model="UNDOutput"
-              class="appearance-none bg-transparent text-2xl text-gray-800 dark:text-gray-300 font-medium w-full mr-3 py-1 leading-tight focus:outline-none"
-              type="number"
-              placeholder="0.0"
-              readonly
-            />
-            <button
-              v-if="selectedUToken.allowance == 0 && selectedToken"
-              type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-              @click="approve(selectedUToken.address)"
-            >
-              Approve
-            </button>
-
-            <button
-              v-else-if="!selectedUToken.allowance == 0 && selectedToken"
-              type="button"
-              class="px-2 py-1 mx-2 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-              @click="setInputMax"
-            >
-              Max
-            </button>
-            <button
-              class="flex-shrink-0 text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 hover:bg-opacity-100 hover:text-white transition-all duration-200 text-sm font-medium py-1 px-4 rounded flex items-center space-x-2 focus:outline-none"
-              type="button"
-            >
-              <span>{{ selectedUToken.name }}</span>
-              <!-- <i class="fas fa-chevron-down pt-1"></i> -->
-            </button>
+        </template>
+        <template v-slot:append>
+          <div class="flex flex-col">
+            <div class="flex items-center space-x-2 focus:outline-none">
+              <button
+                v-if="selectedUToken.allowance == 0 && selectedUToken"
+                type="button"
+                class="px-2 py-1 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
+                @click="approve(selectedUToken.address)"
+              >
+                Approve
+              </button>
+              <div class="flex items-center">
+                <img src="~/assets/tokens/und.svg" width="24" alt="und logo" />
+                <div class="flex items-center p-1">
+                  <p class="text-gray-900 font-semibold text-right">UND</p>
+                </div>
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
+        </template>
+      </input-field>
 
       <div
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
@@ -143,8 +104,10 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Your Positions</p>
               <p class="font-medium text-sm dark:text-white">
-                <span class="text-gray-600">DAI</span>: {{ liquidity.token1 }},
-                <span class="text-gray-600">UND</span>: {{ liquidity.token0 }}
+                <span class="text-gray-600">DAI</span>:
+                {{ Number(liquidity.token1).toFixed(2) }},
+                <span class="text-gray-600">UND</span>:
+                {{ Number(liquidity.token0).toFixed(2) }}
               </p>
             </div>
           </div>
@@ -161,133 +124,11 @@
 
     <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
     <RejectedModal v-model="ui.showRejected" />
-
-    <!-- Select Tokens Modal -->
-    <Modal :show="ui.showDialog" @close="ui.showDialog = false">
-      <template>
-        <div class="flex flex-col space-y-4">
-          <div class="flex justify-between items-center">
-            <p class="font-medium dark:text-white">Select a Token</p>
-            <button
-              type="button"
-              class="focus:outline-none"
-              @click="ui.showDialog = false"
-            >
-              <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
-            </button>
-          </div>
-
-          <div v-for="(poolToken, index) in supportedPoolTokens" :key="index">
-            <a @click="selectPoolToken(poolToken)">
-              <!-- <div
-                class="h-40 w-1/2 border border-gray-300 dark:border-gray-700 p-8 rounded-md flex flex-col items-center justify-center hover:shadow-md cursor-pointer"
-              >
-                <img
-                  src="~/assets/pool-tokens/eth-dai.svg"
-                  width="40"
-                  alt="Dai"
-                />
-                <p class="font-medium text-center pt-2 dark:text-white">
-                  {{ poolToken.name }}
-                </p>
-                <p class="text-sm text-center dark:text-white">
-                  Balance: {{ balance }}
-                </p>
-                <p class="text-sm text-center dark:text-white"> 
-                  {{ poolToken.exchange }}
-                </p>
-              </div> -->
-
-              <div
-                class="w-full flex items-center justify-between cursor-pointer hover:text-light-primary py-4"
-              >
-                <div class="space-x-2 flex items-center">
-                  <img
-                    src="~/assets/icons/crypto/dai.svg"
-                    width="32"
-                    alt="Dai"
-                  />
-                  <span class="font-medium dark:text-white text-sm"
-                    >{{ poolToken.name }}
-                    <!-- ({{ poolToken.exchange }}) -->
-                  </span>
-                </div>
-                <div>
-                  <span class="dark:text-white text-gray-800 font-medium">{{
-                    balance
-                  }}</span>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
-      </template>
-    </Modal>
-
-    <!-- Transaction confirmation Modal -->
-    <Modal :show="ui.showConfirmation" @close="ui.showConfirmation = false">
-      <template>
-        <div class="flex flex-col space-y-4">
-          <div class="flex justify-between items-center">
-            <p class="font-medium dark:text-white">Confirm Mint</p>
-            <button
-              type="button"
-              class="focus:outline-none"
-              @click="ui.showConfirmation = false"
-            >
-              <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
-            </button>
-          </div>
-
-          <div class="flex flex-col space-y-4">
-            <div class="flex w-full items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <img src="~/assets/pool-tokens/eth-dai.svg" width="40" alt="" />
-                <span class="text-2xl dark:text-white">{{
-                  lpTokenAmount
-                }}</span>
-              </div>
-              <p class="text-lg font-medium dark:text-white">UNIETH-DAI</p>
-            </div>
-            <i
-              class="fas fa-arrow-down text-lg text-gray-800 dark:text-gray-500 mx-2"
-            ></i>
-            <div class="flex w-full items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt="" />
-                <span class="text-2xl dark:text-white">{{ UNDOutput }}</span>
-              </div>
-              <p class="text-lg font-medium dark:text-white">UND</p>
-            </div>
-          </div>
-
-          <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-md">
-            <div class="flex flex-col space-y-1">
-              <div class="flex items-center justify-between">
-                <p class="text-sm text-gray-600">Fees</p>
-                <p class="font-medium text-sm dark:text-white">0.25%</p>
-              </div>
-              <div class="flex items-center justify-between">
-                <p class="text-sm text-gray-600">Funding Rate</p>
-                <p class="font-medium text-sm dark:text-white">50%</p>
-              </div>
-            </div>
-            <button
-              class="w-full mt-4 py-2 bg-light-primary dark:bg-dark-primary font-medium text-white rounded-md"
-            >
-              Confirm Mint
-            </button>
-          </div>
-        </div>
-      </template>
-    </Modal>
+    <AwaitingModal v-model="ui.showAwaiting" />
   </div>
 </template>
 
 <script>
-// import components
-import Modal from '@/components/_app/Modal'
-
 import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
@@ -299,14 +140,12 @@ import { removeLiquidity, getAmountOfLockedTokens } from '~/mixins/stake'
 import config from '~/configs/config'
 
 export default {
-  components: { Modal },
   data() {
     return {
       ui: {
-        showDialog: false,
-        showConfirmation: false,
         showSuccess: false,
         showRejected: false,
+        showAwaiting: false,
       },
       selectedToken: {
         name: 'dai',
@@ -324,7 +163,7 @@ export default {
           'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
       },
       balance: '--.--',
-      lpTokenAmount: '0',
+      lpTokenAmount: '',
       // isTokenApproved: '',
       txLink: '',
       UNDBalance: '',
@@ -423,6 +262,7 @@ export default {
     },
 
     async removeLiquidity() {
+      this.ui.showAwaiting = true
       try {
         const transaction = await removeLiquidity(
           config.contracts.dai,
@@ -431,9 +271,10 @@ export default {
           this.lpTokenAmount
         )
         this.txLink = transaction.hash
+        this.ui.showAwaiting = false
         this.ui.showSuccess = true
       } catch (error) {
-        console.log(error)
+        this.ui.showAwaiting = false
         this.ui.showRejected = true
       }
     },

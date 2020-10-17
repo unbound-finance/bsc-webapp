@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import Modal from '@/components/_app/Modal'
+import Modal from '@/components/Modal'
 export default {
   props: {
     hash: String,
