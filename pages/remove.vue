@@ -98,7 +98,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Pool Share</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ liquidity.poolShare }}%
+                {{ Number(liquidity.poolShare).toFixed(2) }}%
               </p>
             </div>
             <div class="flex items-center justify-between">

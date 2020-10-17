@@ -12,7 +12,12 @@
         <p class="text-center font-medium dark:text-white text-lg">
           Add Liquidity
         </p>
-        <button class="focus:outline-none">
+        <button
+          v-tooltip="{
+            content: 'Add liquidity and earn fees.',
+          }"
+          class="focus:outline-none"
+        >
           <i class="far fa-question-circle text-gray-600 text-lg"></i>
         </button>
       </div>

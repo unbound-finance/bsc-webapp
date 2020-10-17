@@ -10,9 +10,7 @@
           </button>
         </nuxt-link>
         <p class="text-center font-medium dark:text-white text-lg">Earn</p>
-        <button class="focus:outline-none">
-          <i class="far fa-question-circle text-gray-600 text-lg"></i>
-        </button>
+        <span></span>
       </div>
       <nuxt-link class="w-full" to="/add">
         <button
@@ -56,7 +54,7 @@
               <p>Pooled Dai</p>
             </div>
             <div class="w-1/2 text-right">
-              <p>{{ liquidity.token0 }}</p>
+              <p>{{ Number(liquidity.token0).toFixed(4) }}</p>
             </div>
           </div>
           <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
@@ -64,7 +62,7 @@
               <p>Pooled UND</p>
             </div>
             <div class="w-1/2 text-right">
-              <p>{{ liquidity.token1 }}</p>
+              <p>{{ Number(liquidity.token1).toFixed(4) }}</p>
             </div>
           </div>
           <!-- <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
@@ -80,7 +78,7 @@
               <p>Your pool share</p>
             </div>
             <div class="w-1/2 text-right">
-              <p>{{ liquidity.poolShare }} %</p>
+              <p>{{ Number(liquidity.poolShare).toFixed(2) }} %</p>
             </div>
           </div>
 
