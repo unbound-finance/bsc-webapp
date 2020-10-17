@@ -281,7 +281,6 @@ export default {
 
     async getAllowance(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
-
       const signer = provider.getSigner()
       const userAddress = provider.getSigner().getAddress()
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)

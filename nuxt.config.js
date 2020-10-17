@@ -39,6 +39,7 @@ export default {
    ** https://nuxtjs.org/guide/plugins
    */
   plugins: [
+    '@/plugins/ga.js',
     '@/plugins/vue-toasted.js',
     '@/plugins/notification.js',
     '@/plugins/vue-tailwind.js',
