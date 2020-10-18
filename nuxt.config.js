@@ -82,6 +82,14 @@ export default {
    */
   build: {},
   purgeCSS: {
-    whitelist: ['dark-mode', 'light-mode'],
+    whitelist: [
+      'dark-mode',
+      'light-mode',
+      'tooltip',
+      'tooltip-inner',
+      'tooltip-arrow',
+      'tooltip.popover',
+      'popover-arrow',
+    ],
   },
 }
