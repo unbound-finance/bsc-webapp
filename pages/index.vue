@@ -15,7 +15,7 @@
           class="p-4 border border-gray-200 dark:border-gray-800 rounded-lg w-full flex space-x-4 gap-4"
         >
           <img
-            :src="require(`~/assets/icons/${data.icon}.svg`)"
+            :src="require(`~/assets/icons/${data.icon}.webp`)"
             width="64"
             :alt="data.title"
           />
