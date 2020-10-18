@@ -11,7 +11,11 @@
         </nuxt-link>
         <p class="text-center font-medium dark:text-white text-lg">Unlock</p>
         <button
-          v-tooltip="'Unlock your liquidity pool tokens by burning UND.'"
+          v-tooltip.auto="{
+            content: 'Unlock your liquidity pool tokens by burning UND.',
+            autoHide: true,
+            trigger: 'hover',
+          }"
           class="focus:outline-none"
         >
           <i class="far fa-question-circle text-gray-600 text-lg"></i>

@@ -13,8 +13,10 @@
           Add Liquidity
         </p>
         <button
-          v-tooltip="{
+          v-tooltip.auto="{
             content: 'Add liquidity and earn fees.',
+            autoHide: true,
+            trigger: 'hover',
           }"
           class="focus:outline-none"
         >

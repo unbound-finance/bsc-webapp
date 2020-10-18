@@ -11,7 +11,11 @@
         </nuxt-link>
         <p class="text-center font-medium dark:text-white text-lg">Mint</p>
         <button
-          v-tooltip="'Mint UND by locking your liquidity provider tokens.'"
+          v-tooltip.auto="{
+            content: 'Mint UND by locking your liquidity provider tokens.',
+            autoHide: true,
+            trigger: 'hover',
+          }"
           class="focus:outline-none"
         >
           <i class="far fa-question-circle text-gray-600 text-lg"></i>
