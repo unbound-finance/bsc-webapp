@@ -39,6 +39,7 @@
         :value="(Number(UNDOutput) && UNDOutput) || ''"
         label="Burn"
         :readonly="true"
+        :loading="ui.priceLoader"
       >
         <template v-slot:showBalance>
           <p v-if="poolToken" class="text-xs text-gray-500">
@@ -114,6 +115,7 @@ export default {
         showSuccess: false,
         showRejected: false,
         showAwaiting: false,
+        priceLoader: false,
       },
 
       LPTAmount: '',
@@ -163,6 +165,7 @@ export default {
 
   methods: {
     async getLoanRatioPerLPT(poolToken) {
+      this.ui.priceLoader = true
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
@@ -197,6 +200,7 @@ export default {
         this.LPTPrice = (totalValueInDai / LPTTotalSupply)
           .toFixed(8)
           .slice(0, -1)
+        this.ui.priceLoader = false
       } else {
         const stablecoinDecimal = await getDecimals(token1)
         let difference
@@ -220,11 +224,11 @@ export default {
         this.LPTPrice = (totalValueInDai / LPTTotalSupply)
           .toFixed(8)
           .slice(0, -1)
+        this.ui.priceLoader = false
       }
     },
 
     async unlock(poolToken) {
-      console.log(poolToken)
       this.ui.showAwaiting = true
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(

@@ -37,6 +37,7 @@
         :value="(Number(UNDOutput) && UNDOutput) || ''"
         label="Mint"
         :readonly="true"
+        :loading="ui.priceLoader"
       >
         <template v-slot:append>
           <div class="flex flex-col">
@@ -62,7 +63,8 @@
         class="w-full flex items-center justify-between px-2"
       >
         <p class="text-sm text-gray-600">Price Per LP Token</p>
-        <p class="font-medium text-sm dark:text-white">
+        <div v-if="ui.priceLoader" class="loading-dots text-2xl">.</div>
+        <p v-else class="font-medium text-sm dark:text-white">
           {{ LPTPrice }} {{ poolToken && poolToken.uToken.symbol }}
         </p>
       </div>
@@ -216,6 +218,7 @@ export default {
         showSuccess: false,
         showRejected: false,
         showAwaiting: false,
+        priceLoader: false,
       },
       poolToken: null,
       LPTAmount: '',
@@ -233,7 +236,6 @@ export default {
   computed: {
     UNDOutput() {
       const loanRatioPerLPT = this.LPTAmount * this.loanRatioPerLPT
-      console.log(this.loanRatioPerLPT)
       return loanRatioPerLPT.toFixed(4).slice(0, -1)
     },
 
@@ -266,6 +268,7 @@ export default {
 
   methods: {
     async getLoanRatioPerLPT(poolToken) {
+      this.ui.priceLoader = true
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
@@ -285,7 +288,6 @@ export default {
         let difference
         let totalValueInDai
         totalValueInDai = reserve[0].toString() * 2
-        console.log(totalValueInDai)
         // first case: tokenDecimal is smaller than 18
         // for stablecoins with less than 18 decimals
         if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
@@ -303,6 +305,7 @@ export default {
         this.LPTPrice = (totalValueInDai / LPTTotalSupply)
           .toFixed(4)
           .slice(0, -1)
+        this.ui.priceLoader = false
       } else {
         const stablecoinDecimal = await getDecimals(token1)
         let difference
@@ -320,15 +323,13 @@ export default {
           // removes decimals to match 18
           totalValueInDai = totalValueInDai / 10 ** difference
         }
-        console.log('totalValueInDai', totalValueInDai)
-        console.log('LPTTotalSupply', LPTTotalSupply)
-        console.log('loanRate', llc.loanRate)
 
         this.loanRatioPerLPT =
           ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
         this.LPTPrice = (totalValueInDai / LPTTotalSupply)
           .toFixed(4)
           .slice(0, -1)
+        this.ui.priceLoader = false
       }
     },
 

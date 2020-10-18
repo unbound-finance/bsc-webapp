@@ -27,7 +27,9 @@
       </div>
       <form>
         <div class="flex items-center py-2">
+          <div v-if="loading" class="loading-dots text-4xl w-full">.</div>
           <input
+            v-else
             v-model="model"
             type="number"
             placeholder="0.00"
@@ -103,6 +105,10 @@ export default {
     value: {
       type: [String, Number],
       default: '',
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
