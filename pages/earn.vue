@@ -35,7 +35,7 @@
           <div class="flex items-center space-x-2">
             <double-logo
               token0logo="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png"
-              :token1logo="require('~/assets/tokens/und.svg')"
+              :token1logo="require('~/assets/tokens/und.webp')"
             />
             <p class="font-medium dark:text-white">DAI / UND</p>
           </div>

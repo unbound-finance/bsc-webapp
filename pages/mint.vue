@@ -41,7 +41,7 @@
         <template v-slot:append>
           <div class="flex flex-col">
             <div class="flex items-center focus:outline-none">
-              <img src="~/assets/tokens/und.svg" width="24" alt="und logo" />
+              <img src="~/assets/tokens/und.webp" width="16" alt="und logo" />
               <div class="flex items-center p-1">
                 <p
                   class="text-gray-900 dark:text-gray-500 font-semibold text-right"
