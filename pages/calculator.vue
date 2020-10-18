@@ -86,7 +86,7 @@
             v-model="calcData.ltv"
             class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
             type="text"
-            placeholder="30"
+            placeholder="Enter LTV (Eg. 30)"
             required
           />
         </div>
@@ -98,7 +98,7 @@
             v-model="calcData.days"
             class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
             type="text"
-            placeholder="30"
+            placeholder="Enter days (Eg. 30)"
             required
           />
         </div>
