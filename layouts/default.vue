@@ -27,7 +27,7 @@ export default {
   // $g-color-1: #ffe7d6;
   // $g-color-2: #f2f7ff;
 
-  $g-color-1: #ced8fd;
+  $g-color-1: #26bcb424;
   $g-color-2: #ffffff;
 
   background: radial-gradient($g-color-1, $g-color-2);
