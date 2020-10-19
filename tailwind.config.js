@@ -15,7 +15,7 @@ module.exports = {
       },
 
       dark: {
-        primary: '#1966D4',
+        primary: '#49C1BF',
         bg: '#212429',
       },
       transparent: 'transparent',
