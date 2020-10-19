@@ -10,6 +10,7 @@ export default [
     uToken: {
       address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
       symbol: 'UND',
+      icon: '@/assets/tokens/und.webp',
     },
   },
   {
@@ -24,6 +25,7 @@ export default [
     uToken: {
       address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
       symbol: 'UND',
+      icon: '@/assets/tokens/und.webp',
     },
   },
   {
@@ -38,6 +40,7 @@ export default [
     uToken: {
       address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
       symbol: 'UND',
+      icon: '@/assets/tokens/und.webp',
     },
   },
   {
@@ -52,6 +55,7 @@ export default [
     uToken: {
       address: '0xcB0Aa6Eb5424db37CD96e3CFdE1D03ED56BE4b90',
       symbol: 'uETH',
+      icon: '@/assets/tokens/uEth.svg',
     },
   },
   {
@@ -66,6 +70,7 @@ export default [
     uToken: {
       address: '0xcB0Aa6Eb5424db37CD96e3CFdE1D03ED56BE4b90',
       symbol: 'uETH',
+      icon: '@/assets/tokens/uEth.svg',
     },
   },
 ]
