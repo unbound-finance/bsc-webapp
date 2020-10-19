@@ -84,7 +84,7 @@
           </label>
           <input
             v-model="calcData.ltv"
-            class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
+            class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-white border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
             type="text"
             placeholder="Enter LTV (Eg. 30)"
             required
@@ -96,7 +96,7 @@
           </label>
           <input
             v-model="calcData.days"
-            class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
+            class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-white border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
             type="text"
             placeholder="Enter Days (Eg. 30)"
             required
@@ -105,7 +105,7 @@
       </div>
       <button
         type="submit"
-        class="rounded-md text-white bg-light-primary text-sm w-full py-2 font-medium mt-4 focus:outline-none"
+        class="rounded-md text-light-primary dark:text-dark-primary bg-light-primary bg-opacity-25 text-sm w-full py-2 font-medium mt-4 focus:outline-none"
       >
         <loader v-if="ui.loading" />
         <span v-else>Calculate</span>
@@ -124,7 +124,7 @@
         <p class="text-sm text-gray-600">
           Current {{ selectedPair.asset }} Price
         </p>
-        <p class="text-sm font-medium">
+        <p class="text-sm font-medium dark:text-white">
           $
           {{ Number(calcResult.assetValue).toFixed(2) }}
         </p>
@@ -133,7 +133,7 @@
         <p class="text-sm text-gray-600">
           {{ selectedPair.asset }} Break Even Price
         </p>
-        <p class="text-sm font-medium">
+        <p class="text-sm font-medium dark:text-white">
           $
           {{ Number(calcResult.breakEvenPrice).toFixed(2) }}
         </p>
@@ -142,7 +142,7 @@
         <p class="text-sm text-gray-600">
           Fees Earned per {{ selectedPair.asset }}
         </p>
-        <p class="text-sm font-medium">
+        <p class="text-sm font-medium dark:text-white">
           $
           {{
             (
@@ -154,14 +154,14 @@
 
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Net Break Even Price</p>
-        <p class="text-sm font-medium">
+        <p class="text-sm font-medium dark:text-white">
           $
           {{ calcResult.breakEvenPriceWithFees.toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Net Break Even Price Percentage</p>
-        <p class="text-sm font-medium">
+        <p class="text-sm font-medium dark:text-white">
           -
           {{
             100 -
