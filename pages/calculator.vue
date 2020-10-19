@@ -80,7 +80,7 @@
       <div class="flex items-center space-x-4 mt-4">
         <div>
           <label class="block text-sm leading-5 font-medium text-gray-700 p-1">
-            LTV
+            LTV (%)
           </label>
           <input
             v-model="calcData.ltv"
@@ -98,14 +98,14 @@
             v-model="calcData.days"
             class="appearance-none block w-full dark:bg-dark-bg text-gray-700 dark:text-gray-500 border border-gray-200 dark:border-gray-700 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500"
             type="text"
-            placeholder="Enter days (Eg. 30)"
+            placeholder="Enter Days (Eg. 30)"
             required
           />
         </div>
       </div>
       <button
         type="submit"
-        class="rounded-md text-white bg-dark-primary text-sm w-full py-2 font-medium mt-4 focus:outline-none"
+        class="rounded-md text-white bg-light-primary text-sm w-full py-2 font-medium mt-4 focus:outline-none"
       >
         <loader v-if="ui.loading" />
         <span v-else>Calculate</span>
