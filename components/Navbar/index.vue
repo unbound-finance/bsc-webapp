@@ -11,7 +11,7 @@
       <nuxt-link to="/calculator" class="font-medium dark:text-white">
         Calculator
       </nuxt-link>
-      <nuxt-link to="/info" class="font-medium dark:text-white">
+      <nuxt-link to="/account" class="font-medium dark:text-white">
         Account
       </nuxt-link>
     </div>
