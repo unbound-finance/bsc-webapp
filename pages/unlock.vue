@@ -53,7 +53,12 @@
         <template v-slot:append>
           <div class="flex flex-col">
             <div class="flex items-center focus:outline-none">
-              <img src="~/assets/tokens/und.webp" width="16" alt="und logo" />
+              <img
+                :src="require(`~/assets/tokens/${poolToken.uToken.icon}`)"
+                width="16"
+                :alt="`${poolToken.uToken.symbol} logo`"
+                style="max-width: 16px; max-height: 22px"
+              />
               <div class="flex items-center p-1">
                 <p
                   class="text-gray-900 font-semibold text-right dark:text-gray-500"
