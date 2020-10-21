@@ -113,7 +113,6 @@ export default {
   data() {
     return {
       config,
-      address: '',
       ui: {
         showDialog: false,
         showChgNetDialog: false,
@@ -122,8 +121,17 @@ export default {
     }
   },
 
+  computed: {
+    isWalletConnected() {
+      return !!this.$store.state.address
+    },
+    address() {
+      return this.$store.state.address
+    },
+  },
+
   mounted() {
-    this.connectMetamask()
+    this.isConnected()
     this.getNetwork()
     this.reloadOnNetChange()
     this.reloadOnAccChange()
@@ -167,6 +175,19 @@ export default {
 
         if (this.network !== 'kovan') {
           this.ui.showChgNetDialog = true
+        }
+      }
+    },
+
+    async isConnected() {
+      const ethereum = window.ethereum || window.web3
+      if (ethereum) {
+        const isConnected = await ethereum.isConnected()
+        if (isConnected) {
+          // get the address
+          const provider = await new ethers.providers.Web3Provider(ethereum)
+          const address = await provider.getSigner().getAddress()
+          await this.$store.commit('getProvider', address)
         }
       }
     },
