@@ -1,24 +1,14 @@
 <template>
-  <div class="w-full min-h-screen">
+  <div class="min-h-screen">
     <Navbar />
-
-    <div class="max-w-6xl mx-auto">
-      <div class="w-full h-full flex justify-center px-4">
-        <div
-          class="w-full md:w-2/5 bg-white dark:bg-dark-bg rounded-lg my-4 md:my-8 p-4"
-        >
-          <nuxt />
-        </div>
-      </div>
+    <div class="md:max-w-6xl mx-auto p-4">
+      <nuxt />
     </div>
   </div>
 </template>
 
 <script>
-import Navbar from '@/components/Navbar'
-export default {
-  components: { Navbar },
-}
+export default {}
 </script>
 
 <style lang="scss">
