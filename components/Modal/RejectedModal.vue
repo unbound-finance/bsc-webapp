@@ -6,7 +6,7 @@
         <p class="text-red-600 font-medium">Transaction Rejected</p>
 
         <button
-          class="w-full px-4 py-2 rounded mt-4 bg-red-600 dark:bg-dark-primary dark:text-white bg-opacity-25 text-red-600 font-medium focus:outline-none"
+          class="w-full px-4 py-2 rounded mt-4 bg-red-600 bg-opacity-25 text-red-600 font-medium focus:outline-none"
           @click="modal = false"
         >
           Close
