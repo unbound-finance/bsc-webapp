@@ -14,9 +14,6 @@
       <nuxt-link to="/account" class="font-medium dark:text-white">
         Account
       </nuxt-link>
-      <nuxt-link to="/analytics" class="font-medium dark:text-white">
-        Analytics
-      </nuxt-link>
     </div>
 
     <div class="flex items-center space-x-4">
