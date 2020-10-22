@@ -73,4 +73,34 @@ export default [
       icon: 'uEth.svg',
     },
   },
+  {
+    name: 'ENJ/UND',
+    exchange: 'Uniswap',
+    address: '0x136bf0b90ea8fb45f7a6bf35ac22a3bac067e264',
+    llcAddress: '0xF0Ec90d37ABcB7F928f1947367E58042E7B0e28d',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c/logo.png',
+    currencyTwoLogo: 'https://beta.unbound.finance/_nuxt/img/und.e52ca44.webp',
+    stablecoin: '0x09D9a16a6083a75aEfF476BD021A50aA683A29d1',
+    uToken: {
+      address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
+      symbol: 'UND',
+      icon: 'und.webp',
+    },
+  },
+  {
+    name: 'TOMO/UND',
+    exchange: 'Uniswap',
+    address: '0x1060abf5954c27ac553b37151a6a7608a3f6adb7',
+    llcAddress: '0xC8b98e60eC524827B85BBC62dB64B3aFaC708185',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x05D3606d5c81EB9b7B18530995eC9B29da05FaBa/logo.png',
+    currencyTwoLogo: 'https://beta.unbound.finance/_nuxt/img/und.e52ca44.webp',
+    stablecoin: '0x09D9a16a6083a75aEfF476BD021A50aA683A29d1',
+    uToken: {
+      address: '0xc266314a87744E94E6F2FC1130d6C5E43FaB0E75',
+      symbol: 'UND',
+      icon: 'und.webp',
+    },
+  },
 ]
