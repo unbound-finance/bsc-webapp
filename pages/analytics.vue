@@ -11,7 +11,7 @@
             >Total Liquidity</span
           >
           <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            $1.10B
+            ${{ overview.totalLiquidity }}
           </div>
         </div>
         <div
@@ -137,6 +137,11 @@
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
+                    Total Locked
+                  </th>
+                  <th
+                    class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+                  >
                     Price
                   </th>
                   <th
@@ -148,7 +153,7 @@
                 </tr>
               </thead>
               <tbody
-                v-if="searchResult.length != 0"
+                v-if="searchResult && searchResult.length != 0"
                 class="bg-white bg-opacity-75 dark:bg-gray-900"
               >
                 <tr v-for="(data, i) in searchResult" :key="i">
@@ -180,6 +185,13 @@
                     <div
                       class="text-sm leading-5 text-gray-900 dark:text-gray-200"
                     >
+                      {{ data.lockedLPT }}
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <div
+                      class="text-sm leading-5 text-gray-900 dark:text-gray-200"
+                    >
                       ${{ data.price }}
                     </div>
                   </td>
@@ -204,7 +216,7 @@
 
               <tbody v-else>
                 <tr class="bg-white dark:bg-gray-900">
-                  <td colspan="5">
+                  <td colspan="6">
                     <div class="text-sm text-center p-4 text-gray-600">
                       Token Not found.
                     </div>
@@ -227,6 +239,7 @@ import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
+import { getTotalLiquidity, getTotalLockedLPT } from '~/mixins/analytics'
 
 export default {
   layout: 'blank',
@@ -237,6 +250,9 @@ export default {
       },
       poolTokens: null,
       search: '',
+      overview: {
+        totalLiquidity: 0,
+      },
     }
   },
   computed: {
@@ -257,8 +273,12 @@ export default {
   },
   mounted() {
     this.getPoolTokens()
+    this.getAnalyticsData()
   },
   methods: {
+    async getAnalyticsData() {
+      this.overview.totalLiquidity = await getTotalLiquidity()
+    },
     async getLoanRatioPerLPT(poolToken) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
@@ -324,11 +344,13 @@ export default {
       try {
         await supportedPoolTokens.map(async (ev) => {
           const loanRatio = await this.getLoanRatioPerLPT(ev)
+          const lockedLPT = await getTotalLockedLPT(ev.address, ev.llcAddress)
 
           const obj = {
             ...ev,
             ltv: loanRatio.ltv,
             price: loanRatio.price,
+            lockedLPT,
           }
           poolTokens.push(obj)
         })
