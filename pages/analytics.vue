@@ -72,7 +72,7 @@
         >
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              $400K
+              ${{ fees.staking }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Staker Fees</span
@@ -81,7 +81,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              $400K
+              ${{ fees.safu }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >SAFU Fund</span
@@ -90,7 +90,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              $200K
+              ${{ fees.devfund }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Dev Fund</span
@@ -236,22 +236,29 @@ import { ethers } from 'ethers'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+import unboundTokenABI from '~/configs/abi/UnboundDai'
 
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
 import { getTotalLiquidity, getTotalLockedLPT } from '~/mixins/analytics'
+import config from '~/configs/config'
 
 export default {
   layout: 'blank',
   data() {
     return {
       ui: {
-        showFeesBreakdown: false,
+        showFeesBreakdown: true,
       },
       poolTokens: null,
       search: '',
       overview: {
         totalLiquidity: 0,
+      },
+      fees: {
+        staking: '',
+        devfund: '',
+        safu: '',
       },
     }
   },
@@ -274,11 +281,49 @@ export default {
   mounted() {
     this.getPoolTokens()
     this.getAnalyticsData()
+    this.getFees()
   },
   methods: {
     async getAnalyticsData() {
       this.overview.totalLiquidity = await getTotalLiquidity()
     },
+
+    async getFees() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const unboundToken = await new ethers.Contract(
+        config.contracts.unboundDai,
+        unboundTokenABI,
+        signer
+      )
+
+      // get total fee stored in the contract
+      const storedFee = await unboundToken.storedFee()
+
+      // get splitting ratio of the storedFee
+      const stakeShares = await unboundToken.stakeShares()
+      const safuSharesOfStoredFee = await unboundToken.safuSharesOfStoredFee()
+
+      // split stored fee
+      const stakingFees = (storedFee * stakeShares) / 100
+      this.fees.staking = (stakingFees / 1e18).toFixed(2)
+
+      const remainingFee = storedFee - stakingFees
+
+      this.fees.safu = (
+        (remainingFee * safuSharesOfStoredFee) /
+        100 /
+        1e18
+      ).toFixed(2)
+
+      this.fees.devfund = (
+        (remainingFee - (remainingFee * safuSharesOfStoredFee) / 100) /
+        1e18
+      ).toFixed(2)
+
+      console.log(safuSharesOfStoredFee.toString())
+    },
+
     async getLoanRatioPerLPT(poolToken) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
