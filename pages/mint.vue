@@ -89,7 +89,7 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Minting Fees</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(UNDOutput) * parseInt(llc.fee)) / 1e5 }}
+                {{ (parseInt(UNDOutput) * parseInt(llc.fee)) / 1e6 }}
                 {{ poolToken.uToken.symbol }}
               </p>
             </div>
