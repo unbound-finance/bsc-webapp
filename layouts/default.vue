@@ -3,12 +3,8 @@
     <Navbar />
 
     <div class="max-w-6xl mx-auto">
-      <div class="w-full h-full flex justify-center px-4">
-        <div
-          class="w-full md:w-2/5 bg-white dark:bg-dark-bg rounded-lg my-4 md:my-8 p-4"
-        >
-          <nuxt />
-        </div>
+      <div class="w-full flex justify-center px-4">
+        <nuxt />
       </div>
     </div>
   </div>
@@ -33,9 +29,17 @@ export default {
 }
 
 .dark-mode {
-  $g-color-1: #2c313a;
-  $g-color-2: #2b3546;
+  $g-color-1: #2b3546;
+  $g-color-2: #2c2f36;
 
   background: radial-gradient($g-color-1, $g-color-2);
+
+  .bottom-container {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .main_container {
+    background: rgb(33, 36, 41);
+  }
 }
 </style>

@@ -1,134 +1,108 @@
 <template>
-  <div>
-    <div class="flex flex-col items-center w-full py-8 space-y-6 px-4">
-      <div class="flex w-full items-center justify-between">
-        <nuxt-link to="/">
-          <button class="focus:outline-none">
-            <i
-              class="fas fa-chevron-left text-gray-900 dark:text-white text-lg"
-            ></i>
+  <div
+    class="relative flex flex-col items-center justify-center flex-wrap my-4 md:my-8 p-4"
+  >
+    <div class="dark:bg-dark-bg main_container">
+      <div class="flex flex-col items-center w-full py-4 space-y-4 px-4">
+        <div class="flex w-full items-center justify-between">
+          <nuxt-link to="/">
+            <button class="focus:outline-none">
+              <i
+                class="fas fa-chevron-left text-gray-900 dark:text-white text-lg"
+              ></i>
+            </button>
+          </nuxt-link>
+          <p class="text-center font-medium dark:text-white text-lg">Mint</p>
+          <button
+            v-tooltip.auto="{
+              content: 'Mint UND by locking your liquidity provider tokens.',
+              autoHide: true,
+              trigger: 'hover',
+            }"
+            class="focus:outline-none"
+          >
+            <i class="far fa-question-circle text-gray-600 text-lg"></i>
           </button>
-        </nuxt-link>
-        <p class="text-center font-medium dark:text-white text-lg">Mint</p>
-        <button
-          v-tooltip.auto="{
-            content: 'Mint UND by locking your liquidity provider tokens.',
-            autoHide: true,
-            trigger: 'hover',
-          }"
-          class="focus:outline-none"
-        >
-          <i class="far fa-question-circle text-gray-600 text-lg"></i>
-        </button>
-      </div>
-
-      <input-field
-        v-model="LPTAmount"
-        label="Supply"
-        :pool-token.sync="poolToken"
-      />
-      <i
-        v-if="poolToken"
-        class="fas fa-arrow-down text-gray-800 dark:text-gray-600"
-      ></i>
-
-      <input-field
-        v-if="poolToken"
-        :value="(Number(UNDOutput) && UNDOutput) || ''"
-        label="Mint"
-        :readonly="true"
-        :loading="ui.priceLoader"
-      >
-        <template v-slot:append>
-          <div class="flex flex-col">
-            <div class="flex items-center focus:outline-none">
-              <img
-                :src="require(`~/assets/tokens/${poolToken.uToken.icon}`)"
-                width="16"
-                :alt="`${poolToken.uToken.symbol} logo`"
-                style="max-width: 16px; max-height: 22px"
-              />
-              <div class="flex items-center p-1">
-                <p
-                  class="text-gray-900 dark:text-gray-500 font-semibold text-right"
-                >
-                  {{ poolToken.uToken.symbol }}
-                </p>
-              </div>
-            </div>
-            <span class="text-xs text-right text-gray-500 dark:text-gray-700"
-              >Unbound</span
-            >
-          </div>
-        </template>
-      </input-field>
-
-      <div
-        v-if="LPTAmount"
-        class="w-full flex items-center justify-between px-2"
-      >
-        <p class="text-sm text-gray-600">Price Per LP Token</p>
-        <div v-if="ui.priceLoader" class="loading-dots text-2xl">.</div>
-        <p v-else class="font-medium text-sm dark:text-white">
-          {{ LPTPrice }} {{ poolToken && poolToken.uToken.symbol }}
-        </p>
-      </div>
-
-      <!-- Show fees -->
-      <div
-        v-if="LPTAmount"
-        class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
-      >
-        <p
-          class="text-gray-800 dark:text-gray-400 font-medium text-sm mx-4 my-2"
-        >
-          Fees
-        </p>
-        <div class="bg-white dark:bg-dark-bg rounded-lg p-4">
-          <div class="flex flex-col space-y-1">
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-600">Minting Fees</p>
-              <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(UNDOutput) * parseInt(llc.fee)) / 1e5 }}
-                {{ poolToken.uToken.symbol }}
-              </p>
-            </div>
-            <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-600">Funding Rate</p>
-              <p class="font-medium text-sm dark:text-white">
-                {{ (llc.loanRate * 100) / 1e6 }}%
-              </p>
-            </div>
-          </div>
         </div>
+
+        <input-field
+          v-model="LPTAmount"
+          label="Supply"
+          :pool-token.sync="poolToken"
+        />
+        <i
+          v-if="poolToken"
+          class="fas fa-arrow-down text-gray-800 dark:text-gray-600"
+        ></i>
+
+        <input-field
+          v-if="poolToken"
+          :value="(Number(UNDOutput) && UNDOutput) || ''"
+          label="Mint"
+          :readonly="true"
+          :loading="ui.priceLoader"
+        >
+          <template v-slot:append>
+            <div class="flex flex-col">
+              <div class="flex items-center focus:outline-none">
+                <img
+                  :src="require(`~/assets/tokens/${poolToken.uToken.icon}`)"
+                  width="16"
+                  :alt="`${poolToken.uToken.symbol} logo`"
+                  style="max-width: 16px; max-height: 22px"
+                />
+                <div class="flex items-center p-1">
+                  <p
+                    class="text-gray-900 dark:text-gray-500 font-semibold text-right"
+                  >
+                    {{ poolToken.uToken.symbol }}
+                  </p>
+                </div>
+              </div>
+              <span class="text-xs text-right text-gray-500 dark:text-gray-700"
+                >Unbound</span
+              >
+            </div>
+          </template>
+        </input-field>
+
+        <div
+          v-if="LPTAmount"
+          class="w-full flex items-center justify-between px-2"
+        >
+          <p class="text-sm text-gray-600">Price Per LP Token</p>
+          <div v-if="ui.priceLoader" class="loading-dots text-2xl">.</div>
+          <p v-else class="font-medium text-sm dark:text-white font-mono">
+            {{ LPTPrice }} {{ poolToken && poolToken.uToken.symbol }}
+          </p>
+        </div>
+
+        <button
+          v-if="isWalletConnected"
+          class="font-medium w-full py-2 rounded-md focus:outline-none"
+          :class="[
+            !LPTAmount ? getDisabledClass : getActiveClass,
+            isSufficentBalance ? getDisabledClass : getActiveClass,
+          ]"
+          :disabled="shouldDisableMint"
+          @click="
+            mint(
+              poolToken.address,
+              poolToken.llcAddress,
+              poolToken.uToken.address
+            )
+          "
+        >
+          <span v-if="!LPTAmount">Enter An Amount</span>
+          <span v-else-if="isSufficentBalance">Insufficient Balance</span>
+          <span v-else>Mint</span>
+        </button>
+
+        <ConnectWalletBtn v-else class="w-full" />
       </div>
 
-      <button
-        v-if="isWalletConnected"
-        class="font-medium w-full py-2 rounded-md focus:outline-none"
-        :class="[
-          !LPTAmount ? getDisabledClass : getActiveClass,
-          isSufficentBalance ? getDisabledClass : getActiveClass,
-        ]"
-        :disabled="shouldDisableMint"
-        @click="
-          mint(
-            poolToken.address,
-            poolToken.llcAddress,
-            poolToken.uToken.address
-          )
-        "
-      >
-        <span v-if="!LPTAmount">Enter An Amount</span>
-        <span v-else-if="isSufficentBalance">Insufficient Balance</span>
-        <span v-else>Mint</span>
-      </button>
-
-      <ConnectWalletBtn v-else class="w-full" />
-    </div>
-
-    <!-- Transaction confirmation Modal -->
-    <!-- <Modal v-model="ui.showConfirmation">
+      <!-- Transaction confirmation Modal -->
+      <!-- <Modal v-model="ui.showConfirmation">
       <template>
         <div class="flex flex-col space-y-4">
           <div class="flex justify-between items-center">
@@ -190,9 +164,31 @@
       </template>
     </Modal> -->
 
-    <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
-    <RejectedModal v-model="ui.showRejected" />
-    <AwaitingModal v-model="ui.showAwaiting" />
+      <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
+      <RejectedModal v-model="ui.showRejected" />
+      <AwaitingModal v-model="ui.showAwaiting" />
+    </div>
+
+    <!-- Show fees -->
+    <div v-if="LPTAmount" class="bottom-container">
+      <div class="px-4">
+        <div class="flex flex-col space-y-1">
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Minting Fees</p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{ (parseInt(UNDOutput) * parseInt(llc.fee)) / 1e5 }}
+              {{ poolToken.uToken.symbol }}
+            </p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Funding Rate</p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{ (llc.loanRate * 100) / 1e6 }}%
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -414,3 +410,19 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+.bottom-container {
+  width: 100%;
+  max-width: 400px;
+  padding-top: calc(24px + 2rem);
+  padding-bottom: 20px;
+  margin-top: -2rem;
+  margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 16px;
+  z-index: -1;
+  transform: translateY();
+  transition: transform 300ms ease-in-out 0s;
+}
+</style>

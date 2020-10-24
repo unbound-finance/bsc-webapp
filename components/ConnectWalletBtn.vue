@@ -40,12 +40,6 @@
               >
                 {{ network }}{{ network !== 'main' ? ' testnet' : 'net' }}
               </div>
-              <!-- <button
-                type="button"
-                class="focus:outline-none px-2 py-1 rounded text-sm bg-light-primary dark:bg-dark-primary bg-opacity-25 text-light-primary dark:text-white"
-              >
-                Change
-              </button> -->
             </div>
 
             <div class="w-full md:w-1/2 pt-4">
@@ -72,18 +66,18 @@
     </Modal>
 
     <!-- Change Network Modal -->
-    <Modal v-model="ui.showChgNetDialog">
+    <Modal v-model="ui.showChgNetDialog" :persistent="true">
       <template>
         <div class="flex flex-col space-y-4">
           <div class="flex justify-between items-center">
             <p class="font-medium dark:text-white">Change Your Network</p>
-            <button
+            <!-- <button
               type="button"
               class="focus:outline-none"
               @click="ui.showChgNetDialog = false"
             >
               <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
-            </button>
+            </button> -->
           </div>
 
           <div>
