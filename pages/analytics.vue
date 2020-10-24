@@ -163,8 +163,9 @@
     <div class="mt-4 md:mt-8">
       <div class="w-full flex items-center justify-between py-2">
         <p class="text-lg text-gray-800 dark:text-gray-200 font-medium p-2">
-          Pool Tokens
+          Liquidity Pool Tokens
         </p>
+
         <input
           v-model="search"
           type="text"
@@ -186,11 +187,6 @@
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Exchange
-                  </th>
-                  <th
-                    class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-                  >
                     Total Locked
                   </th>
                   <th
@@ -198,10 +194,16 @@
                   >
                     Price
                   </th>
+
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    LTV
+                    Funding Rate
+                  </th>
+                  <th
+                    class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Minting Fee
                   </th>
                   <th class="px-6 py-3 bg-gray-50"></th>
                 </tr>
@@ -225,16 +227,15 @@
                         >
                           {{ data.name }}
                         </div>
+                        <div
+                          class="text-sm leading-5 text-gray-500 dark:text-gray-700"
+                        >
+                          {{ data.exchange }}
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-no-wrap">
-                    <div
-                      class="text-sm leading-5 text-gray-900 dark:text-gray-200"
-                    >
-                      {{ data.exchange }}
-                    </div>
-                  </td>
+
                   <td class="px-6 py-4 whitespace-no-wrap">
                     <div
                       class="text-sm leading-5 text-gray-900 dark:text-gray-200"
@@ -256,14 +257,24 @@
                       {{ data.ltv }}%
                     </div>
                   </td>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <div
+                      class="text-sm leading-5 text-gray-900 dark:text-gray-200"
+                    >
+                      {{ Number((data.mintingFee / 1e6) * 100) }}%
+                    </div>
+                  </td>
                   <td
                     class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium"
                   >
-                    <button
-                      class="bg-light-primary dark:bg-dark-primary text-light-primary dark:text-white bg-opacity-25 px-6 py-1 rounded appearance-none focus:outline-none"
-                    >
-                      Mint
-                    </button>
+                    <nuxt-link to="/mint">
+                      <button
+                        type="button"
+                        class="bg-light-primary dark:bg-dark-primary text-light-primary dark:text-white bg-opacity-25 px-6 py-1 rounded appearance-none focus:outline-none"
+                      >
+                        Mint
+                      </button>
+                    </nuxt-link>
                   </td>
                 </tr>
               </tbody>
@@ -445,12 +456,14 @@ export default {
         await supportedPoolTokens.map(async (ev) => {
           const loanRatio = await this.getLoanRatioPerLPT(ev)
           const lockedLPT = await getTotalLockedLPT(ev.address, ev.llcAddress)
+          const mintingFee = await getLLC(ev.llcAddress)
 
           const obj = {
             ...ev,
             ltv: loanRatio.ltv,
             price: loanRatio.price,
             lockedLPT,
+            mintingFee: mintingFee.fee,
           }
           poolTokens.push(obj)
         })
