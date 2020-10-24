@@ -8,6 +8,7 @@ export default {
     liquidityLock: '0x0097551eBF9224159D4f94CA3Cb03bb7608e1C54',
     unboundStaking: '0x339004Ea6d1F74B94A905a314B52211f0DdeC00F',
     UNDUniswapPool: '0x0ab8f8efa4aa3f60a7e20fb6142a3d144008a469',
+    uETHUniswapPool: '0x4291c0c918505a2310797fed1bed7c3db292b252',
     uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
     valuator: '0x9fC541FCC54Ded46CD69a112d0f27584fb081e45',
   },

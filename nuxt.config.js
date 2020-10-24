@@ -72,6 +72,8 @@ export default {
     '@/plugins/notification.js',
     '@/plugins/vue-tailwind.js',
     '@/plugins/vue-tooltip.js',
+    '@/plugins/vue-scrollbar.js',
+    '@/plugins/numberFormatter',
   ],
   /*
    ** Auto import components
