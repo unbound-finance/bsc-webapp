@@ -7,11 +7,63 @@
         class="flex flex-col w-full md:w-1/3 md:border-r border-gray-200 dark:border-gray-800 px-4"
       >
         <div class="p-2 flex flex-col">
-          <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
-            >Total Liquidity</span
+          <div class="px-2 w-full flex items-center justify-between">
+            <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
+              >Total Liquidity</span
+            >
+            <button
+              type="button"
+              class="text-xs text-light-primary dark:text-dark-primary appearance-none focus:outline-none"
+              @click="ui.showLiquidityBreakdown = !ui.showLiquidityBreakdown"
+            >
+              <span v-if="!ui.showLiquidityBreakdown">View Details</span>
+              <i v-else class="fas fa-times text-xs"></i>
+            </button>
+          </div>
+
+          <div
+            v-if="ui.showLiquidityBreakdown"
+            class="w-full px-2 flex items-center space-x-6 mt-2 transition-all ease-in duration-150"
           >
-          <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            ${{ overview.totalLiquidity }}
+            <div class="flex items-center">
+              <img
+                src="~/assets/tokens/und.webp"
+                class="mr-2"
+                width="16"
+                alt="UND logo"
+              />
+              <div class="flex flex-col">
+                <div class="font-medium text-gray-800 dark:text-gray-200">
+                  ${{ fees.staking }}
+                </div>
+                <span class="text-xs text-gray-500 dark:text-gray-600"
+                  >UND</span
+                >
+              </div>
+            </div>
+
+            <div class="flex items-center">
+              <img
+                src="~/assets/tokens/uEth.svg"
+                class="mr-2"
+                alt="uEth logo"
+                style="max-height: 20px; max-width: 16px"
+              />
+              <div class="flex flex-col">
+                <div class="font-medium text-gray-800 dark:text-gray-200">
+                  ${{ fees.safu }}
+                </div>
+                <span class="text-xs text-gray-500 dark:text-gray-600"
+                  >uETH</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div v-else class="px-2 transition-all ease-in duration-150">
+            <div class="text-xl font-medium text-gray-800 dark:text-gray-200">
+              ${{ overview.totalLiquidity }}
+            </div>
           </div>
         </div>
         <div
@@ -61,7 +113,7 @@
             class="text-xs text-light-primary dark:text-dark-primary appearance-none focus:outline-none"
             @click="ui.showFeesBreakdown = !ui.showFeesBreakdown"
           >
-            <span v-if="!ui.showFeesBreakdown">View Breakdown</span>
+            <span v-if="!ui.showFeesBreakdown">View Details</span>
             <i v-else class="fas fa-times text-xs"></i>
           </button>
         </div>
@@ -98,9 +150,11 @@
           </div>
         </div>
 
-        <div v-else class="mt-2 px-2 transition-all ease-in duration-150">
+        <div v-else class="px-2 transition-all ease-in duration-150">
           <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-            $1,000,000
+            ${{
+              Number(fees.staking) + Number(fees.safu) + Number(fees.devfund)
+            }}
           </div>
         </div>
       </div>
@@ -248,7 +302,8 @@ export default {
   data() {
     return {
       ui: {
-        showFeesBreakdown: true,
+        showFeesBreakdown: false,
+        showLiquidityBreakdown: false,
       },
       poolTokens: null,
       search: '',

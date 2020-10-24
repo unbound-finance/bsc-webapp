@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <form @submit.prevent="calculate">
+  <div class="main_container my-4 md:my-8">
+    <form class="p-4" @submit.prevent="calculate">
       <div class="space-y-1">
         <label class="block text-sm leading-5 font-medium text-gray-700 p-1">
           Select Pair

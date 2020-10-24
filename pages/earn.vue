@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="flex flex-col items-center w-full py-2 space-y-4 px-4">
+  <div class="main_container my-4 md:my-8">
+    <div class="flex flex-col items-center w-full space-y-4 p-4">
       <div class="flex w-full items-center justify-between">
         <nuxt-link to="/">
           <button class="focus:outline-none">

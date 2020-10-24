@@ -1,10 +1,10 @@
 <template>
-  <div class="bg-white dark:bg-dark-bg min-h-screen">
+  <div>
     <Navbar />
     <div class="md:max-w-6xl mx-auto p-4">
       <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-2">
         <div
-          class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75"
           :class="showFees ? '' : 'border'"
         >
           <div class="flex flex-col">
@@ -53,7 +53,7 @@
           </div>
         </div>
         <div
-          class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75"
           :class="showLiquidity ? '' : 'border'"
         >
           <div class="flex flex-col">
@@ -66,7 +66,7 @@
           </div>
         </div>
         <div
-          class="w-full border-gray-200 dark:border-gray-800 rounded p-4"
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75"
           :class="showLiquidity ? '' : 'border'"
         >
           <div class="flex flex-col">
@@ -115,7 +115,7 @@
               :class="
                 isExactActive
                   ? 'text-light-primary dark:text-white border-b-2 border-light-primary dark:border-dark-primary cursor-pointer'
-                  : 'text-gray-400 dark:text-gray-700 cursor-pointer'
+                  : 'text-gray-500 dark:text-gray-700 cursor-pointer'
               "
               >Transactions</span
             >
@@ -142,7 +142,7 @@ import supportedPoolTokens from '~/configs/supportedPoolTokens'
 // const txDecoder = require('ethereum-tx-decoder')
 
 export default {
-  layout: 'account',
+  layout: 'blank',
   data() {
     return {
       ui: {

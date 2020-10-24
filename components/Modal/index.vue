@@ -20,6 +20,10 @@ export default {
   name: 'Modal',
   props: {
     value: Boolean,
+    persistent: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -39,15 +43,19 @@ export default {
   },
   methods: {
     close() {
-      this.modal = false
-      this.$emit('close')
+      if (!this.persistent) {
+        this.modal = false
+        this.$emit('close')
+      }
     },
     closeOnEsc() {
-      document.addEventListener('keydown', (e) => {
-        if (this.show && e.keyCode === 27) {
-          this.close()
-        }
-      })
+      if (!this.persistent) {
+        document.addEventListener('keydown', (e) => {
+          if (this.show && e.keyCode === 27) {
+            this.close()
+          }
+        })
+      }
     },
   },
 }
