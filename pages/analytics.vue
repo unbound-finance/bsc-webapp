@@ -34,7 +34,9 @@
               />
               <div class="flex flex-col">
                 <div class="font-medium text-gray-800 dark:text-gray-200">
-                  ${{ $numberFormatter(overview.liquidity.UNDLiquidity) }}
+                  ${{
+                    $numberFormatter(Number(overview.liquidity.UNDLiquidity), 2)
+                  }}
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-600"
                   >UND</span
@@ -51,7 +53,12 @@
               />
               <div class="flex flex-col">
                 <div class="font-medium text-gray-800 dark:text-gray-200">
-                  ${{ $numberFormatter(overview.liquidity.uETHLiquidity) }}
+                  ${{
+                    $numberFormatter(
+                      Number(overview.liquidity.uETHLiquidity),
+                      2
+                    )
+                  }}
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-600"
                   >uETH</span
@@ -65,7 +72,7 @@
               class="text-xl font-medium text-gray-800 dark:text-gray-200"
               :title="overview.liquidity.total.toLocaleString()"
             >
-              ${{ $numberFormatter(Number(overview.liquidity.total)) }}
+              ${{ $numberFormatter(Number(overview.liquidity.total), 2) }}
             </div>
           </div>
         </div>
@@ -127,7 +134,7 @@
         >
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(fees.staking) }}
+              ${{ $numberFormatter(Number(fees.staking), 2) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Staker Fees</span
@@ -136,7 +143,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(fees.safu) }}
+              ${{ $numberFormatter(Number(fees.safu), 2) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >SAFU Fund</span
@@ -145,7 +152,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(fees.devfund) }}
+              ${{ $numberFormatter(Number(fees.devfund), 2) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Dev Fund</span
@@ -166,7 +173,8 @@
           >
             ${{
               $numberFormatter(
-                Number(fees.staking) + Number(fees.safu) + Number(fees.devfund)
+                Number(fees.staking) + Number(fees.safu) + Number(fees.devfund),
+                2
               )
             }}
           </div>
