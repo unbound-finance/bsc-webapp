@@ -5,12 +5,11 @@
       class="modal-backdrop flex justify-center items-center"
       @click="close"
     >
-      <div
+      <perfect-scrollbar
         class="modal-container mx-4 p-4 rounded-lg shadow-lg bg-white dark:bg-gray-900 m-auto"
-        @click.stop
       >
         <slot></slot>
-      </div>
+      </perfect-scrollbar>
     </div>
   </transition>
 </template>
@@ -35,6 +34,11 @@ export default {
       this.modal = a
     },
     modal(a) {
+      if (a) {
+        document.body.classList.add('overflow-hidden')
+      } else {
+        document.body.classList.remove('overflow-hidden')
+      }
       this.$emit('input', a)
     },
   },
@@ -74,6 +78,7 @@ export default {
 
 .modal-container {
   width: 400px;
+  max-height: 75%;
   overflow-x: auto;
   transition: all 0.3s ease;
 }

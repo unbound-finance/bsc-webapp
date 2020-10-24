@@ -1,7 +1,9 @@
 import { ethers } from 'ethers'
+import Axios from 'axios'
 import ERC20ABI from '~/configs/abi/ERC20'
 import UnboundDollarABI from '~/configs/abi/UnboundDai'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
+import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 const signer = provider.getSigner()
@@ -38,4 +40,52 @@ const getLockedLPT = async (LPTAddress) => {
   return formatted
 }
 
-export { getBalanceOfToken, checkLoan, getLockedLPT }
+const getLPTPrice = async (poolToken) => {
+  const contract = await new ethers.Contract(
+    poolToken.address,
+    UniswapLPTABI,
+    signer
+  )
+  const reserve = await contract.getReserves()
+  const LPTTotalSupply = await contract.totalSupply()
+  const token0 = await contract.token0()
+
+  if (token0.toLowerCase() === poolToken.stablecoin) {
+    const value = reserve[0].toString() * 2
+    if (poolToken.uToken.symbol === 'uETH') {
+      const ethPrice = await getERC20Price('ethereum')
+      return (value / LPTTotalSupply).toFixed(4).slice(0, -1) * ethPrice
+    } else {
+      return (value / LPTTotalSupply).toFixed(4).slice(0, -1)
+    }
+  } else {
+    const value = reserve[1].toString() * 2
+    if (poolToken.uToken.symbol === 'uETH') {
+      const ethPrice = await getERC20Price('ethereum')
+      return (value / LPTTotalSupply).toFixed(4).slice(0, -1) * ethPrice
+    } else {
+      return (value / LPTTotalSupply).toFixed(4).slice(0, -1)
+    }
+  }
+}
+
+const getERC20Price = async (id) => {
+  // id: 'ethereum'
+  try {
+    const { data } = await Axios.get(
+      `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`
+    )
+    const { usd } = data[id]
+    return usd
+  } catch (error) {
+    throw new Error('Error fetching price.')
+  }
+}
+
+export {
+  getBalanceOfToken,
+  checkLoan,
+  getLockedLPT,
+  getERC20Price,
+  getLPTPrice,
+}

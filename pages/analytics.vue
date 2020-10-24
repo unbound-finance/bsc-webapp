@@ -34,7 +34,9 @@
               />
               <div class="flex flex-col">
                 <div class="font-medium text-gray-800 dark:text-gray-200">
-                  ${{ fees.staking }}
+                  ${{
+                    $numberFormatter(Number(overview.liquidity.UNDLiquidity), 2)
+                  }}
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-600"
                   >UND</span
@@ -51,7 +53,12 @@
               />
               <div class="flex flex-col">
                 <div class="font-medium text-gray-800 dark:text-gray-200">
-                  ${{ fees.safu }}
+                  ${{
+                    $numberFormatter(
+                      Number(overview.liquidity.uETHLiquidity),
+                      2
+                    )
+                  }}
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-600"
                   >uETH</span
@@ -61,8 +68,11 @@
           </div>
 
           <div v-else class="px-2 transition-all ease-in duration-150">
-            <div class="text-xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ overview.totalLiquidity }}
+            <div
+              class="text-xl font-medium text-gray-800 dark:text-gray-200"
+              :title="overview.liquidity.total.toLocaleString()"
+            >
+              ${{ $numberFormatter(Number(overview.liquidity.total), 2) }}
             </div>
           </div>
         </div>
@@ -87,7 +97,7 @@
             >Total Volume (24H)</span
           >
           <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            $900K
+            $0
           </div>
         </div>
         <div
@@ -98,7 +108,7 @@
             >Collatralization Ratio</span
           >
           <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            60%
+            {{ overview.cRatio }}%
           </div>
         </div>
       </div>
@@ -124,7 +134,7 @@
         >
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ fees.staking }}
+              ${{ $numberFormatter(Number(fees.staking), 2) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Staker Fees</span
@@ -133,7 +143,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ fees.safu }}
+              ${{ $numberFormatter(Number(fees.safu), 2) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >SAFU Fund</span
@@ -142,7 +152,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ fees.devfund }}
+              ${{ $numberFormatter(Number(fees.devfund), 2) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Dev Fund</span
@@ -151,9 +161,21 @@
         </div>
 
         <div v-else class="px-2 transition-all ease-in duration-150">
-          <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
+          <div
+            class="text-2xl font-medium text-gray-800 dark:text-gray-200"
+            :title="
+              (
+                Number(fees.staking) +
+                Number(fees.safu) +
+                Number(fees.devfund)
+              ).toLocaleString()
+            "
+          >
             ${{
-              Number(fees.staking) + Number(fees.safu) + Number(fees.devfund)
+              $numberFormatter(
+                Number(fees.staking) + Number(fees.safu) + Number(fees.devfund),
+                2
+              )
             }}
           </div>
         </div>
@@ -163,8 +185,9 @@
     <div class="mt-4 md:mt-8">
       <div class="w-full flex items-center justify-between py-2">
         <p class="text-lg text-gray-800 dark:text-gray-200 font-medium p-2">
-          Pool Tokens
+          Liquidity Pool Tokens
         </p>
+
         <input
           v-model="search"
           type="text"
@@ -186,11 +209,6 @@
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Exchange
-                  </th>
-                  <th
-                    class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-                  >
                     Total Locked
                   </th>
                   <th
@@ -198,10 +216,16 @@
                   >
                     Price
                   </th>
+
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    LTV
+                    Funding Rate
+                  </th>
+                  <th
+                    class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Minting Fee
                   </th>
                   <th class="px-6 py-3 bg-gray-50"></th>
                 </tr>
@@ -225,16 +249,15 @@
                         >
                           {{ data.name }}
                         </div>
+                        <div
+                          class="text-sm leading-5 text-gray-500 dark:text-gray-700"
+                        >
+                          {{ data.exchange }}
+                        </div>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 whitespace-no-wrap">
-                    <div
-                      class="text-sm leading-5 text-gray-900 dark:text-gray-200"
-                    >
-                      {{ data.exchange }}
-                    </div>
-                  </td>
+
                   <td class="px-6 py-4 whitespace-no-wrap">
                     <div
                       class="text-sm leading-5 text-gray-900 dark:text-gray-200"
@@ -256,14 +279,24 @@
                       {{ data.ltv }}%
                     </div>
                   </td>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <div
+                      class="text-sm leading-5 text-gray-900 dark:text-gray-200"
+                    >
+                      {{ Number((data.mintingFee / 1e6) * 100) }}%
+                    </div>
+                  </td>
                   <td
                     class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium"
                   >
-                    <button
-                      class="bg-light-primary dark:bg-dark-primary text-light-primary dark:text-white bg-opacity-25 px-6 py-1 rounded appearance-none focus:outline-none"
-                    >
-                      Mint
-                    </button>
+                    <nuxt-link to="/mint">
+                      <button
+                        type="button"
+                        class="bg-light-primary dark:bg-dark-primary text-light-primary dark:text-white bg-opacity-25 px-6 py-1 rounded appearance-none focus:outline-none"
+                      >
+                        Mint
+                      </button>
+                    </nuxt-link>
                   </td>
                 </tr>
               </tbody>
@@ -294,7 +327,8 @@ import unboundTokenABI from '~/configs/abi/UnboundDai'
 
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
-import { getTotalLiquidity, getTotalLockedLPT } from '~/mixins/analytics'
+import { getLockedLPT, getLPTPrice } from '~/mixins/info'
+import { getTotalLiquidity, getCRatio } from '~/mixins/analytics'
 import config from '~/configs/config'
 
 export default {
@@ -308,7 +342,12 @@ export default {
       poolTokens: null,
       search: '',
       overview: {
-        totalLiquidity: 0,
+        liquidity: {
+          total: 0,
+          UNDLiquidity: 0,
+          uETHLiquidity: 0,
+        },
+        cRatio: 0,
       },
       fees: {
         staking: '',
@@ -340,7 +379,11 @@ export default {
   },
   methods: {
     async getAnalyticsData() {
-      this.overview.totalLiquidity = await getTotalLiquidity()
+      const liquidity = await getTotalLiquidity()
+      this.overview.liquidity.total = liquidity.total
+      this.overview.liquidity.UNDLiquidity = liquidity.undLiquidity
+      this.overview.liquidity.uETHLiquidity = liquidity.uethLiquidityInUsd
+      this.overview.cRatio = await getCRatio()
     },
 
     async getFees() {
@@ -444,12 +487,15 @@ export default {
       try {
         await supportedPoolTokens.map(async (ev) => {
           const loanRatio = await this.getLoanRatioPerLPT(ev)
-          const lockedLPT = await getTotalLockedLPT(ev.address, ev.llcAddress)
+          const lockedLPT = await getLockedLPT(ev.llcAddress)
+          const mintingFee = await getLLC(ev.llcAddress)
+          const price = await getLPTPrice(ev)
 
           const obj = {
             ...ev,
             ltv: loanRatio.ltv,
-            price: loanRatio.price,
+            mintingFee: mintingFee.fee,
+            price: Number(price).toFixed(2),
             lockedLPT,
           }
           poolTokens.push(obj)
