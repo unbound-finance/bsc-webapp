@@ -2,27 +2,46 @@
   <div class="flex flex-col items-center justify-center w-full">
     <div class="mint__input dark:border-gray-700">
       <div class="flex items-center justify-between">
-        <span class="text-sm text-gray-500 dark:text-gray-700">{{
-          label
-        }}</span>
+        <span class="text-sm text-gray-500">{{ label }}</span>
         <slot name="showBalance">
-          <p v-if="poolToken && type === 'mint'" class="text-xs text-gray-500">
-            Balance:
-            <span
-              class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ poolToken.balance }}</span
-            >
-          </p>
-          <p
-            v-if="poolToken && type === 'unlock'"
-            class="text-xs text-gray-500"
+          <div
+            v-if="poolToken && type === 'mint'"
+            class="flex items-center space-x-2"
           >
-            Locked LPT's:
-            <span
-              class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ poolToken.lockedBalance }}</span
+            <button
+              type="button"
+              class="appearance-none text-xs text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
+              @click="model = poolToken.balance"
             >
-          </p>
+              Max
+            </button>
+            <p class="text-xs text-gray-500">
+              Balance:
+              <span
+                class="font-mono text-gray-900 dark:text-gray-500 font-medium"
+                >{{ poolToken.balance }}</span
+              >
+            </p>
+          </div>
+          <div
+            v-if="poolToken && type === 'unlock'"
+            class="flex items-center space-x-2"
+          >
+            <button
+              type="button"
+              class="appearance-none text-xs text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
+              @click="model = poolToken.lockedBalance"
+            >
+              Max
+            </button>
+            <p class="text-xs text-gray-500">
+              Locked LPT's:
+              <span
+                class="font-mono text-gray-900 dark:text-gray-500 font-medium"
+                >{{ poolToken.lockedBalance }}</span
+              >
+            </p>
+          </div>
         </slot>
       </div>
       <form>
@@ -33,7 +52,7 @@
             v-model="model"
             type="number"
             placeholder="0.00"
-            class="font-mono text-3xl appearance-none bg-transparent text-gray-900 dark:text-gray-400 font-medium w-full leading-tight focus:outline-none"
+            class="font-mono text-3xl pr-4 appearance-none bg-transparent text-gray-900 dark:text-gray-200 font-medium w-full leading-tight focus:outline-none"
             :class="readonly ? 'cursor-not-allowed' : ''"
             :readonly="readonly"
           />
@@ -52,12 +71,12 @@
                   class="flex items-center hover:bg-gray-100 dark-hover:bg-gray-900 rounded-md p-1"
                 >
                   <p
-                    class="text-gray-900 dark:text-gray-500 font-semibold text-right"
+                    class="text-gray-900 dark:text-gray-200 font-semibold text-right"
                   >
                     {{ poolToken.name }}
                   </p>
                   <i
-                    class="fas fa-chevron-down dark:text-gray-500 text-xs pl-1 font-bold"
+                    class="fas fa-chevron-down dark:text-gray-200 text-xs pl-1 font-bold"
                   ></i>
                 </div>
               </button>
@@ -129,6 +148,7 @@ export default {
       this.$emit('input', a)
     },
     poolToken(a) {
+      this.model = null
       this.$emit('update:poolToken', a)
     },
   },
