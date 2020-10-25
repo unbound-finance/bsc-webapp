@@ -13,13 +13,15 @@
           :event="data.isDisabled ? '' : 'click'"
         >
           <div
-            class="p-4 border border-gray-200 dark:border-gray-800 rounded-lg w-full flex space-x-4 gap-4"
+            class="p-4 border border-gray-200 dark:border-gray-800 rounded-lg w-full flex items-center space-x-2 gap-4"
           >
-            <img
-              :src="require(`~/assets/icons/${data.icon}.svg`)"
-              width="32"
-              :alt="data.title"
-            />
+            <div class="w-8 h-8">
+              <img
+                :src="require(`~/assets/icons/${data.icon}`)"
+                :alt="data.title"
+                style="min-width: 32px"
+              />
+            </div>
             <div>
               <p class="font-medium dark:text-white">{{ data.title }}</p>
               <p class="text-sm text-gray-600 dark:text-white opacity-50">
@@ -42,7 +44,7 @@ export default {
         {
           title: 'Mint',
           route: '/mint',
-          icon: 'mint',
+          icon: 'mint.svg',
           description:
             'Collateralize your liquidity pool tokens to generate UND or uETH.',
           isDisabled: false,
@@ -50,14 +52,14 @@ export default {
         {
           title: 'Unlock',
           route: '/unlock',
-          icon: 'burn',
+          icon: 'burn.webp',
           description: 'Unlock your liquidity pool tokens.',
           isDisabled: false,
         },
         {
           title: 'Earn',
           route: '/earn',
-          icon: 'earn',
+          icon: 'earn.svg',
           description: 'Add liquidity and earn minting fees.',
           isDisabled: false,
         },
