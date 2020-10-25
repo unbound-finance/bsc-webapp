@@ -245,7 +245,10 @@ export default {
     },
 
     isSufficentBalance() {
-      return parseFloat(this.LPTAmount) > parseFloat(this.balance)
+      return (
+        this.poolToken &&
+        parseFloat(this.LPTAmount) > parseFloat(this.poolToken.balance)
+      )
     },
 
     shouldDisableMint() {

@@ -5,11 +5,11 @@
       class="modal-backdrop flex justify-center items-center"
       @click="close"
     >
-      <perfect-scrollbar
+      <div
         class="modal-container mx-4 p-4 rounded-lg shadow-lg bg-white dark:bg-gray-900 m-auto"
       >
         <slot></slot>
-      </perfect-scrollbar>
+      </div>
     </div>
   </transition>
 </template>

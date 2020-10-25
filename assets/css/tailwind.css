@@ -24,6 +24,26 @@ input[type='number'] {
   border-radius: 24px;
 }
 
+/* The emerging W3C standard
+   that is currently Firefox-only */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cccccc transparent;
+}
+
+/* Works on Chrome/Edge/Safari */
+*::-webkit-scrollbar {
+  width: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 20px;
+  border: 3px solid transparent;
+}
+
 .tooltip {
   display: block !important;
   z-index: 10000;
