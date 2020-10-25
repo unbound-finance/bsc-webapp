@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="modal">
-    <div class="flex flex-col justify-center py-4 items-center space-y-4">
+    <div class="flex flex-col justify-center px-4 py-8 items-center space-y-4">
       <img src="~/assets/icons/modal/success.svg" width="128" alt="success" />
       <div>
         <p class="text-xl dark:text-white font-medium text-gray-800">
@@ -23,10 +23,10 @@
 <script>
 import Modal from '@/components/Modal'
 export default {
+  extends: Modal,
   props: {
     hash: String,
   },
-  extends: Modal,
 }
 </script>
 

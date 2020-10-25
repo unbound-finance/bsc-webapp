@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="modal" :persistent="persistent">
-    <div class="flex flex-col space-y-4">
+    <div class="flex flex-col space-y-4 p-4">
       <div class="flex justify-between items-center">
         <p class="font-medium dark:text-white">Select Pool Token</p>
         <button type="button" class="focus:outline-none" @click="modal = false">
@@ -31,10 +31,10 @@
                 :token1logo="token.currencyTwoLogo"
               />
               <div class="flex flex-col">
-                <span class="font-medium dark:text-gray-500">{{
+                <span class="font-medium dark:text-gray-200">{{
                   token.name
                 }}</span>
-                <span class="text-xs text-gray-500 dark:text-gray-700">{{
+                <span class="text-xs text-gray-500 dark:text-gray-500">{{
                   token.exchange
                 }}</span>
               </div>
@@ -42,13 +42,13 @@
             <div>
               <span
                 v-if="type === 'mint'"
-                class="text-gray-800 dark:text-gray-500 font-bold font-mono"
+                class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
                 {{ token.balance || 0 }}
               </span>
               <span
                 v-if="type === 'unlock'"
-                class="text-gray-800 dark:text-gray-500 font-bold font-mono"
+                class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
                 {{ token.lockedBalance || 0 }}
               </span>

@@ -6,7 +6,8 @@
       @click="close"
     >
       <div
-        class="modal-container mx-4 p-4 rounded-lg shadow-lg bg-white dark:bg-gray-900 m-auto"
+        class="modal-container mx-4 shadow-lg bg-white dark:bg-gray-900 m-auto"
+        @click.stop
       >
         <slot></slot>
       </div>
@@ -78,9 +79,10 @@ export default {
 
 .modal-container {
   width: 400px;
-  max-height: 75%;
+  max-height: 85%;
   overflow-x: auto;
   transition: all 0.3s ease;
+  border-radius: 22px;
 }
 
 .modal-transition-enter,
