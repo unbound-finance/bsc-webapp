@@ -7,7 +7,7 @@
         class="flex flex-col w-full md:w-1/3 md:border-r border-gray-200 dark:border-gray-800 px-4"
       >
         <div class="p-2 flex flex-col">
-          <div class="px-2 w-full flex items-center justify-between">
+          <div class="w-full flex items-center justify-between">
             <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
               >Total Liquidity</span
             >
@@ -34,8 +34,8 @@
               />
               <div class="flex flex-col">
                 <div class="font-medium text-gray-800 dark:text-gray-200">
-                  ${{
-                    $numberFormatter(Number(overview.liquidity.UNDLiquidity), 2)
+                  {{
+                    $numberFormatter(Number(overview.liquidity.UNDLiquidity), 1)
                   }}
                 </div>
                 <span class="text-xs text-gray-500 dark:text-gray-600"
@@ -53,10 +53,10 @@
               />
               <div class="flex flex-col">
                 <div class="font-medium text-gray-800 dark:text-gray-200">
-                  ${{
+                  {{
                     $numberFormatter(
                       Number(overview.liquidity.uETHLiquidity),
-                      2
+                      1
                     )
                   }}
                 </div>
@@ -67,12 +67,12 @@
             </div>
           </div>
 
-          <div v-else class="px-2 transition-all ease-in duration-150">
+          <div v-else class="transition-all ease-in duration-150">
             <div
               class="text-xl font-medium text-gray-800 dark:text-gray-200"
               :title="overview.liquidity.total.toLocaleString()"
             >
-              ${{ $numberFormatter(Number(overview.liquidity.total), 2) }}
+              ${{ $numberFormatter(Number(overview.liquidity.total), 1) }}
             </div>
           </div>
         </div>
@@ -81,10 +81,10 @@
         ></div>
         <div class="p-2 flex flex-col">
           <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
-            >Current Minting Fee</span
+            >Collatralization Ratio</span
           >
           <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            0.5%
+            {{ overview.cRatio }}%
           </div>
         </div>
       </div>
@@ -105,10 +105,10 @@
         ></div>
         <div class="p-2 flex flex-col">
           <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
-            >Collatralization Ratio</span
+            >.</span
           >
           <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            {{ overview.cRatio }}%
+            .
           </div>
         </div>
       </div>
@@ -133,8 +133,8 @@
           class="w-full px-2 flex items-center justify-between mt-4 transition-all ease-in duration-150"
         >
           <div class="flex flex-col items-center justify-center">
-            <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(Number(fees.staking), 2) }}
+            <div class="text-lg font-medium text-gray-800 dark:text-gray-200">
+              ${{ $numberFormatter(Number(fees.staking), 1) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Staker Fees</span
@@ -142,8 +142,8 @@
           </div>
 
           <div class="flex flex-col items-center justify-center">
-            <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(Number(fees.safu), 2) }}
+            <div class="text-lg font-medium text-gray-800 dark:text-gray-200">
+              ${{ $numberFormatter(Number(fees.safu), 1) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >SAFU Fund</span
@@ -151,8 +151,8 @@
           </div>
 
           <div class="flex flex-col items-center justify-center">
-            <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(Number(fees.devfund), 2) }}
+            <div class="text-lg font-medium text-gray-800 dark:text-gray-200">
+              ${{ $numberFormatter(Number(fees.devfund), 1) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Dev Fund</span
@@ -174,7 +174,7 @@
             ${{
               $numberFormatter(
                 Number(fees.staking) + Number(fees.safu) + Number(fees.devfund),
-                2
+                1
               )
             }}
           </div>
@@ -327,7 +327,7 @@ import unboundTokenABI from '~/configs/abi/UnboundDai'
 
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
-import { getLockedLPT, getLPTPrice } from '~/mixins/info'
+import { getTotalLockedLPT, getLPTPrice } from '~/mixins/info'
 import { getTotalLiquidity, getCRatio } from '~/mixins/analytics'
 import config from '~/configs/config'
 
@@ -382,7 +382,7 @@ export default {
       const liquidity = await getTotalLiquidity()
       this.overview.liquidity.total = liquidity.total
       this.overview.liquidity.UNDLiquidity = liquidity.undLiquidity
-      this.overview.liquidity.uETHLiquidity = liquidity.uethLiquidityInUsd
+      this.overview.liquidity.uETHLiquidity = liquidity.uethLiquidity
       this.overview.cRatio = await getCRatio()
     },
 
@@ -487,7 +487,7 @@ export default {
       try {
         await supportedPoolTokens.map(async (ev) => {
           const loanRatio = await this.getLoanRatioPerLPT(ev)
-          const lockedLPT = await getLockedLPT(ev.llcAddress)
+          const lockedLPT = await getTotalLockedLPT(ev.address, ev.llcAddress)
           const mintingFee = await getLLC(ev.llcAddress)
           const price = await getLPTPrice(ev)
 

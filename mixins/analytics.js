@@ -3,7 +3,7 @@ import config from '@/configs/config'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundDai from '~/configs/abi/UnboundDai'
 
-import { getERC20Price, getLPTPrice, getLockedLPT } from '~/mixins/info'
+import { getERC20Price, getLPTPrice, getTotalLockedLPT } from '~/mixins/info'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
@@ -33,6 +33,7 @@ export const getTotalLiquidity = async () => {
   return {
     total: Number(undLiquidity + uethLiquidityInUsd),
     undLiquidity: Number(undLiquidity),
+    uethLiquidity: Number(uethLiquidity),
     uethLiquidityInUsd: Number(uethLiquidityInUsd),
   }
 }
@@ -66,7 +67,10 @@ export const getCRatio = async () => {
     await Promise.all(
       supportedPoolTokens.map(async (poolToken) => {
         const LPTPrice = await getLPTPrice(poolToken)
-        const lockedLPT = await getLockedLPT(poolToken.llcAddress)
+        const lockedLPT = await getTotalLockedLPT(
+          poolToken.address,
+          poolToken.llcAddress
+        )
         return Number(LPTPrice * lockedLPT)
       })
     )
