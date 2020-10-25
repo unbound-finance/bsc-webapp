@@ -2,6 +2,7 @@
   <div
     class="relative flex flex-col items-center justify-center flex-wrap my-4 md:my-8 p-4"
   >
+    <!-- Main Card -->
     <div class="dark:bg-dark-bg main_container">
       <div class="flex flex-col items-center w-full py-4 space-y-4 px-4">
         <div class="flex w-full items-center justify-between">
@@ -82,18 +83,13 @@
           class="font-medium w-full py-2 rounded-md focus:outline-none"
           :class="[
             !LPTAmount ? getDisabledClass : getActiveClass,
+            LPTAmount === '0' ? getDisabledClass : getActiveClass,
             isSufficentBalance ? getDisabledClass : getActiveClass,
           ]"
           :disabled="shouldDisableMint"
-          @click="
-            mint(
-              poolToken.address,
-              poolToken.llcAddress,
-              poolToken.uToken.address
-            )
-          "
+          @click="ui.showConfirmation = true"
         >
-          <span v-if="!LPTAmount">Enter An Amount</span>
+          <span v-if="!LPTAmount || LPTAmount === '0'">Enter An Amount</span>
           <span v-else-if="isSufficentBalance">Insufficient Balance</span>
           <span v-else>Mint</span>
         </button>
@@ -102,67 +98,154 @@
       </div>
 
       <!-- Transaction confirmation Modal -->
-      <!-- <Modal v-model="ui.showConfirmation">
-      <template>
-        <div class="flex flex-col space-y-4">
-          <div class="flex justify-between items-center">
-            <p class="font-medium dark:text-white">Confirm Mint</p>
-            <button
-              type="button"
-              class="focus:outline-none"
-              @click="ui.showConfirmation = false"
-            >
-              <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
-            </button>
-          </div>
-
-          <div class="flex flex-col space-y-4">
-            <div class="flex w-full items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <img src="~/assets/pool-tokens/eth-dai.svg" width="40" alt />
-                <span class="text-2xl dark:text-white">
-                  {{ LPTAmount }}
-                </span>
+      <Modal v-if="poolToken" v-model="ui.showConfirmation">
+        <template>
+          <div class="flex flex-col">
+            <div style="padding: 24px">
+              <div class="flex justify-between items-center">
+                <p class="text-xl font-medium dark:text-white">Confirm Mint</p>
+                <button
+                  type="button"
+                  class="focus:outline-none"
+                  @click="ui.showConfirmation = false"
+                >
+                  <i
+                    class="fas fa-times text-lg text-gray-900 dark:text-gray-500"
+                  ></i>
+                </button>
               </div>
-              <p class="text-lg font-medium dark:text-white">UNIETH-DAI</p>
-            </div>
-            <i
-              class="fas fa-arrow-down text-lg text-gray-800 dark:text-gray-500 mx-2"
-            ></i>
-            <div class="flex w-full items-center justify-between">
-              <div class="flex items-center space-x-2">
-                <img class="h-6" src="~/assets/icons/crypto/dai.webp" alt />
-                <span class="text-2xl dark:text-white">{{ UNDOutput }}</span>
-              </div>
-              <p class="text-lg font-medium dark:text-white">UND</p>
-            </div>
-          </div>
 
-          <div class="bg-gray-200 dark:bg-gray-800 p-4 rounded-md">
-            <div class="flex flex-col space-y-1">
-              <div class="flex items-center justify-between">
-                <p class="text-sm text-gray-600">Fees</p>
-                <p class="font-medium text-sm dark:text-white">
-                  {{ (parseInt(UNDOutput) * 0.25) / 100 }} UND
+              <div class="flex flex-col mt-4">
+                <div class="flex w-full items-center justify-between">
+                  <div class="flex items-center">
+                    <double-logo
+                      :token0logo="poolToken.currencyOneLogo"
+                      :token1logo="poolToken.currencyTwoLogo"
+                    />
+                    <span class="text-3xl font-mono dark:text-white">
+                      {{ LPTAmount }}
+                    </span>
+                  </div>
+                  <p class="text-2xl font-mono font-medium dark:text-white">
+                    {{ poolToken.name }}
+                  </p>
+                </div>
+                <i
+                  class="fas fa-arrow-down text-xs my-2 text-gray-600 dark:text-gray-700 mx-2"
+                ></i>
+                <div class="flex w-full items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <img
+                      class="w-24 h-24 mr-4"
+                      :src="require(`~/assets/tokens/${poolToken.uToken.icon}`)"
+                      width="16"
+                      :alt="`${poolToken.uToken.symbol} logo`"
+                      style="max-width: 24px; max-height: 24px"
+                    />
+                    <span class="text-3xl font-mono dark:text-white">{{
+                      UNDOutput
+                    }}</span>
+                  </div>
+                  <p class="text-2xl font-mono font-medium dark:text-white">
+                    UND
+                  </p>
+                </div>
+                <p
+                  class="text-sm text-gray-600 dark:text-gray-400 italic font-medium mt-4"
+                >
+                  You will have to pay
+                  <span
+                    class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
+                    >{{ Number(UNDOutput) && UNDOutput }}
+                    {{ poolToken.uToken.symbol }}</span
+                  >
+                  for unlocking your
+                  <span
+                    class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
+                    >{{ LPTAmount }} {{ poolToken.name }}</span
+                  >.
                 </p>
               </div>
-              <div class="flex items-center justify-between">
-                <p class="text-sm text-gray-600">Funding Rate</p>
-                <p class="font-medium text-sm dark:text-white">50%</p>
-              </div>
             </div>
-            <button
-              class="w-full mt-4 py-2 bg-light-primary dark:bg-dark-primary font-medium text-white rounded-md"
-              @click="
-                mint(selectedPoolToken.address, selectedPoolToken.llcAddress)
-              "
-            >
-              Confirm Mint
-            </button>
+
+            <div class="bg-gray-200 dark:bg-gray-800" style="padding: 24px">
+              <div class="flex flex-col space-y-1">
+                <div class="flex items-center justify-between">
+                  <p
+                    class="text-sm font-medium text-gray-600 dark:text-gray-400"
+                  >
+                    Funding Rate
+                  </p>
+                  <p class="font-medium font-mono dark:text-white">
+                    {{ (llc.loanRate * 100) / 1e6 }}%
+                  </p>
+                </div>
+
+                <div class="flex items-center justify-between pt-4">
+                  <p
+                    class="text-sm font-medium text-gray-600 dark:text-gray-400"
+                  >
+                    {{ poolToken.uToken.symbol }} To Mint
+                  </p>
+                  <p class="font-medium font-mono dark:text-white">
+                    {{ Number(UNDOutput) && UNDOutput }}
+                    {{ poolToken.uToken.symbol }}
+                  </p>
+                </div>
+                <div class="flex items-center justify-between">
+                  <p
+                    class="text-sm font-medium text-gray-600 dark:text-gray-400"
+                  >
+                    Minting Fees ({{ Number((llc.fee * 100) / 1e6) }}%)
+                  </p>
+                  <p class="font-medium font-mono dark:text-white">
+                    -{{
+                      Number(
+                        (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) /
+                          100
+                      ).toFixed(2)
+                    }}
+                    {{ poolToken.uToken.symbol }}
+                  </p>
+                </div>
+                <div
+                  class="border-b border-dotted border-gray-600 dark:border-gray-400"
+                ></div>
+                <div class="flex items-center justify-between">
+                  <p
+                    class="text-sm font-medium text-gray-600 dark:text-gray-400"
+                  >
+                    Receivable {{ poolToken.uToken.symbol }}
+                  </p>
+                  <p class="font-medium font-mono dark:text-white">
+                    {{
+                      Number(
+                        (Number(UNDOutput) && UNDOutput) -
+                          (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) /
+                            100
+                      ).toFixed(2)
+                    }}
+                    {{ poolToken.uToken.symbol }}
+                  </p>
+                </div>
+              </div>
+              <button
+                class="w-full mt-4 py-4 bg-light-primary dark:bg-dark-primary font-medium text-white appearance-none focus:outline-none"
+                style="border-radius: 12px"
+                @click="
+                  mint(
+                    poolToken.address,
+                    poolToken.llcAddress,
+                    poolToken.uToken.address
+                  )
+                "
+              >
+                Confirm Mint
+              </button>
+            </div>
           </div>
-        </div>
-      </template>
-    </Modal> -->
+        </template>
+      </Modal>
 
       <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
       <RejectedModal v-model="ui.showRejected" />
@@ -170,13 +253,19 @@
     </div>
 
     <!-- Show fees -->
-    <div v-if="LPTAmount" class="bottom-container">
+    <div v-if="LPTAmount && poolToken" class="bottom-container">
       <div class="px-4">
         <div class="flex flex-col space-y-1">
           <div class="flex items-center justify-between">
-            <p class="text-sm text-gray-600 dark:text-gray-400">Minting Fees</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Minting Fees ({{ Number((llc.fee * 100) / 1e6) }}%)
+            </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ (parseInt(UNDOutput) * parseInt(llc.fee)) / 1e5 }}
+              {{
+                Number(
+                  (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) / 100
+                ).toFixed(2)
+              }}
               {{ poolToken.uToken.symbol }}
             </p>
           </div>
@@ -186,6 +275,23 @@
               {{ (llc.loanRate * 100) / 1e6 }}%
             </p>
           </div>
+          <div class="border-b border-gray-200 dark:border-gray-800"></div>
+          <div class="flex items-center justify-between pb-4">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Currenly Locked
+            </p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{ poolToken.lockedBalance }} {{ poolToken.name }}
+            </p>
+          </div>
+          <a
+            :href="`https://${this.$store.state.network}.etherscan.io/address/${poolToken.address}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="p-1 mt-2 z-10 w-full text-center border rounded-md border-light-primary dark:border-dark-primary text-xs font-mono text-light-primary dark:text-dark-primary"
+          >
+            {{ poolToken.name }} Contract Address
+          </a>
         </div>
       </div>
     </div>
@@ -252,7 +358,9 @@ export default {
     },
 
     shouldDisableMint() {
-      return !this.LPTAmount || this.isSufficentBalance
+      return (
+        !this.LPTAmount || this.LPTAmount === '0' || this.isSufficentBalance
+      )
     },
 
     getDisabledClass() {
@@ -390,6 +498,7 @@ export default {
             this.ui.showConfirmation = false
             this.txLink = mintUND.hash
             this.ui.showSuccess = true
+            this.LPTAmount = ''
 
             // initiate the UND contract to detect the event so we can update the balances
             const UND = new ethers.Contract(uToken, UnboundDaiABI, signer)
