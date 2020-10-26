@@ -68,12 +68,10 @@ export default {
    */
   plugins: [
     '@/plugins/ga.js',
-    '@/plugins/vue-toasted.js',
-    '@/plugins/notification.js',
     '@/plugins/vue-tailwind.js',
     '@/plugins/vue-tooltip.js',
-    '@/plugins/vue-scrollbar.js',
-    '@/plugins/numberFormatter',
+    '@/plugins/numberFormatter.js',
+    '@/plugins/vue-content-loader.js',
   ],
   /*
    ** Auto import components

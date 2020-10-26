@@ -310,6 +310,45 @@
                 </tr>
               </tbody>
 
+              <tbody
+                v-else-if="!searchResult"
+                class="bg-white dark:bg-gray-900"
+              >
+                <tr>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <content-loader
+                      :height="100"
+                      :primary-opacity="0.25"
+                    ></content-loader>
+                  </td>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <content-loader
+                      :height="48"
+                      :primary-opacity="0.25"
+                    ></content-loader>
+                  </td>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <content-loader
+                      :height="32"
+                      :primary-opacity="0.25"
+                    ></content-loader>
+                  </td>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <content-loader
+                      :height="48"
+                      :primary-opacity="0.25"
+                    ></content-loader>
+                  </td>
+                  <td class="px-6 py-4 whitespace-no-wrap">
+                    <content-loader
+                      :height="48"
+                      :primary-opacity="0.25"
+                    ></content-loader>
+                  </td>
+                  <td class="px-6 py-4 whitespace-no-wrap"></td>
+                </tr>
+              </tbody>
+
               <tbody v-else>
                 <tr class="bg-white dark:bg-gray-900">
                   <td colspan="6">
@@ -329,6 +368,7 @@
 
 <script>
 import { ethers } from 'ethers'
+import { ContentLoader } from 'vue-content-loader'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
@@ -343,6 +383,7 @@ import { dynamicsort } from '~/utils'
 
 export default {
   layout: 'blank',
+  components: { ContentLoader },
   data() {
     return {
       ui: {

@@ -68,7 +68,7 @@
     <!-- Change Network Modal -->
     <Modal v-model="ui.showChgNetDialog" :persistent="true">
       <template>
-        <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-4 p-6">
           <div class="flex justify-between items-center">
             <p class="font-medium dark:text-white">Change Your Network</p>
             <!-- <button
