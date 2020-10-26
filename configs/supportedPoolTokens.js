@@ -34,7 +34,8 @@ export default [
     address: '0x1df2d569e7d9864b74c9ad366469b3e905ac918c',
     llcAddress: '0x2909Da870BA5603f5B5Aa6890D859CbB09fCf5D9',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-    currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
     stablecoin: '0x72136837e180CB468B5C1283d7Eb573F7c9C0a88',
     uToken: {
       address: '0x96AE296471296B29694881815E15F33b9200C7f2',
@@ -47,9 +48,9 @@ export default [
     exchange: 'Uniswap',
     address: '0xf111398f0f6e6010b17ba143d210a61550f06150',
     llcAddress: '0x5F7c390726a9862AE437Dc2Ef87C178986711D35',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+    currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
     stablecoin: '0x7fEFAA2ABed3212974009CF5cD500b5c5C872bF1',
     uToken: {
       address: '0x96AE296471296B29694881815E15F33b9200C7f2',
