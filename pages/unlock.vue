@@ -27,6 +27,8 @@
         label="Unlock"
         :pool-token.sync="poolToken"
         type="unlock"
+        @focus="LPTAmountField = true"
+        @blur="LPTAmountField = false"
       />
 
       <i
@@ -36,10 +38,11 @@
 
       <input-field
         v-if="poolToken"
-        :value="(Number(UNDOutput) && UNDOutput) || ''"
+        v-model="uTokenAmount"
         label="Burn"
-        :readonly="true"
         :loading="ui.priceLoader"
+        @focus="uTokenAmountField = true"
+        @blur="uTokenAmountField = false"
       >
         <template v-slot:showBalance>
           <p v-if="poolToken" class="text-xs text-gray-500">
@@ -123,7 +126,8 @@ export default {
         priceLoader: false,
       },
 
-      LPTAmount: '',
+      LPTAmount: null,
+      uTokenAmount: null,
       poolToken: null,
       txLink: '',
       UNDBalance: null,
@@ -138,8 +142,11 @@ export default {
 
   computed: {
     UNDOutput() {
-      const loanRatioPerLPT = this.LPTAmount * this.loanRatioPerLPT
-      return loanRatioPerLPT.toFixed(4).slice(0, -1)
+      return Number(this.LPTAmount * this.loanRatioPerLPT)
+    },
+
+    LPTOutput() {
+      return Number(this.uTokenAmount / this.loanRatioPerLPT)
     },
     isWalletConnected() {
       return !!this.$store.state.address
@@ -165,6 +172,20 @@ export default {
   watch: {
     poolToken(a) {
       this.getLoanRatioPerLPT(a)
+    },
+    UNDOutput(a) {
+      if (a === 0 || a === '0') {
+        this.uTokenAmount = null
+        return
+      }
+      if (!this.uTokenAmountField) this.uTokenAmount = Number(a).toFixed(4)
+    },
+    LPTOutput(a) {
+      if (a === 0 || a === '0') {
+        this.LPTAmount = null
+        return
+      }
+      if (!this.LPTAmountField) this.LPTAmount = Number(a).toFixed(4)
     },
   },
 

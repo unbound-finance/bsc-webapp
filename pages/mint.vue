@@ -30,6 +30,8 @@
           v-model="LPTAmount"
           label="Supply"
           :pool-token.sync="poolToken"
+          @focus="LPTAmountField = true"
+          @blur="LPTAmountField = false"
         />
         <i
           v-if="poolToken"
@@ -38,10 +40,11 @@
 
         <input-field
           v-if="poolToken"
-          :value="(Number(UNDOutput) && UNDOutput) || ''"
+          v-model="uTokenAmount"
           label="Mint"
-          :readonly="true"
           :loading="ui.priceLoader"
+          @focus="uTokenAmountField = true"
+          @blur="uTokenAmountField = false"
         >
           <template v-slot:append>
             <div class="flex flex-col">
@@ -123,7 +126,7 @@
                       :token1logo="poolToken.currencyTwoLogo"
                     />
                     <span class="text-3xl font-mono dark:text-white">
-                      {{ LPTAmount }}
+                      {{ Number(LPTAmount).toFixed(2) }}
                     </span>
                   </div>
                   <p class="text-2xl font-mono font-medium dark:text-white">
@@ -143,28 +146,13 @@
                       style="max-width: 24px; max-height: 24px"
                     />
                     <span class="text-3xl font-mono dark:text-white">{{
-                      UNDOutput
+                      Number(uTokenAmount).toFixed(2)
                     }}</span>
                   </div>
                   <p class="text-2xl font-mono font-medium dark:text-white">
                     UND
                   </p>
                 </div>
-                <p
-                  class="text-sm text-gray-600 dark:text-gray-400 italic font-medium mt-4"
-                >
-                  You will have to pay
-                  <span
-                    class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
-                    >{{ Number(UNDOutput) && UNDOutput }}
-                    {{ poolToken.uToken.symbol }}</span
-                  >
-                  for unlocking your
-                  <span
-                    class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
-                    >{{ LPTAmount }} {{ poolToken.name }}</span
-                  >.
-                </p>
               </div>
             </div>
 
@@ -185,10 +173,10 @@
                   <p
                     class="text-sm font-medium text-gray-600 dark:text-gray-400"
                   >
-                    {{ poolToken.uToken.symbol }} To Mint
+                    Estimated {{ poolToken.uToken.symbol }} To Mint
                   </p>
                   <p class="font-medium font-mono dark:text-white">
-                    {{ Number(UNDOutput) && UNDOutput }}
+                    {{ Number(uTokenAmount).toFixed(2) }}
                     {{ poolToken.uToken.symbol }}
                   </p>
                 </div>
@@ -201,7 +189,7 @@
                   <p class="font-medium font-mono dark:text-white">
                     -{{
                       Number(
-                        (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) /
+                        (Number(uTokenAmount) * Number((llc.fee * 100) / 1e6)) /
                           100
                       ).toFixed(2)
                     }}
@@ -209,7 +197,7 @@
                   </p>
                 </div>
                 <div
-                  class="border-b border-dotted border-gray-600 dark:border-gray-400"
+                  class="border-b border-dashed border-gray-600 dark:border-gray-400"
                 ></div>
                 <div class="flex items-center justify-between">
                   <p
@@ -219,15 +207,34 @@
                   </p>
                   <p class="font-medium font-mono dark:text-white">
                     {{
+                      Number(uTokenAmount).toFixed(2) -
                       Number(
-                        (Number(UNDOutput) && UNDOutput) -
-                          (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) /
-                            100
+                        (Number(uTokenAmount) * Number((llc.fee * 100) / 1e6)) /
+                          100
                       ).toFixed(2)
                     }}
                     {{ poolToken.uToken.symbol }}
                   </p>
                 </div>
+                <div
+                  class="border-b border-dashed border-gray-600 dark:border-gray-400"
+                ></div>
+                <p
+                  class="text-sm text-gray-600 dark:text-gray-400 italic font-medium pt-4"
+                >
+                  You will have to payback
+                  <span
+                    class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
+                    >{{ Number(uTokenAmount).toFixed(2) }}
+                    {{ poolToken.uToken.symbol }}</span
+                  >
+                  for unlocking your
+                  <span
+                    class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
+                    >{{ Number(LPTAmount).toFixed(2) }}
+                    {{ poolToken.name }}</span
+                  >.
+                </p>
               </div>
               <button
                 class="w-full mt-4 py-4 bg-light-primary dark:bg-dark-primary font-medium text-white appearance-none focus:outline-none"
@@ -328,7 +335,8 @@ export default {
         priceLoader: false,
       },
       poolToken: null,
-      LPTAmount: '',
+      LPTAmount: null,
+      uTokenAmount: null,
       LPTPrice: '',
       loanRatioPerLPT: '',
       txLink: '',
@@ -342,8 +350,11 @@ export default {
 
   computed: {
     UNDOutput() {
-      const loanRatioPerLPT = this.LPTAmount * this.loanRatioPerLPT
-      return loanRatioPerLPT.toFixed(4).slice(0, -1)
+      return Number(this.LPTAmount * this.loanRatioPerLPT)
+    },
+
+    LPTOutput() {
+      return Number(this.uTokenAmount / this.loanRatioPerLPT)
     },
 
     isWalletConnected() {
@@ -375,6 +386,20 @@ export default {
   watch: {
     poolToken(a) {
       this.getLoanRatioPerLPT(a)
+    },
+    UNDOutput(a) {
+      if (a === 0 || a === '0') {
+        this.uTokenAmount = null
+        return
+      }
+      if (!this.uTokenAmountField) this.uTokenAmount = Number(a).toFixed(4)
+    },
+    LPTOutput(a) {
+      if (a === 0 || a === '0') {
+        this.LPTAmount = null
+        return
+      }
+      if (!this.LPTAmountField) this.LPTAmount = Number(a).toFixed(4)
     },
   },
 

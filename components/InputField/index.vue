@@ -10,7 +10,7 @@
           >
             <button
               type="button"
-              class="appearance-none text-xs text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
+              class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
               @click="model = poolToken.balance"
             >
               Max
@@ -29,7 +29,7 @@
           >
             <button
               type="button"
-              class="appearance-none text-xs text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
+              class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
               @click="model = poolToken.lockedBalance"
             >
               Max
@@ -55,6 +55,7 @@
             class="font-mono text-3xl pr-4 appearance-none bg-transparent text-gray-900 dark:text-gray-200 font-medium w-full leading-tight focus:outline-none"
             :class="readonly ? 'cursor-not-allowed' : ''"
             :readonly="readonly"
+            v-on="listeners"
           />
           <slot name="append">
             <div v-if="poolToken" class="flex flex-col">
@@ -139,6 +140,15 @@ export default {
       poolToken: null,
       LPTBalance: 0,
     }
+  },
+  computed: {
+    listeners() {
+      const { blur, focus } = this.$listeners
+      const listeners = {}
+      if (blur) listeners.blur = blur
+      if (focus) listeners.focus = focus
+      return listeners
+    },
   },
   watch: {
     value(a) {
