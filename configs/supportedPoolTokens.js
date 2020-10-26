@@ -1,6 +1,6 @@
 export default [
   {
-    name: 'ETH/DAI',
+    name: 'ETH-DAI',
     exchange: 'Uniswap',
     address: '0xf9e8d8e2036b71c81ad730d01e4d383eabcca17e',
     llcAddress: '0x2a20162bA2941F86426F019e7aa47d3A8a80Ce02',
@@ -15,7 +15,7 @@ export default [
     },
   },
   {
-    name: 'ETH/USDC',
+    name: 'ETH-USDC',
     exchange: 'Uniswap',
     address: '0xb7c32567185194953d81292a55ebfdae55bfa55b',
     llcAddress: '0xde980605bEb79D311090Ea202063a97420268976',
@@ -29,7 +29,7 @@ export default [
     },
   },
   {
-    name: 'ETH/USDT',
+    name: 'ETH-USDT',
     exchange: 'Uniswap',
     address: '0x1df2d569e7d9864b74c9ad366469b3e905ac918c',
     llcAddress: '0x2909Da870BA5603f5B5Aa6890D859CbB09fCf5D9',
@@ -44,7 +44,7 @@ export default [
     },
   },
   {
-    name: 'USDC/USDT',
+    name: 'USDC-USDT',
     exchange: 'Uniswap',
     address: '0xf111398f0f6e6010b17ba143d210a61550f06150',
     llcAddress: '0x5F7c390726a9862AE437Dc2Ef87C178986711D35',
@@ -59,7 +59,7 @@ export default [
     },
   },
   {
-    name: 'WBTC/ETH',
+    name: 'WBTC-ETH',
     exchange: 'Uniswap',
     address: '0xa7d52b4656191bde7309cf436013fd169da68810',
     llcAddress: '0xb6b94586D6F759c654c6D942A215137467D50fD5',
@@ -74,7 +74,7 @@ export default [
     },
   },
   {
-    name: 'LINK/DAI',
+    name: 'LINK-DAI',
     exchange: 'Uniswap',
     address: '0xb9d8eeb6e5853f35900835728bd8f06c1af3ef76',
     llcAddress: '0xDBC6674b5E3553Ba2376bAA1DEAADD84155c5d93',
@@ -90,7 +90,7 @@ export default [
     },
   },
   {
-    name: 'TOMOE/USDT',
+    name: 'TOMOE-USDT',
     exchange: 'Uniswap',
     address: '0x3bf0e5bcd1b48dec99a61fc058a965c3f9c47a73',
     llcAddress: '0xbF6acC812Ec285b43d94AB3c0454394A753c3393',
@@ -106,7 +106,7 @@ export default [
     },
   },
   {
-    name: 'ENJ/USDT',
+    name: 'ENJ-USDT',
     exchange: 'Uniswap',
     address: '0xf6e2091b70d4642674fc4ff44f1cdac52699cf91',
     llcAddress: '0x7ccf24be964c3b66048e8b53668d56d33a1a4db5',
@@ -122,7 +122,7 @@ export default [
     },
   },
   // {
-  //   name: 'ENJ/UND',
+  //   name: 'ENJ-UND',
   //   exchange: 'Uniswap',
   //   address: '0x136bf0b90ea8fb45f7a6bf35ac22a3bac067e264',
   //   llcAddress: '0xF0Ec90d37ABcB7F928f1947367E58042E7B0e28d',
@@ -137,7 +137,7 @@ export default [
   //   },
   // },
   // {
-  //   name: 'TOMO/UND',
+  //   name: 'TOMO-UND',
   //   exchange: 'Uniswap',
   //   address: '0x1060abf5954c27ac553b37151a6a7608a3f6adb7',
   //   llcAddress: '0xC8b98e60eC524827B85BBC62dB64B3aFaC708185',

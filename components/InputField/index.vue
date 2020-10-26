@@ -72,7 +72,7 @@
                   class="flex items-center hover:bg-gray-100 dark-hover:bg-gray-900 rounded-md p-1"
                 >
                   <p
-                    class="text-gray-900 dark:text-gray-200 font-semibold text-right"
+                    class="text-gray-900 dark:text-gray-200 font-semibold text-right whitespace-no-wrap"
                   >
                     {{ poolToken.name }}
                   </p>
