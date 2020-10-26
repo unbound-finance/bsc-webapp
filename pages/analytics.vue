@@ -81,10 +81,13 @@
         ></div>
         <div class="p-2 flex flex-col">
           <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
-            >Collatralization Ratio</span
+            >Total Value Locked</span
           >
-          <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            {{ overview.cRatio }}%
+          <div
+            class="font-medium text-gray-800 dark:text-gray-200 text-xl"
+            :title="overview.tvl.toLocaleString()"
+          >
+            ${{ $numberFormatter(Number(overview.tvl), 1) }}
           </div>
         </div>
       </div>
@@ -105,10 +108,10 @@
         ></div>
         <div class="p-2 flex flex-col">
           <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
-            >.</span
+            >Collatralization Ratio</span
           >
           <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            .
+            {{ overview.cRatio }}%
           </div>
         </div>
       </div>
@@ -214,7 +217,7 @@
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
-                    Price
+                    Total Value Locked
                   </th>
 
                   <th
@@ -268,8 +271,14 @@
                   <td class="px-6 py-4 whitespace-no-wrap">
                     <div
                       class="text-sm leading-5 text-gray-900 dark:text-gray-200"
+                      :title="data.tvl.toLocaleString()"
                     >
-                      ${{ data.price }}
+                      {{ $numberFormatter(data.tvl, 1) }}
+                    </div>
+                    <div
+                      class="text-sm leading-5 text-gray-500 dark:text-gray-700"
+                    >
+                      price: {{ data.price.toLocaleString() }}
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-no-wrap">
@@ -328,8 +337,9 @@ import unboundTokenABI from '~/configs/abi/UnboundDai'
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
 import { getTotalLockedLPT, getLPTPrice } from '~/mixins/info'
-import { getTotalLiquidity, getCRatio } from '~/mixins/analytics'
+import { getTotalLiquidity, getCRatio, getTVL } from '~/mixins/analytics'
 import config from '~/configs/config'
+import { dynamicsort } from '~/utils'
 
 export default {
   layout: 'blank',
@@ -348,6 +358,7 @@ export default {
           uETHLiquidity: 0,
         },
         cRatio: 0,
+        tvl: 0,
       },
       fees: {
         staking: '',
@@ -384,6 +395,7 @@ export default {
       this.overview.liquidity.UNDLiquidity = liquidity.undLiquidity
       this.overview.liquidity.uETHLiquidity = liquidity.uethLiquidity
       this.overview.cRatio = await getCRatio()
+      this.overview.tvl = await getTVL()
     },
 
     async getFees() {
@@ -483,25 +495,30 @@ export default {
     },
 
     async getPoolTokens() {
-      const poolTokens = []
       try {
-        await supportedPoolTokens.map(async (ev) => {
-          const loanRatio = await this.getLoanRatioPerLPT(ev)
-          const lockedLPT = await getTotalLockedLPT(ev.address, ev.llcAddress)
-          const mintingFee = await getLLC(ev.llcAddress)
-          const price = await getLPTPrice(ev)
+        this.poolTokens = (
+          await Promise.all(
+            supportedPoolTokens.map(async (ev) => {
+              const loanRatio = await this.getLoanRatioPerLPT(ev)
+              const lockedLPT = await getTotalLockedLPT(
+                ev.address,
+                ev.llcAddress
+              )
+              const mintingFee = await getLLC(ev.llcAddress)
+              const price = await getLPTPrice(ev)
+              const tvl = Number(lockedLPT * price)
 
-          const obj = {
-            ...ev,
-            ltv: loanRatio.ltv,
-            mintingFee: mintingFee.fee,
-            price: Number(price).toFixed(2),
-            lockedLPT,
-          }
-          poolTokens.push(obj)
-        })
-
-        this.poolTokens = poolTokens
+              return {
+                ...ev,
+                ltv: loanRatio.ltv,
+                mintingFee: mintingFee.fee,
+                price: Number(price).toFixed(2),
+                lockedLPT,
+                tvl,
+              }
+            })
+          )
+        ).sort(dynamicsort('tvl', 'desc'))
       } catch (error) {
         throw new Error('Something went wrong!' + error)
       }

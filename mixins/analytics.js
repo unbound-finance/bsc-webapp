@@ -80,4 +80,23 @@ export const getCRatio = async () => {
   return Number((totalLockedLPTValue / totalUTokensMinted) * 100).toFixed(2)
 }
 
+export const getTVL = async () => {
+  // Get total value of locked LPT's
+  const totalLockedLPTValue = (
+    await Promise.all(
+      supportedPoolTokens.map(async (poolToken) => {
+        const LPTPrice = await getLPTPrice(poolToken)
+        const lockedLPT = await getTotalLockedLPT(
+          poolToken.address,
+          poolToken.llcAddress
+        )
+        return Number(LPTPrice * lockedLPT)
+      })
+    )
+  ).reduce((a, b) => a + b || 0, 0)
+
+  // Calculate Collatralization Percentage
+  return Number(totalLockedLPTValue).toFixed(2)
+}
+
 export const getFeesAccrued = async () => {}
