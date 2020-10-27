@@ -207,10 +207,13 @@
                   </p>
                   <p class="font-medium font-mono dark:text-white">
                     {{
-                      Number(uTokenAmount).toFixed(2) -
                       Number(
-                        (Number(uTokenAmount) * Number((llc.fee * 100) / 1e6)) /
-                          100
+                        Number(uTokenAmount).toFixed(2) -
+                          Number(
+                            (Number(uTokenAmount) *
+                              Number((llc.fee * 100) / 1e6)) /
+                              100
+                          ).toFixed(2)
                       ).toFixed(2)
                     }}
                     {{ poolToken.uToken.symbol }}
