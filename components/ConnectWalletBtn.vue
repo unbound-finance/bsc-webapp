@@ -93,6 +93,24 @@
         </div>
       </template>
     </Modal>
+
+    <!-- Non-Metamask wallet Error Modal -->
+    <Modal v-model="ui.showError" :persistent="true">
+      <template>
+        <div class="flex flex-col space-y-4 p-6">
+          <div class="flex justify-between items-center">
+            <p class="font-medium text-lg text-red-600">Error</p>
+          </div>
+
+          <div>
+            <p class="dark:text-gray-200 text-sm">
+              We've detected non-ethereum browser. Please try switching to
+              ethereum/dapp enabled browser.
+            </p>
+          </div>
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -108,6 +126,7 @@ export default {
       ui: {
         showDialog: false,
         showChgNetDialog: false,
+        showError: false,
       },
       network: null,
     }
@@ -219,9 +238,7 @@ export default {
         this.$emit('connected', address)
         // Acccounts always exposed
       } else {
-        console.log(
-          'Non-Ethereum browser detected. You should consider trying MetaMask!'
-        )
+        this.ui.showError = true
       }
     },
   },
