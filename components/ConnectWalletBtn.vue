@@ -18,8 +18,8 @@
     <!-- Change Wallet Address Modal -->
     <Modal v-model="ui.showDialog">
       <template>
-        <div class="flex flex-col space-y-4 p-4">
-          <div class="flex justify-between items-center">
+        <div class="flex flex-col space-y-4">
+          <div class="flex justify-between items-center px-6 pt-4">
             <p class="font-medium dark:text-white">Account</p>
             <button
               type="button"
@@ -29,10 +29,8 @@
               <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
             </button>
           </div>
-
-          <div
-            class="rounded-lg border border-gray-300 dark:border-gray-800 p-4"
-          >
+          <div class="border-b border-gray-200 dark:border-gray-800"></div>
+          <div class="px-6 pb-6 pt-2">
             <div class="flex justify-between items-center">
               <p class="text-sm text-gray-600">Connected with Metamask</p>
               <div
