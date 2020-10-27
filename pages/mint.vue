@@ -28,7 +28,7 @@
 
         <input-field
           v-model="LPTAmount"
-          label="Supply"
+          label="Lock"
           :pool-token.sync="poolToken"
           @focus="LPTAmountField = true"
           @blur="LPTAmountField = false"
@@ -286,22 +286,33 @@
             </p>
           </div>
           <div class="border-b border-gray-200 dark:border-gray-800"></div>
-          <div class="flex items-center justify-between pb-4">
+          <p class="py-2 font-medium text-gray-800 dark:text-gray-200">
+            Your Position
+          </p>
+          <div class="flex items-center justify-between">
             <p class="text-sm text-gray-600 dark:text-gray-400">
-              Currenly Locked
+              Currently Minted
+            </p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{ poolToken.mintedUTokens }} {{ poolToken.name }}
+            </p>
+          </div>
+          <div class="flex items-center justify-between pb-2">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Currently Locked
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
               {{ poolToken.lockedBalance }} {{ poolToken.name }}
             </p>
           </div>
-          <a
+          <!-- <a
             :href="`https://${this.$store.state.network}.etherscan.io/address/${poolToken.address}`"
             target="_blank"
             rel="noopener noreferrer"
             class="p-1 mt-2 z-10 w-full text-center border rounded-md border-light-primary dark:border-dark-primary text-xs font-mono text-light-primary dark:text-dark-primary"
           >
             {{ poolToken.name }} Contract Address
-          </a>
+          </a> -->
         </div>
       </div>
     </div>

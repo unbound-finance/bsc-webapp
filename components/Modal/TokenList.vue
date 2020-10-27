@@ -71,7 +71,7 @@ import Modal from '@/components/Modal'
 import supportedPoolTokens from '@/configs/supportedPoolTokens'
 
 import { getTokenBalance } from '~/mixins/ERC20'
-import { getLockedLPT } from '~/mixins/info'
+import { getLockedLPT, checkLoan } from '~/mixins/info'
 
 export default {
   extends: Modal,
@@ -129,12 +129,17 @@ export default {
           const balance = await getTokenBalance(poolToken.address)
           const lockedBalance = await getLockedLPT(poolToken.llcAddress)
           const UNDBalance = await getTokenBalance(poolToken.uToken.address)
+          const mintedUTokens = await checkLoan(
+            poolToken.llcAddress,
+            poolToken.uToken.address
+          )
 
           return {
             ...poolToken,
             balance: balance.toFixed,
             lockedBalance,
             UNDBalance: UNDBalance.toFixed,
+            mintedUTokens,
           }
         })
       )
