@@ -1,106 +1,86 @@
 <template>
-  <div class="max-w-4xl mx-auto p-8">
-    <p class="text-2xl text-accent font-medium p-2 text-center">
-      unbound faucet
-    </p>
-    <div class="rounded-lg w-full p-8 mt-8 bg-gray-200 dark:bg-gray-800">
-      <div v-if="isAuthenticated">
-        <p class="dark:text-white">
-          This faucet allows you to request test dai and test eth once every
-          24h.
-        </p>
-        <div class="flex flex-wrap items-center my-3 space-x-4">
-          <input
-            class="appearance-none block w-full md:w-1/2 bg-white dark:bg-gray-200 text-gray-700 border rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-            type="text"
-            placeholder="Your Kovan Address..."
-          />
-          <button
-            class="py-2 px-6 mt-2 md:mt-0 bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800 rounded-sm focus:outline-none"
-          >
-            Send me tokens
-          </button>
-        </div>
-      </div>
-      <div v-else>
-        <p class="dark:text-white">
-          This faucet allows you to request test dai and test eth on kovan
-          testnet. <br />A Github account is required to request test tokens.
-        </p>
-        <button
-          class="py-2 px-6 bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800 mt-8 font-medium rounded-sm focus:outline-none"
-          @click="signInWithGithub"
-        >
-          {{ ui.loading ? 'Loading...' : 'Login with Github' }}
-        </button>
-      </div>
+  <div class="main_container my-4 md:my-8">
+    <div class="flex flex-col space-y-4">
+      <p class="text-3xl font-bold text-gray-800 dark:text-gray-200">Faucet</p>
+      <p class="text-sm text-gray-600">
+        This faucet will give you some test tokens on kovan testnet such as ETH,
+        DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE. You can then go to
+        <a href="https://app.uniswap.org/#/pool" target="_blank">
+          <span class="text-light-primary dark:text-dark-primary font-medium"
+            >Uniswap</span
+          >,
+        </a>
+        provide liquidity there and grab some Liquidity Pool Tokens(LPT), then
+        comeback here and mint our uTokens like UND and uETH using those LPT's.
+      </p>
+
+      <p class="font-medium italic text-xs text-gray-600">
+        **Note: You can only request test tokens once every 24 hours for your
+        address.
+      </p>
+
+      <button
+        type="button"
+        class="w-full font-medium text-white rounded-lg py-4 appearance-none focus:outline-none"
+        :class="
+          ui.errorMsg
+            ? 'bg-gradient-to-r from-red-700 to-red-600'
+            : 'bg-gradient-to-r from-light-primary to-dark-primary'
+        "
+        @click="requestFaucet"
+      >
+        <loader v-if="ui.loading" />
+        <span v-else>{{ ui.errorMsg ? ui.errorMsg : 'Request Tokens' }}</span>
+      </button>
     </div>
+    <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
   </div>
 </template>
 
 <script>
+import { ethers } from 'ethers'
+
+import UnboundFaucet from '~/configs/abi/UnboundFaucet'
+import config from '~/configs/config'
+
+const provider = new ethers.providers.Web3Provider(window.ethereum)
+const signer = provider.getSigner()
+
 export default {
-  layout: 'info',
   data() {
     return {
-      isAuthenticated: false,
       ui: {
         loading: false,
+        showSuccess: false,
+        errorMsg: null,
       },
+      txLink: null,
     }
   },
-  computed: {
-    code() {
-      return this.$route.query.code
-    },
-  },
-
-  mounted() {
-    if (this.code) this.getAccessToken()
-  },
-
   methods: {
-    // JSON Object to query
-    toQuery(params, delimiter = '&') {
-      const keys = Object.keys(params)
-      return keys.reduce((str, key, index) => {
-        let query = `${str}${key}=${params[key]}`
-        if (index < keys.length - 1) {
-          query += delimiter
+    async requestFaucet() {
+      this.ui.errorMsg = null
+      this.ui.loading = true
+      const faucet = await new ethers.Contract(
+        config.faucet,
+        UnboundFaucet,
+        signer
+      )
+
+      try {
+        if (this.$store.state.address) {
+          const distribute = await faucet.releaseAll(this.$store.state.address)
+          this.ui.loading = false
+          this.txLink = distribute.hash
+          this.ui.showSuccess = true
         }
-        return query
-      }, '')
-    },
-    async signInWithGithub() {
-      const search = await this.toQuery({
-        // client_id: env.GITHUB_CLIENT_ID,
-        // redirect_uri: env.GITHUB_CALLBACK_URI,
-        // scope: 'user:email',
-      })
-
-      window.open(`https://github.com/login/oauth/authorize?${search}`, '_self')
-    },
-
-    async getAccessToken() {
-      // Get Access Token from Github
-
-      const data = JSON.stringify({
-        client_id: '2a402e657970a7da677c',
-        client_secret: '9679f79aa1dec599e8d8f9e1076870ea6d162e0f',
-        code: this.code,
-      })
-
-      const config = {
-        method: 'post',
-        url: 'https://unbound-faucet-serverless.vercel.app/api/release',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data,
+      } catch (error) {
+        this.ui.errorMsg = 'You can request only once every 24 hours.'
+        setTimeout(() => {
+          this.ui.errorMsg = null
+        }, 2500)
+        this.ui.loading = false
       }
-
-      const result = await this.$axios(config)
-      console.log(result)
     },
   },
 }

@@ -18,7 +18,7 @@
     <!-- Change Wallet Address Modal -->
     <Modal v-model="ui.showDialog">
       <template>
-        <div class="flex flex-col space-y-4">
+        <div class="flex flex-col space-y-4 p-4">
           <div class="flex justify-between items-center">
             <p class="font-medium dark:text-white">Account</p>
             <button
