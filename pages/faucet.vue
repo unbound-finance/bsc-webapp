@@ -11,9 +11,16 @@
           Liquidity Pool Tokens(LPT).
         </li>
         <li>
-          Then visit the unbound dashboard, use Mint to collatralize these LPT
+          Then visit the unbound dashboard, use Mint to collatralize this LPT.
         </li>
-        <li>The Uniswap pools that we support on testent are:</li>
+        <li>
+          The Uniswap pools that we support on testent are
+          <nuxt-link
+            to="/analytics"
+            class="text-light-primary dark:text-dark-primary font-medium"
+            >here</nuxt-link
+          >
+        </li>
       </ul>
 
       <p class="font-medium italic text-xs text-gray-600">
