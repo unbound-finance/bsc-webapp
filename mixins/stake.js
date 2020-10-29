@@ -7,10 +7,9 @@ import config from '~/configs/config'
 
 import { getEIP712Signature, getNonce } from '~/mixins/crypto'
 
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-
 const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const contract = await new ethers.Contract(
     config.contracts.uniswapRouter,
     UniswapRouterABI,
@@ -40,6 +39,8 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 }
 
 const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const userAddress = await signer.getAddress()
   const nonce = await getNonce(config.contracts.UNDUniswapPool, signer)
   const deadline = +new Date() + 10000
@@ -141,6 +142,8 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 }
 
 const getPoolTokenBalance = async () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const userAddress = signer.getAddress()
   const poolTokenContract = await new ethers.Contract(
     config.contracts.UNDUniswapPool,
@@ -152,6 +155,8 @@ const getPoolTokenBalance = async () => {
 }
 
 const getPoolTokenReserves = async () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const poolTokenContract = new ethers.Contract(
     config.contracts.UNDUniswapPool,
     UniswapLPTABI,
@@ -165,6 +170,8 @@ const getPoolTokenReserves = async () => {
 }
 
 const getPoolTokenTotalSupply = async () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const poolTokenContract = new ethers.Contract(
     config.contracts.UNDUniswapPool,
     UniswapLPTABI,
