@@ -17,6 +17,9 @@
       <nuxt-link to="/analytics" class="font-medium dark:text-white">
         Analytics
       </nuxt-link>
+      <nuxt-link to="/faucet" class="font-medium dark:text-white">
+        Faucet
+      </nuxt-link>
     </div>
 
     <div class="flex items-center space-x-4">

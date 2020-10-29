@@ -1,18 +1,20 @@
 <template>
   <div class="main_container my-4 md:my-8">
-    <div class="flex flex-col space-y-4">
+    <div class="flex flex-col space-y-6">
       <p class="text-3xl font-bold text-gray-800 dark:text-gray-200">Faucet</p>
-      <p class="text-sm text-gray-600">
-        This faucet will give you some test tokens on kovan testnet such as ETH,
-        DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE. You can then go to
-        <a href="https://app.uniswap.org/#/pool" target="_blank">
-          <span class="text-light-primary dark:text-dark-primary font-medium"
-            >Uniswap</span
-          >,
-        </a>
-        provide liquidity there and grab some Liquidity Pool Tokens(LPT), then
-        comeback here and mint our uTokens like UND and uETH using those LPT's.
-      </p>
+
+      <ul class="text-sm text-gray-600 list-disc px-4">
+        <li>This faucet will give you our test tokens on kovan testnet .</li>
+        <li>These are ETH, DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE.</li>
+        <li>
+          You can then go to Uniswap, provide liquidity to the pool and receive
+          Liquidity Pool Tokens(LPT).
+        </li>
+        <li>
+          Then visit the unbound dashboard, use Mint to collatralize these LPT
+        </li>
+        <li>The Uniswap pools that we support on testent are:</li>
+      </ul>
 
       <p class="font-medium italic text-xs text-gray-600">
         **Note: You can only request test tokens once every 24 hours for your
@@ -20,6 +22,7 @@
       </p>
 
       <button
+        v-if="isWalletConnected"
         type="button"
         class="w-full font-medium text-white rounded-lg py-4 appearance-none focus:outline-none"
         :class="
@@ -32,6 +35,7 @@
         <loader v-if="ui.loading" />
         <span v-else>{{ ui.errorMsg ? ui.errorMsg : 'Request Tokens' }}</span>
       </button>
+      <connect-wallet-btn v-else class="w-full" />
     </div>
     <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
   </div>
@@ -56,6 +60,12 @@ export default {
       },
       txLink: null,
     }
+  },
+
+  computed: {
+    isWalletConnected() {
+      return !!this.$store.state.address
+    },
   },
 
   methods: {
