@@ -21,6 +21,15 @@
             >here</nuxt-link
           >
         </li>
+        <li>
+          You can find token addresses
+          <a
+            href="https://www.notion.so/Unbound-Token-Addresses-1815d02f646e4b5eb037c2e06690f14b"
+            target="_blank"
+            class="text-light-primary dark:text-dark-primary font-medium"
+            >here</a
+          >
+        </li>
       </ul>
 
       <p class="font-medium italic text-xs text-gray-600">
