@@ -42,6 +42,25 @@
               >
             </p>
           </div>
+          <div
+            v-if="uToken && type === 'add'"
+            class="flex items-center space-x-2"
+          >
+            <button
+              type="button"
+              class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
+              @click="model = uToken.uTokenbalance"
+            >
+              Max
+            </button>
+            <p class="text-xs text-gray-500">
+              Balance:
+              <span
+                class="font-mono text-gray-900 dark:text-gray-500 font-medium"
+                >{{ uToken.uTokenbalance }}</span
+              >
+            </p>
+          </div>
         </slot>
       </div>
       <form>
@@ -86,11 +105,49 @@
               }}</span>
             </div>
 
+            <div v-else-if="uToken" class="flex items-center space-x-2">
+              <button
+                v-if="uToken.uTokenAllowance == '0' && uToken"
+                type="button"
+                class="px-2 py-1 rounded border border-light-primary dark:border-dark-primary text-xs text-light-primary dark:text-dark-primary appearance-none focus:outline-none"
+                @click="approve(uToken.address)"
+              >
+                Approve
+              </button>
+              <button
+                type="button"
+                class="flex items-center focus:outline-none"
+                @click="ui.showUTokenListModal = true"
+              >
+                <img
+                  :src="require(`~/assets/tokens/${uToken.icon}`)"
+                  width="16"
+                />
+
+                <div
+                  class="flex items-center hover:bg-gray-100 dark-hover:bg-gray-900 rounded-md p-1"
+                >
+                  <p
+                    class="text-gray-900 dark:text-gray-200 font-semibold text-right whitespace-no-wrap"
+                  >
+                    {{ uToken.name }}
+                  </p>
+                  <i
+                    class="fas fa-chevron-down dark:text-gray-200 text-xs pl-1 font-bold"
+                  ></i>
+                </div>
+              </button>
+            </div>
+
             <button
               v-else
               type="button"
               class="bg-light-primary text-white text-xs font-medium rounded py-1 w-2/3 focus:outline-none"
-              @click="ui.showTokenListModal = true"
+              @click="
+                type === 'add'
+                  ? (ui.showUTokenListModal = true)
+                  : (ui.showTokenListModal = true)
+              "
             >
               Select Token
               <i class="fas fa-chevron-down text-xs pl-1 font-bold"></i>
@@ -104,10 +161,19 @@
       :pool-token.sync="poolToken"
       :type="type"
     />
+
+    <u-token-list
+      v-model="ui.showUTokenListModal"
+      :u-token.sync="uToken"
+    ></u-token-list>
   </div>
 </template>
 
 <script>
+import { ethers } from 'ethers'
+
+import ERC20ABI from '~/configs/abi/ERC20'
+import config from '~/configs/config'
 export default {
   props: {
     label: {
@@ -136,8 +202,10 @@ export default {
       model: this.value,
       ui: {
         showTokenListModal: false,
+        showUTokenListModal: false,
       },
       poolToken: null,
+      uToken: null,
       LPTBalance: 0,
     }
   },
@@ -160,6 +228,29 @@ export default {
     poolToken(a) {
       this.model = null
       this.$emit('update:poolToken', a)
+    },
+    uToken(a) {
+      this.model = null
+      this.$emit('update:uToken', a)
+    },
+  },
+  methods: {
+    async approve(tokenAddress) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
+      try {
+        const totalSupply = contract.totalSupply()
+        const approve = await contract.approve(
+          config.contracts.uniswapRouter,
+          totalSupply
+        )
+        this.ui.showSuccess = true
+        this.txLink = approve.hash
+        this.checkAllowances()
+      } catch (error) {
+        this.ui.showRejected = true
+      }
     },
   },
 }

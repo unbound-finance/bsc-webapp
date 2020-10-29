@@ -294,7 +294,7 @@
               Currently Minted
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ poolToken.mintedUTokens }} {{ poolToken.name }}
+              {{ poolToken.mintedUTokens }} {{ poolToken.uToken.symbol }}
             </p>
           </div>
           <div class="flex items-center justify-between pb-2">

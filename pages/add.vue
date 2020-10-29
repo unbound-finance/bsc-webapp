@@ -24,55 +24,30 @@
         </button>
       </div>
 
-      <input-field v-model="lpTokenAmount" label="Input">
-        <template v-slot:showBalance>
-          <p v-if="selectedToken" class="text-xs text-gray-500">
-            Balance:
-            <span
-              class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ balance }}</span
-            >
-          </p>
-        </template>
-        <template v-slot:append>
-          <div class="flex flex-col">
-            <div class="flex items-center space-x-2 focus:outline-none">
-              <button
-                v-if="selectedToken.allowance == 0 && selectedToken"
-                type="button"
-                class="px-2 py-1 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-                @click="approve(selectedToken.address)"
-              >
-                Approve
-              </button>
-              <div class="flex items-center">
-                <img :src="selectedToken.tokenIcon" width="20" alt="dai logo" />
-                <div class="flex items-center p-1">
-                  <p
-                    class="text-gray-900 dark:text-gray-500 font-semibold text-right"
-                  >
-                    DAI
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </template>
-      </input-field>
+      <input-field
+        v-model="uTokenAmount"
+        label="Input"
+        :u-token.sync="uToken"
+        type="add"
+      />
 
-      <i class="fas fa-plus text-gray-800 text-sm dark:text-gray-500"></i>
+      <i
+        v-if="uToken"
+        class="fas fa-plus text-gray-800 text-sm dark:text-gray-500"
+      ></i>
 
       <input-field
-        :value="(Number(UNDOutput) && UNDOutput) || ''"
+        v-if="uToken"
+        :value="uTokenAmount"
         label="Input"
         :readonly="true"
       >
         <template v-slot:showBalance>
-          <p v-if="selectedUToken" class="text-xs text-gray-500">
+          <p v-if="uToken" class="text-xs text-gray-500">
             Balance:
             <span
               class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ UNDBalance }}</span
+              >{{ uToken.tokenBalance }}</span
             >
           </p>
         </template>
@@ -80,20 +55,21 @@
           <div class="flex flex-col">
             <div class="flex items-center space-x-2 focus:outline-none">
               <button
-                v-if="selectedUToken.allowance == 0 && selectedUToken"
+                v-if="uToken && uToken.tokenAllowance == 0"
                 type="button"
                 class="px-2 py-1 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
-                @click="approve(selectedUToken.address)"
+                @click="approve(uToken.token.address)"
               >
                 Approve
               </button>
               <div class="flex items-center">
-                <img src="~/assets/tokens/und.webp" width="16" alt="und logo" />
+                <img :src="uToken.token.icon" width="16" />
+
                 <div class="flex items-center p-1">
                   <p
                     class="text-gray-900 dark:text-gray-500 font-semibold text-right"
                   >
-                    UND
+                    {{ uToken.token.name }}
                   </p>
                 </div>
               </div>
@@ -104,7 +80,7 @@
 
       <!-- Show fees -->
       <div
-        v-if="lpTokenAmount"
+        v-if="uTokenAmount"
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
       >
         <p
@@ -114,18 +90,12 @@
         </p>
         <div class="bg-white dark:bg-dark-bg rounded-lg p-4">
           <div class="flex flex-col space-y-1">
-            <!-- <div class="flex items-center justify-between">
-              <p class="text-sm text-gray-600">Pool Share</p>
-              <p class="font-medium text-sm dark:text-white">
-                {{ (parseInt(UNDOutput) * 0.25) / 100 }} UND
-              </p>
-            </div> -->
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">
                 Estimated Earning (for a month)
               </p>
               <p class="font-medium text-sm dark:text-white">
-                {{ UNDOutput * 0.06 }}
+                {{ uTokenAmount * 0.06 }}
               </p>
             </div>
           </div>
@@ -136,20 +106,16 @@
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
         :class="[
-          !lpTokenAmount ? getDisabledClass : getActiveClass,
+          !uTokenAmount ? getDisabledClass : getActiveClass,
           isSufficentBalance ? getDisabledClass : getActiveClass,
-          selectedToken.allowance == 0 ? getDisabledClass : getActiveClass,
-          selectedUToken.allowance == 0 ? getDisabledClass : getActiveClass,
         ]"
         :disabled="shouldDisableAddLiquidity"
-        @click="addLiquidity"
+        @click="addLiquidity(uToken.address, uToken.token.address)"
       >
-        <span v-if="!lpTokenAmount">Enter An Amount</span>
+        <span v-if="!uTokenAmount">Enter An Amount</span>
         <span v-else-if="isSufficentBalance">Insufficient Liquidity</span>
         <span
-          v-else-if="
-            selectedToken.allowance == 0 || selectedUToken.allowance == 0
-          "
+          v-else-if="uToken.uTokenAllowance == 0 || uToken.tokenAllowance == 0"
           >Please Approve Tokens</span
         >
         <span v-else>Add Liquidity</span>
@@ -169,12 +135,13 @@ import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
 import config from '~/configs/config'
-
 import { addLiquidity } from '~/mixins/stake'
 
 export default {
   data() {
     return {
+      uTokenAmount: null,
+      uToken: null,
       ui: {
         showDialog: false,
         showConfirmation: false,
@@ -182,57 +149,29 @@ export default {
         showRejected: false,
         showAwaiting: false,
       },
-      selectedToken: {
-        name: 'DAI',
-        exchange: 'Uniswap',
-        address: config.contracts.dai,
-        allowance: '',
-        tokenIcon:
-          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-      },
-      selectedUToken: {
-        name: 'UND',
-        address: config.contracts.unboundDai,
-        allowance: '',
-        tokenIcon:
-          'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-      },
-      balance: '--.--',
-      lpTokenAmount: '',
       txLink: '',
-      UNDBalance: '--.--',
-      supportedPoolTokens: [
-        {
-          name: 'DAI',
-          exchange: 'Uniswap',
-          address: '0x5124d2A8e3A02f906d86803D703FD6CcCf492EF8',
-          currencyOneLogo:
-            'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-          currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-        },
-      ],
     }
   },
 
   computed: {
-    UNDOutput() {
-      return this.lpTokenAmount
-    },
-
     isWalletConnected() {
       return !!this.$store.state.address
     },
 
     isSufficentBalance() {
-      return parseFloat(this.lpTokenAmount) > parseFloat(this.balance)
+      return (
+        this.uToken &&
+        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.uTokenbalance) &&
+        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.tokenBalance)
+      )
     },
 
     shouldDisableAddLiquidity() {
       return (
-        !this.lpTokenAmount ||
+        !this.uTokenAmount ||
         this.isSufficentBalance ||
-        !this.selectedToken.allowance ||
-        !this.selectedUToken.allowance
+        !this.uToken.uTokenAllowance ||
+        !this.uToken.tokenAllowance
       )
     },
 
@@ -245,30 +184,7 @@ export default {
     },
   },
 
-  async mounted() {
-    this.balance = await this.getBalanceOfToken(this.selectedToken.address)
-    this.UNDBalance = await this.getBalanceOfToken(this.selectedUToken.address)
-    this.checkAllowances()
-  },
-
   methods: {
-    selectPoolToken(poolToken) {
-      this.selectedToken = poolToken
-      this.ui.showDialog = false
-    },
-
-    async getBalanceOfToken(tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
-      const userAddress = signer.getAddress()
-      const getBalance = await contract.balanceOf(userAddress)
-      const balance = ethers.utils.formatEther(getBalance.toString())
-      const formattedBalance =
-        Math.round((parseInt(balance) + Number.EPSILON) * 100) / 100
-      return formattedBalance
-    },
-
     async approve(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
@@ -279,22 +195,21 @@ export default {
           config.contracts.uniswapRouter,
           totalSupply
         )
-        this.ui.showRejected = true
+        this.ui.showSuccess = true
         this.txLink = approve.hash
         this.checkAllowances()
       } catch (error) {
         this.ui.showRejected = true
       }
     },
-
-    async addLiquidity() {
+    async addLiquidity(uToken, token) {
       this.ui.showAwaiting = true
       try {
         const transaction = await addLiquidity(
-          config.contracts.dai,
-          config.contracts.unboundDai,
-          this.lpTokenAmount,
-          this.lpTokenAmount
+          token,
+          uToken,
+          this.uTokenAmount,
+          this.uTokenAmount
         )
         this.txLink = transaction.hash
         this.ui.showAwaiting = false
@@ -303,30 +218,6 @@ export default {
         this.ui.showAwaiting = false
         this.ui.showRejected = true
       }
-    },
-
-    async getAllowance(tokenAddress) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-      const signer = provider.getSigner()
-      const userAddress = provider.getSigner().getAddress()
-      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
-      const allowance = await contract.allowance(
-        userAddress,
-        config.contracts.uniswapRouter
-      )
-      return allowance
-    },
-
-    async checkAllowances() {
-      const UNDAllowance = await this.getAllowance(config.contracts.unboundDai)
-      const daiAllowance = await this.getAllowance(config.contracts.dai)
-      this.selectedToken.allowance = daiAllowance.toString()
-      this.selectedUToken.allowance = UNDAllowance.toString()
-    },
-
-    setInputMax() {
-      this.lpTokenAmount = this.balance
     },
   },
 }
