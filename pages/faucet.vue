@@ -5,7 +5,16 @@
 
       <ul class="text-sm text-gray-600 list-disc px-4">
         <li>This faucet will give you our test tokens on kovan testnet .</li>
-        <li>These are ETH, DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE.</li>
+        <li>
+          These are ETH, DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE. You can
+          find token addresses
+          <a
+            href="https://www.notion.so/Unbound-Token-Addresses-1815d02f646e4b5eb037c2e06690f14b"
+            target="_blank"
+            class="text-light-primary dark:text-dark-primary font-medium"
+            >here</a
+          >
+        </li>
         <li>
           You can then go to Uniswap, provide liquidity to the pool and receive
           Liquidity Pool Tokens(LPT).
@@ -19,15 +28,6 @@
             to="/analytics"
             class="text-light-primary dark:text-dark-primary font-medium"
             >here</nuxt-link
-          >
-        </li>
-        <li>
-          You can find token addresses
-          <a
-            href="https://www.notion.so/Unbound-Token-Addresses-1815d02f646e4b5eb037c2e06690f14b"
-            target="_blank"
-            class="text-light-primary dark:text-dark-primary font-medium"
-            >here</a
           >
         </li>
       </ul>
