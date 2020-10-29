@@ -150,56 +150,72 @@ export default {
 
   methods: {
     reloadOnNetChange() {
-      if (window.ethereum || window.web3) {
-        const ethereum = window.ethereum || window.web3
+      try {
+        if (window.ethereum || window.web3) {
+          const ethereum = window.ethereum || window.web3
 
-        // Silence the metamask warning 🤫
-        ethereum.autoRefreshOnNetworkChange = false
+          // Silence the metamask warning 🤫
+          ethereum.autoRefreshOnNetworkChange = false
 
-        // Reload browser tab when newtork changed
-        ethereum.on('chainChanged', (chainId) => {
-          window.location.reload()
-        })
+          // Reload browser tab when newtork changed
+          ethereum.on('chainChanged', (chainId) => {
+            window.location.reload()
+          })
+        }
+      } catch (error) {
+        console.log(error)
       }
     },
 
     reloadOnAccChange() {
-      if (window.ethereum || window.web3) {
-        const ethereum = window.ethereum || window.web3
+      try {
+        if (window.ethereum || window.web3) {
+          const ethereum = window.ethereum || window.web3
 
-        // Silence the metamask warning 🤫
-        ethereum.autoRefreshOnNetworkChange = false
+          // Silence the metamask warning 🤫
+          ethereum.autoRefreshOnNetworkChange = false
 
-        // Reload browser tab when account changed
-        ethereum.on('accountsChanged', (accounts) => {
-          window.location.reload()
-        })
+          // Reload browser tab when account changed
+          ethereum.on('accountsChanged', (accounts) => {
+            window.location.reload()
+          })
+        }
+      } catch (error) {
+        console.log(error)
       }
     },
 
     async getNetwork() {
-      if (window.ethereum || window.web3) {
-        const web3 = new Web3(window.ethereum || window.web3)
-        const network = await web3.eth.net.getNetworkType()
-        this.$store.commit('getNetwork', network)
-        this.network = network
+      try {
+        if (window.ethereum || window.web3) {
+          const web3 = new Web3(window.ethereum || window.web3)
+          const network = await web3.eth.net.getNetworkType()
+          this.$store.commit('getNetwork', network)
+          this.network = network
 
-        if (this.network !== 'kovan') {
-          this.ui.showChgNetDialog = true
+          if (this.network !== 'kovan') {
+            this.ui.showChgNetDialog = true
+          }
         }
+      } catch (error) {
+        console.log(error)
       }
     },
 
     async isConnected() {
-      const ethereum = window.ethereum || window.web3
-      if (ethereum) {
-        const isConnected = await ethereum.isConnected()
-        if (isConnected) {
-          // get the address
-          const provider = await new ethers.providers.Web3Provider(ethereum)
-          const address = await provider.getSigner().getAddress()
-          await this.$store.commit('getProvider', address)
+      try {
+        const ethereum = window.ethereum || window.web3
+        if (ethereum) {
+          const isConnected = await ethereum.isConnected()
+          if (isConnected) {
+            // get the address
+            const provider = await new ethers.providers.Web3Provider(ethereum)
+            const address = await provider.getSigner().getAddress()
+            await this.$store.commit('getProvider', address)
+          }
         }
+      } catch (error) {
+        console.log(error)
       }
     },
 
