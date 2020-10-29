@@ -57,6 +57,7 @@ export default {
       txLink: null,
     }
   },
+
   methods: {
     async requestFaucet() {
       this.ui.errorMsg = null

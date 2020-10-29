@@ -52,7 +52,7 @@ export default {
         {
           title: 'Unlock',
           route: '/unlock',
-          icon: 'burn.webp',
+          icon: 'burn.svg',
           description: 'Unlock your liquidity pool tokens.',
           isDisabled: false,
         },

@@ -142,16 +142,17 @@ export default {
       const userAddress = provider.getSigner().getAddress()
 
       const poolTokenContract = new ethers.Contract(
-        config.contracts.UNDUniswapPool,
+        config.contracts.UNDUniswapPool, // DAI-UND Pool
         UniswapLPTABI,
         signer
       )
 
       try {
-        const ptBalance = await poolTokenContract.balanceOf(userAddress)
-        console.log(ptBalance.toString())
-        if (ptBalance.toString() > 0) {
+        const lptBalance = await poolTokenContract.balanceOf(userAddress)
+        console.log(lptBalance)
+        if (lptBalance.toString() > 0) {
           const data = await getAmountOfLockedTokens()
+          console.log(data)
           this.liquidity = data
         }
         this.ui.loading = false
