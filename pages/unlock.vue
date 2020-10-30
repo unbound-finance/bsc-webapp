@@ -49,7 +49,7 @@
             Balance:
             <span
               class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ poolToken.UNDBalance }}</span
+              >{{ (toFixed(poolToken.UNDBalance) || '').slice(0, 16) }}</span
             >
           </p>
         </template>
@@ -83,11 +83,17 @@
         :class="[
           !LPTAmount ? getDisabledClass : getActiveClass,
           isSufficientBalance ? getDisabledClass : getActiveClass,
+          Number(LPTAmount).toFixed(18) == 0.0
+            ? getDisabledClass
+            : getActiveClass,
         ]"
         :disabled="shouldDisableUnlock"
         @click="unlock(poolToken)"
       >
         <span v-if="!LPTAmount">Enter An Amount</span>
+        <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
+          >Amount should be greater than 0</span
+        >
         <span v-else-if="isSufficientBalance">Insufficient Balance</span>
         <span v-else>Unlock</span>
       </button>
@@ -102,6 +108,7 @@
 <script>
 import { ethers } from 'ethers'
 // import Web3 from 'web3'
+import { toFixed } from '~/utils'
 
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
@@ -142,11 +149,11 @@ export default {
 
   computed: {
     UNDOutput() {
-      return Number(this.LPTAmount * this.loanRatioPerLPT)
+      return this.LPTAmount * this.loanRatioPerLPT
     },
 
     LPTOutput() {
-      return Number(this.uTokenAmount / this.loanRatioPerLPT)
+      return this.uTokenAmount / this.loanRatioPerLPT
     },
     isWalletConnected() {
       return !!this.$store.state.address
@@ -158,7 +165,12 @@ export default {
       )
     },
     shouldDisableUnlock() {
-      return !this.LPTAmount || this.isSufficientBalance
+      return (
+        !this.LPTAmount ||
+        // eslint-disable-next-line eqeqeq
+        Number(this.LPTAmount).toFixed(18) == 0.0 ||
+        this.isSufficientBalance
+      )
     },
 
     getDisabledClass() {
@@ -178,18 +190,19 @@ export default {
         this.uTokenAmount = null
         return
       }
-      if (!this.uTokenAmountField) this.uTokenAmount = a.toString().slice(0, 16)
+      if (!this.uTokenAmountField) this.uTokenAmount = toFixed(a)
     },
     LPTOutput(a) {
       if (a === 0 || a === '0') {
         this.LPTAmount = null
         return
       }
-      if (!this.LPTAmountField) this.LPTAmount = a.toString().slice(0, 16)
+      if (!this.LPTAmountField) this.LPTAmount = toFixed(a)
     },
   },
 
   methods: {
+    toFixed,
     async getLoanRatioPerLPT(poolToken) {
       this.ui.priceLoader = true
       const provider = new ethers.providers.Web3Provider(window.ethereum)

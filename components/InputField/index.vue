@@ -30,7 +30,7 @@
             <button
               type="button"
               class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
-              @click="model = poolToken.lockedBalance.toString().slice(0, 16)"
+              @click="model = poolToken.lockedBalance"
             >
               Max
             </button>
@@ -38,7 +38,9 @@
               Locked LPT's:
               <span
                 class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-                >{{ poolToken.lockedBalance.toString().slice(0, 16) }}</span
+                >{{
+                  (toFixed(poolToken.lockedBalance) || '').slice(0, 16)
+                }}</span
               >
             </p>
           </div>
