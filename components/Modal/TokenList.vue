@@ -44,13 +44,13 @@
                 v-if="type === 'mint'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                {{ Number(token.balance).toFixed(4) || 0 }}
+                {{ Number(token.balance).toFixed(10) || 0 }}
               </span>
               <span
                 v-if="type === 'unlock'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                {{ Number(token.lockedBalance).toFixed(4) || 0 }}
+                {{ Number(token.lockedBalance).toFixed(10) || 0 }}
               </span>
             </div>
           </div>
