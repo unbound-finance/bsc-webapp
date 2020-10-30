@@ -44,13 +44,13 @@
                 v-if="type === 'mint'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                {{ token.balance || 0 }}
+                {{ Number(token.balance).toFixed(4) || 0 }}
               </span>
               <span
                 v-if="type === 'unlock'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                {{ token.lockedBalance || 0 }}
+                {{ Number(token.lockedBalance).toFixed(4) || 0 }}
               </span>
             </div>
           </div>
@@ -136,9 +136,9 @@ export default {
 
           return {
             ...poolToken,
-            balance: balance.toFixed,
+            balance: balance.formatted,
             lockedBalance,
-            UNDBalance: UNDBalance.toFixed,
+            UNDBalance: UNDBalance.formatted,
             mintedUTokens,
           }
         })

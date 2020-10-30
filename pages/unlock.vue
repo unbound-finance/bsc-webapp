@@ -178,14 +178,14 @@ export default {
         this.uTokenAmount = null
         return
       }
-      if (!this.uTokenAmountField) this.uTokenAmount = Number(a).toFixed(4)
+      if (!this.uTokenAmountField) this.uTokenAmount = a.toString().slice(0, 16)
     },
     LPTOutput(a) {
       if (a === 0 || a === '0') {
         this.LPTAmount = null
         return
       }
-      if (!this.LPTAmountField) this.LPTAmount = Number(a).toFixed(4)
+      if (!this.LPTAmountField) this.LPTAmount = a.toString().slice(0, 16)
     },
   },
 
@@ -262,7 +262,11 @@ export default {
         UnboundLLCABI,
         signer
       )
-      const rawLPTAmount = ethers.utils.parseEther(this.LPTAmount)
+
+      let rawLPTAmount = ethers.utils.parseEther(
+        this.LPTAmount.toString().slice(0, 16)
+      )
+      rawLPTAmount = rawLPTAmount.toString()
       try {
         const unlock = await contract.unlockLPT(
           rawLPTAmount,

@@ -88,12 +88,18 @@
             !LPTAmount ? getDisabledClass : getActiveClass,
             LPTAmount === '0' ? getDisabledClass : getActiveClass,
             isSufficentBalance ? getDisabledClass : getActiveClass,
+            Number(LPTAmount).toFixed(18) == 0.0
+              ? getDisabledClass
+              : getActiveClass,
           ]"
           :disabled="shouldDisableMint"
           @click="ui.showConfirmation = true"
         >
           <span v-if="!LPTAmount || LPTAmount === '0'">Enter An Amount</span>
           <span v-else-if="isSufficentBalance">Insufficient Balance</span>
+          <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
+            >Amount should be greater than 0</span
+          >
           <span v-else>Mint</span>
         </button>
 
@@ -325,6 +331,8 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 
+import { toFixed } from '~/utils'
+
 import UnboundDaiABI from '~/configs/abi/UnboundDai.js'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
@@ -364,11 +372,11 @@ export default {
 
   computed: {
     UNDOutput() {
-      return Number(this.LPTAmount * this.loanRatioPerLPT)
+      return this.LPTAmount * this.loanRatioPerLPT
     },
 
     LPTOutput() {
-      return Number(this.uTokenAmount / this.loanRatioPerLPT)
+      return this.uTokenAmount / this.loanRatioPerLPT
     },
 
     isWalletConnected() {
@@ -384,7 +392,10 @@ export default {
 
     shouldDisableMint() {
       return (
-        !this.LPTAmount || this.LPTAmount === '0' || this.isSufficentBalance
+        !this.LPTAmount ||
+        // eslint-disable-next-line eqeqeq
+        Number(this.LPTAmount).toFixed(18) == 0.0 ||
+        this.isSufficentBalance
       )
     },
 
@@ -406,14 +417,14 @@ export default {
         this.uTokenAmount = null
         return
       }
-      if (!this.uTokenAmountField) this.uTokenAmount = Number(a).toFixed(4)
+      if (!this.uTokenAmountField) this.uTokenAmount = toFixed(a)
     },
-    LPTOutput(a) {
+    LPTOutput(a, b) {
       if (a === 0 || a === '0') {
         this.LPTAmount = null
         return
       }
-      if (!this.LPTAmountField) this.LPTAmount = Number(a).toFixed(4)
+      if (!this.LPTAmountField) this.LPTAmount = toFixed(a)
     },
   },
 
@@ -492,7 +503,11 @@ export default {
       const userAddress = await signer.getAddress()
       const nonce = await getNonce(poolTokenAddress, signer)
       const deadline = +new Date() + 5000
-      const amount = ethers.utils.parseEther(this.LPTAmount).toString()
+
+      let amount = ethers.utils.parseEther(
+        this.LPTAmount.toString().slice(0, 16)
+      )
+      amount = amount.toString()
 
       const EIP712Signature = await getEIP712Signature(
         poolTokenAddress,

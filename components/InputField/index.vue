@@ -19,7 +19,7 @@
               Balance:
               <span
                 class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-                >{{ poolToken.balance }}</span
+                >{{ (toFixed(poolToken.balance) || '').slice(0, 16) }}</span
               >
             </p>
           </div>
@@ -30,7 +30,7 @@
             <button
               type="button"
               class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
-              @click="model = poolToken.lockedBalance"
+              @click="model = poolToken.lockedBalance.toString().slice(0, 16)"
             >
               Max
             </button>
@@ -38,7 +38,7 @@
               Locked LPT's:
               <span
                 class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-                >{{ poolToken.lockedBalance }}</span
+                >{{ poolToken.lockedBalance.toString().slice(0, 16) }}</span
               >
             </p>
           </div>
@@ -172,6 +172,8 @@
 <script>
 import { ethers } from 'ethers'
 
+import { toFixed } from '~/utils'
+
 import ERC20ABI from '~/configs/abi/ERC20'
 import config from '~/configs/config'
 export default {
@@ -222,7 +224,7 @@ export default {
     value(a) {
       this.model = a
     },
-    model(a) {
+    model(a, b) {
       this.$emit('input', a)
     },
     poolToken(a) {
@@ -235,6 +237,7 @@ export default {
     },
   },
   methods: {
+    toFixed,
     async approve(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
