@@ -38,13 +38,11 @@ const getLockedLPT = async (LPTAddress) => {
   const userAddress = signer.getAddress()
   const getLocked = await contract.tokensLocked(userAddress)
   const locked = ethers.utils.formatEther(getLocked.toString())
-  const formatted = parseFloat(locked).toFixed(4).slice(0, -1)
-  return formatted
+  return locked
 }
 
 const getTotalLockedLPT = async (LPTAddress, LLCAddress) => {
   try {
-    console.log('main func', LLCAddress)
     const contract = await new ethers.Contract(
       LPTAddress,
       UniswapLPTABI,
