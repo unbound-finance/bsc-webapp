@@ -156,7 +156,7 @@
                     }}</span>
                   </div>
                   <p class="text-2xl font-mono font-medium dark:text-white">
-                    UND
+                    {{ poolToken.uToken.symbol }}
                   </p>
                 </div>
               </div>
@@ -279,8 +279,9 @@
             <p class="font-medium text-sm dark:text-white font-mono">
               {{
                 Number(
-                  (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) / 100
-                ).toFixed(2)
+                  (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) / 100 ||
+                    ''
+                ).toFixed(4)
               }}
               {{ poolToken.uToken.symbol }}
             </p>
@@ -300,7 +301,12 @@
               Currently Minted
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ poolToken.mintedUTokens }} {{ poolToken.uToken.symbol }}
+              {{
+                poolToken.uToken.symbol == 'UND'
+                  ? toFixed(poolToken.mintedUTokens || '').slice(0, 6)
+                  : toFixed(poolToken.mintedUTokens || '').slice(0, 18)
+              }}
+              {{ poolToken.uToken.symbol }}
             </p>
           </div>
           <div class="flex items-center justify-between pb-2">
@@ -308,7 +314,8 @@
               Currently Locked
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ poolToken.lockedBalance }} {{ poolToken.name }}
+              {{ toFixed(poolToken.lockedBalance || '').slice(0, 8) }}
+              {{ poolToken.name }}
             </p>
           </div>
           <!-- <a
@@ -429,6 +436,7 @@ export default {
   },
 
   methods: {
+    toFixed,
     async getLoanRatioPerLPT(poolToken) {
       this.ui.priceLoader = true
       const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -505,9 +513,11 @@ export default {
       const deadline = +new Date() + 5000
 
       let amount = ethers.utils.parseEther(
-        this.LPTAmount.toString().slice(0, 16)
+        this.LPTAmount.toString().slice(0, 18)
       )
       amount = amount.toString()
+
+      console.log(amount)
 
       const EIP712Signature = await getEIP712Signature(
         poolTokenAddress,

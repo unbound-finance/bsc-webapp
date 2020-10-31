@@ -128,7 +128,7 @@ export default {
         supportedPoolTokens.map(async (poolToken) => {
           const balance = await getTokenBalance(poolToken.address)
           const lockedBalance = await getLockedLPT(poolToken.llcAddress)
-          const UNDBalance = await getTokenBalance(poolToken.uToken.address)
+          const uTokenBalance = await getTokenBalance(poolToken.uToken.address)
           const mintedUTokens = await checkLoan(
             poolToken.llcAddress,
             poolToken.uToken.address
@@ -138,7 +138,7 @@ export default {
             ...poolToken,
             balance: balance.formatted,
             lockedBalance,
-            UNDBalance: UNDBalance.formatted,
+            uTokenBalance: uTokenBalance.formatted,
             mintedUTokens,
           }
         })

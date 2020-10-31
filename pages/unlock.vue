@@ -49,7 +49,11 @@
             Balance:
             <span
               class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ (toFixed(poolToken.UNDBalance) || '').slice(0, 16) }}</span
+              >{{
+                poolToken.uToken.symbol == 'UND'
+                  ? toFixed(poolToken.uTokenBalance).slice(0, 6)
+                  : toFixed(poolToken.uTokenBalance).slice(0, 18)
+              }}</span
             >
           </p>
         </template>
@@ -137,7 +141,7 @@ export default {
       uTokenAmount: null,
       poolToken: null,
       txLink: '',
-      UNDBalance: null,
+      uTokenBalance: null,
       supportedPoolTokens,
       loanRatioPerLPT: '',
       llc: {
@@ -159,10 +163,19 @@ export default {
       return !!this.$store.state.address
     },
     isSufficientBalance() {
-      return (
-        this.poolToken &&
-        parseFloat(this.LPTAmount) > parseFloat(this.poolToken.lockedBalance)
-      )
+      if (this.poolToken) {
+        if (
+          parseFloat(this.LPTAmount) >
+            parseFloat(this.poolToken.lockedBalance) ||
+          parseFloat(this.uTokenAmount) >
+            parseFloat(this.poolToken.uTokenBalance)
+        ) {
+          return true
+        } else {
+          return false
+        }
+      }
+      return false
     },
     shouldDisableUnlock() {
       return (
@@ -277,7 +290,7 @@ export default {
       )
 
       let rawLPTAmount = ethers.utils.parseEther(
-        this.LPTAmount.toString().slice(0, 16)
+        this.LPTAmount.toString().slice(0, 18)
       )
       rawLPTAmount = rawLPTAmount.toString()
       try {

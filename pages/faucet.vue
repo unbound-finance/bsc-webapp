@@ -102,7 +102,12 @@ export default {
           this.ui.showSuccess = true
         }
       } catch (error) {
-        this.ui.errorMsg = 'You can request only once every 24 hours.'
+        // eslint-disable-next-line eqeqeq
+        if (error.code == 4001) {
+          this.ui.errorMsg = 'User denied transaction signature.'
+        } else {
+          this.ui.errorMsg = 'You can request only once every 24 hours.'
+        }
         setTimeout(() => {
           this.ui.errorMsg = null
         }, 2500)
