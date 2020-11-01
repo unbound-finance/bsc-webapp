@@ -155,18 +155,20 @@ const getPoolTokenBalance = async () => {
 }
 
 const getPoolTokenReserves = async () => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum)
-  const signer = provider.getSigner()
-  const poolTokenContract = new ethers.Contract(
-    config.contracts.UNDUniswapPool,
-    UniswapLPTABI,
-    signer
-  )
-  const reserves = await poolTokenContract.getReserves()
-  return {
-    reserve0: reserves[0].toString(),
-    reserve1: reserves[1].toString(),
-  }
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const poolTokenContract = new ethers.Contract(
+      config.contracts.UNDUniswapPool,
+      UniswapLPTABI,
+      signer
+    )
+    const reserves = await poolTokenContract.getReserves()
+    return {
+      reserve0: reserves[0].toString(),
+      reserve1: reserves[1].toString(),
+    }
+  } catch (error) {}
 }
 
 const getPoolTokenTotalSupply = async () => {
@@ -182,15 +184,27 @@ const getPoolTokenTotalSupply = async () => {
 }
 
 const getAmountOfLockedTokens = async () => {
-  const poolTokenTotalSupply = await getPoolTokenTotalSupply()
-  const poolTokenBalance = await getPoolTokenBalance()
-  const poolTokenReserves = await getPoolTokenReserves()
-  const poolTokenRatio =
-    poolTokenBalance.toString() / poolTokenTotalSupply.toString()
-  return {
-    token0: (poolTokenReserves.reserve0 * poolTokenRatio) / 1e18,
-    token1: (poolTokenReserves.reserve0 * poolTokenRatio) / 1e18,
-    poolShare: poolTokenRatio * 100,
+  try {
+    if (!this.$store.state.address) {
+      return {
+        token0: 0,
+        token1: 0,
+        poolShare: 0,
+      }
+    }
+
+    const poolTokenTotalSupply = await getPoolTokenTotalSupply()
+    const poolTokenBalance = await getPoolTokenBalance()
+    const poolTokenReserves = await getPoolTokenReserves()
+    const poolTokenRatio =
+      poolTokenBalance.toString() / poolTokenTotalSupply.toString()
+    return {
+      token0: (poolTokenReserves.reserve0 * poolTokenRatio) / 1e18 || 0,
+      token1: (poolTokenReserves.reserve0 * poolTokenRatio) / 1e18 || 0,
+      poolShare: poolTokenRatio * 100 || 0,
+    }
+  } catch (error) {
+    throw new Error('Something went wrong!', error)
   }
 }
 

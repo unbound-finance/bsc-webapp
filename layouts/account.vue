@@ -37,7 +37,9 @@
                 </div>
                 <div>
                   <p class="text-right text-accent font-medium">
-                    {{ Number(liquidity.token0).toFixed(2) }}
+                    {{
+                      (liquidity && Number(liquidity.token0).toFixed(2)) || 0
+                    }}
                   </p>
                 </div>
                 <div>
@@ -45,7 +47,9 @@
                 </div>
                 <div>
                   <p class="text-right text-accent font-medium">
-                    {{ Number(liquidity.token1).toFixed(2) }}
+                    {{
+                      (liquidity && Number(liquidity.token1).toFixed(2)) || 0
+                    }}
                   </p>
                 </div>
               </div>
@@ -192,57 +196,66 @@ export default {
 
   methods: {
     async getCollectedFees() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const UND = new ethers.Contract(
-        config.contracts.unboundDai,
-        UnboundDai,
-        signer
-      )
-      const safu = await UND.balanceOf(config.safuFund)
-      const team = await UND.balanceOf(config.devFund)
-      this.collectedFees.safu = (safu.toString() / 1e18).toFixed(3)
-      this.collectedFees.team = (team.toString() / 1e18).toFixed(3)
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
+        const UND = new ethers.Contract(
+          config.contracts.unboundDai,
+          UnboundDai,
+          signer
+        )
+        const safu = await UND.balanceOf(config.safuFund)
+        const team = await UND.balanceOf(config.devFund)
+        this.collectedFees.safu = (safu.toString() / 1e18).toFixed(3)
+        this.collectedFees.team = (team.toString() / 1e18).toFixed(3)
+      } catch (error) {
+        throw new Error('Could not fetch fees', error)
+      }
     },
 
     async getTotalLiquidity() {
-      const totalLiquidity = await getPoolTokenReserves()
-      this.totalLiquidity = (totalLiquidity.reserve1 / 1e18).toFixed(2)
+      try {
+        const totalLiquidity = await getPoolTokenReserves()
+        this.totalLiquidity = (totalLiquidity.reserve1 / 1e18).toFixed(2)
+      } catch (error) {
+        throw new Error('Could not fetch total liquidity', error)
+      }
     },
 
     async getTotalUND() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const UND = new ethers.Contract(
-        config.contracts.unboundDai,
-        UnboundDai,
-        signer
-      )
-      const supply = await UND.totalSupply()
-      this.totalMinted = (supply / 1e18).toFixed(2)
+      try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
+        const UND = new ethers.Contract(
+          config.contracts.unboundDai,
+          UnboundDai,
+          signer
+        )
+        const supply = await UND.totalSupply()
+        this.totalMinted = (supply / 1e18).toFixed(2)
+      } catch (error) {}
     },
 
     async fetchLiquidity() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const userAddress = provider.getSigner().getAddress()
-
-      const poolTokenContract = new ethers.Contract(
-        config.contracts.UNDUniswapPool,
-        UniswapLPTABI,
-        signer
-      )
-
       try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const signer = provider.getSigner()
+        const userAddress = provider.getSigner().getAddress()
+
+        const poolTokenContract = new ethers.Contract(
+          config.contracts.UNDUniswapPool,
+          UniswapLPTABI,
+          signer
+        )
         const lptBalance = await poolTokenContract.balanceOf(userAddress)
-        if (lptBalance > 0) {
+        if (parseFloat(lptBalance.toString()) > 0) {
           const data = await getAmountOfLockedTokens()
           this.liquidity = data
         }
-      } catch (error) {}
+      } catch (error) {
+        throw new Error('Could not fetch liquidity', error)
+      }
     },
   },
 }
 </script>
-
-<style></style>
