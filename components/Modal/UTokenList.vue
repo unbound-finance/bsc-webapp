@@ -129,8 +129,6 @@ export default {
           const uTokenAllowance = await this.getAllowance(uToken.address)
           const tokenAllowance = await this.getAllowance(uToken.token.address)
 
-          console.log(uTokenAllowance.toString(), tokenAllowance.toString())
-
           return {
             ...uToken,
             uTokenbalance: uTokenbalance.toFixed,

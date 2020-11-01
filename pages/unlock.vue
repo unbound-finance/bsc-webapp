@@ -51,8 +51,8 @@
               class="font-mono text-gray-900 dark:text-gray-500 font-medium"
               >{{
                 poolToken.uToken.symbol == 'UND'
-                  ? toFixed(poolToken.uTokenBalance).slice(0, 6)
-                  : toFixed(poolToken.uTokenBalance).slice(0, 18)
+                  ? toFixed(poolToken.uTokenBalance || '').slice(0, 6)
+                  : toFixed(poolToken.uTokenBalance || '').slice(0, 18)
               }}</span
             >
           </p>

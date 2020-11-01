@@ -108,7 +108,13 @@ export default {
         loading: false,
       },
       search: '',
-      supportedPoolTokens,
+      supportedPoolTokens: supportedPoolTokens.map((e) => ({
+        ...e,
+        balance: 0,
+        lockedBalance: 0,
+        uTokenBalance: 0,
+        mintedUTokens: 0,
+      })),
     }
   },
 
@@ -135,6 +141,7 @@ export default {
   methods: {
     selectToken(poolToken) {
       this.$emit('update:poolToken', poolToken)
+      this.selectedToken = poolToken
       this.modal = false
     },
 
@@ -152,7 +159,6 @@ export default {
               poolToken.llcAddress,
               poolToken.uToken.address
             )
-            this.ui.loading = false
             return {
               ...poolToken,
               balance: balance.formatted,
@@ -162,6 +168,13 @@ export default {
             }
           })
         )
+        this.ui.loading = false
+        if (this.selectedToken) {
+          const updatedToken = this.supportedPoolTokens.find(
+            ({ address }) => this.selectedToken.address === address
+          )
+          this.$emit('update:poolToken', updatedToken)
+        }
       } catch (error) {
         this.ui.loading = false
         throw new Error('Could not fetch balance.')
