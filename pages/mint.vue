@@ -71,7 +71,7 @@
         </input-field>
 
         <div
-          v-if="LPTAmount"
+          v-if="LPTAmount && poolToken"
           class="w-full flex items-center justify-between px-2"
         >
           <p class="text-sm text-gray-600">Price Per LP Token</p>
@@ -85,6 +85,7 @@
           v-if="isWalletConnected"
           class="font-medium w-full py-2 rounded-md focus:outline-none"
           :class="[
+            !poolToken ? getDisabledClass : getActiveClass,
             !LPTAmount ? getDisabledClass : getActiveClass,
             LPTAmount === '0' ? getDisabledClass : getActiveClass,
             isSufficentBalance ? getDisabledClass : getActiveClass,
@@ -95,7 +96,10 @@
           :disabled="shouldDisableMint"
           @click="ui.showConfirmation = true"
         >
-          <span v-if="!LPTAmount || LPTAmount === '0'">Enter An Amount</span>
+          <span v-if="!poolToken">Select Pool Token</span>
+          <span v-else-if="!LPTAmount || LPTAmount === '0'"
+            >Enter An Amount</span
+          >
           <span v-else-if="isSufficentBalance">Insufficient Balance</span>
           <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
             >Amount should be greater than 0</span
@@ -399,6 +403,7 @@ export default {
 
     shouldDisableMint() {
       return (
+        !this.poolToken ||
         !this.LPTAmount ||
         // eslint-disable-next-line eqeqeq
         Number(this.LPTAmount).toFixed(18) == 0.0 ||

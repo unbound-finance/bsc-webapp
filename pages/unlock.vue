@@ -85,6 +85,7 @@
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
         :class="[
+          !poolToken ? getDisabledClass : getActiveClass,
           !LPTAmount ? getDisabledClass : getActiveClass,
           isSufficientBalance ? getDisabledClass : getActiveClass,
           Number(LPTAmount).toFixed(18) == 0.0
@@ -94,7 +95,8 @@
         :disabled="shouldDisableUnlock"
         @click="unlock(poolToken)"
       >
-        <span v-if="!LPTAmount">Enter An Amount</span>
+        <span v-if="!poolToken">Select Pool Token</span>
+        <span v-else-if="!LPTAmount">Enter An Amount</span>
         <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
           >Amount should be greater than 0</span
         >
@@ -179,6 +181,7 @@ export default {
     },
     shouldDisableUnlock() {
       return (
+        !this.poolToken ||
         !this.LPTAmount ||
         // eslint-disable-next-line eqeqeq
         Number(this.LPTAmount).toFixed(18) == 0.0 ||
