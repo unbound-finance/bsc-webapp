@@ -44,13 +44,25 @@
                 v-if="type === 'mint'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                {{ Number(token.balance).toFixed(10) || 0 }}
+                <loader v-if="ui.loading" color="#2172E5" stroke="4" />
+                <span v-else>
+                  {{
+                    (token.balance && Number(token.balance).toFixed(10)) || 0
+                  }}</span
+                >
               </span>
               <span
                 v-if="type === 'unlock'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                {{ Number(token.lockedBalance).toFixed(10) || 0 }}
+                <loader v-if="ui.loading" color="#2172E5" stroke="4" />
+                <span v-else>
+                  {{
+                    (token.lockedBalance &&
+                      Number(token.lockedBalance).toFixed(10)) ||
+                    0
+                  }}</span
+                >
               </span>
             </div>
           </div>
@@ -92,6 +104,9 @@ export default {
   },
   data() {
     return {
+      ui: {
+        loading: false,
+      },
       search: '',
       supportedPoolTokens,
     }
@@ -124,25 +139,33 @@ export default {
     },
 
     async getSupportedPoolTokens() {
-      this.supportedPoolTokens = await Promise.all(
-        supportedPoolTokens.map(async (poolToken) => {
-          const balance = await getTokenBalance(poolToken.address)
-          const lockedBalance = await getLockedLPT(poolToken.llcAddress)
-          const uTokenBalance = await getTokenBalance(poolToken.uToken.address)
-          const mintedUTokens = await checkLoan(
-            poolToken.llcAddress,
-            poolToken.uToken.address
-          )
-
-          return {
-            ...poolToken,
-            balance: balance.formatted,
-            lockedBalance,
-            uTokenBalance: uTokenBalance.formatted,
-            mintedUTokens,
-          }
-        })
-      )
+      this.ui.loading = true
+      try {
+        this.supportedPoolTokens = await Promise.all(
+          supportedPoolTokens.map(async (poolToken) => {
+            const balance = await getTokenBalance(poolToken.address)
+            const lockedBalance = await getLockedLPT(poolToken.llcAddress)
+            const uTokenBalance = await getTokenBalance(
+              poolToken.uToken.address
+            )
+            const mintedUTokens = await checkLoan(
+              poolToken.llcAddress,
+              poolToken.uToken.address
+            )
+            this.ui.loading = false
+            return {
+              ...poolToken,
+              balance: balance.formatted,
+              lockedBalance,
+              uTokenBalance: uTokenBalance.formatted,
+              mintedUTokens,
+            }
+          })
+        )
+      } catch (error) {
+        this.ui.loading = false
+        throw new Error('Could not fetch balance.')
+      }
     },
   },
 }
