@@ -31,13 +31,19 @@
       </div>
 
       <div v-else class="mt-4">
-        <div class="flex w-full items-center justify-between px-2">
+        <div
+          v-for="(data, i) in liquidity"
+          :key="i"
+          class="flex w-full items-center justify-between px-2"
+        >
           <div class="flex items-center space-x-2">
             <double-logo
-              token0logo="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png"
-              :token1logo="require('~/assets/tokens/und.webp')"
+              :token0logo="data.token.icon"
+              :token1logo="require(`~/assets/tokens/${data.icon}`)"
             />
-            <p class="font-medium dark:text-white">DAI / UND</p>
+            <p class="font-medium dark:text-white">
+              {{ data.token.name }} / {{ data.name }}
+            </p>
           </div>
 
           <button class="focus:outline-none" @click="ui.active = !ui.active">
@@ -110,10 +116,11 @@
 
 <script>
 import { ethers } from 'ethers'
-import config from '~/configs/config'
 
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import { getAmountOfLockedTokens } from '~/mixins/stake'
+
+import supportedUTokens from '~/configs/supportedUTokens'
 // import { ethers } from 'ethers'
 // import Web3 from 'web3'
 // import contractAddresses from '~/configs/addresses'
@@ -141,21 +148,21 @@ export default {
       const signer = provider.getSigner()
       const userAddress = provider.getSigner().getAddress()
 
-      const poolTokenContract = new ethers.Contract(
-        config.contracts.UNDUniswapPool, // DAI-UND Pool
-        UniswapLPTABI,
-        signer
-      )
-
       try {
-        const lptBalance = await poolTokenContract.balanceOf(userAddress)
-        console.log(lptBalance)
-        if (lptBalance.toString() > 0) {
-          const data = await getAmountOfLockedTokens()
-          console.log(data)
-          this.liquidity = data
-        }
-        this.ui.loading = false
+        this.liquidity = await Promise.all(
+          supportedUTokens.map(async (e) => {
+            const poolTokenContract = new ethers.Contract(
+              e.llcAddress,
+              UniswapLPTABI,
+              signer
+            )
+            const lptBalance = await poolTokenContract.balanceOf(userAddress)
+            if (lptBalance.toString() > 0) {
+              const data = await getAmountOfLockedTokens(e.llcAddress)
+              return data
+            }
+          })
+        )
       } catch (error) {
         this.ui.loading = false
       }

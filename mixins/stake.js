@@ -141,12 +141,12 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   // )
 }
 
-const getPoolTokenBalance = async () => {
+const getPoolTokenBalance = async (address) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   const userAddress = signer.getAddress()
   const poolTokenContract = await new ethers.Contract(
-    config.contracts.UNDUniswapPool,
+    address,
     UniswapLPTABI,
     signer
   )
@@ -154,12 +154,12 @@ const getPoolTokenBalance = async () => {
   return balance
 }
 
-const getPoolTokenReserves = async () => {
+const getPoolTokenReserves = async (address) => {
   try {
     const provider = new ethers.providers.Web3Provider(window.ethereum)
     const signer = provider.getSigner()
     const poolTokenContract = new ethers.Contract(
-      config.contracts.UNDUniswapPool,
+      address,
       UniswapLPTABI,
       signer
     )
@@ -171,31 +171,19 @@ const getPoolTokenReserves = async () => {
   } catch (error) {}
 }
 
-const getPoolTokenTotalSupply = async () => {
+const getPoolTokenTotalSupply = async (address) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
-  const poolTokenContract = new ethers.Contract(
-    config.contracts.UNDUniswapPool,
-    UniswapLPTABI,
-    signer
-  )
+  const poolTokenContract = new ethers.Contract(address, UniswapLPTABI, signer)
   const totalSupply = await poolTokenContract.totalSupply()
   return totalSupply
 }
 
-const getAmountOfLockedTokens = async () => {
+const getAmountOfLockedTokens = async (address) => {
   try {
-    if (!this.$store.state.address) {
-      return {
-        token0: 0,
-        token1: 0,
-        poolShare: 0,
-      }
-    }
-
-    const poolTokenTotalSupply = await getPoolTokenTotalSupply()
-    const poolTokenBalance = await getPoolTokenBalance()
-    const poolTokenReserves = await getPoolTokenReserves()
+    const poolTokenTotalSupply = await getPoolTokenTotalSupply(address)
+    const poolTokenBalance = await getPoolTokenBalance(address)
+    const poolTokenReserves = await getPoolTokenReserves(address)
     const poolTokenRatio =
       poolTokenBalance.toString() / poolTokenTotalSupply.toString()
     return {
