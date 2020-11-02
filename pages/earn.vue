@@ -78,7 +78,7 @@
                 <p>Your pool share</p>
               </div>
               <div class="w-1/2 text-right">
-                <p>{{ Number(data.poolInfo.poolShare).toFixed(2) }} %</p>
+                <p>{{ Number(data.poolInfo.poolShare).toFixed(6) }} %</p>
               </div>
             </div>
 
