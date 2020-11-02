@@ -9,7 +9,7 @@
           These are ETH, DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE. You can
           find token addresses
           <a
-            href="https://www.notion.so/Unbound-Token-Addresses-1815d02f646e4b5eb037c2e06690f14b"
+            href="https://www.notion.so/Unbound-Testnet-06c16fd6fcb4479da2cb3b03389b5c39"
             target="_blank"
             class="text-light-primary dark:text-dark-primary font-medium"
             >here</a
