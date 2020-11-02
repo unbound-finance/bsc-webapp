@@ -15,5 +15,5 @@ export default {
   chainId: 42,
   safuFund: '0xcc729a114aa8f572971d4d85B21e661E265Df20C',
   devFund: '0xeA6439DdaB48bF67e8e067b124Cf16d5bFBA8CDB',
-  faucet: '0xb42fbeb6722f8ed06d1b36a09ccbe582dd62a319',
+  faucet: '0x9C02DB5433Ed50789f0dA1ED2542e794Fad4cC47',
 }
