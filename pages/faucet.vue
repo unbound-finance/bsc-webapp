@@ -96,7 +96,7 @@ export default {
 
       try {
         if (this.$store.state.address) {
-          const distribute = await faucet.removeAll(this.$store.state.address)
+          const distribute = await faucet.releaseAll(this.$store.state.address)
           this.ui.loading = false
           this.txLink = distribute.hash
           this.ui.showSuccess = true
