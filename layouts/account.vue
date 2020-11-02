@@ -4,7 +4,7 @@
     <div class="md:max-w-6xl mx-auto p-4">
       <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-2">
         <div
-          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75"
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75 dark:bg-gray-900"
           :class="showFees ? '' : 'border'"
         >
           <div class="flex flex-col">
@@ -57,7 +57,7 @@
           </div>
         </div>
         <div
-          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75"
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75 dark:bg-gray-900"
           :class="showLiquidity ? '' : 'border'"
         >
           <div class="flex flex-col">
@@ -70,7 +70,7 @@
           </div>
         </div>
         <div
-          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75"
+          class="w-full border-gray-200 dark:border-gray-800 rounded p-4 bg-white bg-opacity-75 dark:bg-gray-900"
           :class="showLiquidity ? '' : 'border'"
         >
           <div class="flex flex-col">
