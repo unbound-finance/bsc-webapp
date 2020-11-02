@@ -13,7 +13,10 @@
               <p class="font-medium text-3xl text-accent">
                 ${{
                   liquidity
-                    ? Number(liquidity.token0 + liquidity.token1).toFixed(2)
+                    ? Number(
+                        liquidity[0].poolInfo.totalLiquidity +
+                          liquidity[1].poolInfo.totalLiquidity
+                      ).toFixed(2)
                     : '0'
                 }}
               </p>
@@ -38,7 +41,9 @@
                 <div>
                   <p class="text-right text-accent font-medium">
                     {{
-                      (liquidity && Number(liquidity.token0).toFixed(2)) || 0
+                      (liquidity &&
+                        Number(liquidity[0].poolInfo.token0).toFixed(2)) ||
+                      0
                     }}
                   </p>
                 </div>
@@ -48,7 +53,33 @@
                 <div>
                   <p class="text-right text-accent font-medium">
                     {{
-                      (liquidity && Number(liquidity.token1).toFixed(2)) || 0
+                      (liquidity &&
+                        Number(liquidity[0].poolInfo.token1).toFixed(2)) ||
+                      0
+                    }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-600 font-medium text-sm">Pooled ETH</p>
+                </div>
+                <div>
+                  <p class="text-right text-accent font-medium">
+                    {{
+                      (liquidity &&
+                        Number(liquidity[1].poolInfo.token0).toFixed(2)) ||
+                      0
+                    }}
+                  </p>
+                </div>
+                <div>
+                  <p class="text-gray-600 font-medium text-sm">Pooled uETH</p>
+                </div>
+                <div>
+                  <p class="text-right text-accent font-medium">
+                    {{
+                      (liquidity &&
+                        Number(liquidity[1].poolInfo.token0).toFixed(2)) ||
+                      0
                     }}
                   </p>
                 </div>
@@ -64,7 +95,9 @@
             <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
             <div class="flex items-center justify-between">
               <p class="font-medium text-3xl text-accent">
-                {{ liquidity ? liquidity.poolShare.toFixed(3) : '0' }}%
+                {{
+                  liquidity ? liquidity[0].poolInfo.poolShare.toFixed(6) : '0'
+                }}%
               </p>
             </div>
           </div>
@@ -136,13 +169,15 @@ import { mapGetters } from 'vuex'
 import { ethers } from 'ethers'
 
 // import config from '~/configs/config'
-import { getPoolTokenReserves, getAmountOfLockedTokens } from '~/mixins/stake'
+import { getAmountOfLockedTokens } from '~/mixins/stake'
 
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
 import UnboundDai from '~/configs/abi/UnboundDai'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
+import supportedUTokens from '~/configs/supportedUTokens'
+
 // const txDecoder = require('ethereum-tx-decoder')
 
 export default {
@@ -188,7 +223,6 @@ export default {
 
   mounted() {
     this.ui.loading = true
-    this.getTotalLiquidity()
     this.getTotalUND()
     this.getCollectedFees()
     this.fetchLiquidity()
@@ -213,14 +247,14 @@ export default {
       }
     },
 
-    async getTotalLiquidity() {
-      try {
-        const totalLiquidity = await getPoolTokenReserves()
-        this.totalLiquidity = (totalLiquidity.reserve1 / 1e18).toFixed(2)
-      } catch (error) {
-        throw new Error('Could not fetch total liquidity', error)
-      }
-    },
+    // async getTotalLiquidity() {
+    //   try {
+    //     const totalLiquidity = await getPoolTokenReserves()
+    //     this.totalLiquidity = (totalLiquidity.reserve1 / 1e18).toFixed(2)
+    //   } catch (error) {
+    //     throw new Error('Could not fetch total liquidity', error)
+    //   }
+    // },
 
     async getTotalUND() {
       try {
@@ -237,23 +271,34 @@ export default {
     },
 
     async fetchLiquidity() {
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
-        const userAddress = provider.getSigner().getAddress()
+      this.ui.loading = true
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
+      const userAddress = provider.getSigner().getAddress()
 
-        const poolTokenContract = new ethers.Contract(
-          config.contracts.UNDUniswapPool,
-          UniswapLPTABI,
-          signer
+      try {
+        this.liquidity = await Promise.all(
+          supportedUTokens.map(async (e) => {
+            const poolTokenContract = new ethers.Contract(
+              e.lptAddress,
+              UniswapLPTABI,
+              signer
+            )
+            await poolTokenContract.balanceOf(userAddress)
+            const poolInfo = await getAmountOfLockedTokens(e.lptAddress)
+            return {
+              ...e,
+              poolInfo: {
+                token0: poolInfo.token0,
+                token1: poolInfo.token1,
+                totalLiquidity: poolInfo.token0 + poolInfo.token1,
+                poolShare: poolInfo.poolShare,
+              },
+            }
+          })
         )
-        const lptBalance = await poolTokenContract.balanceOf(userAddress)
-        if (parseFloat(lptBalance.toString()) > 0) {
-          const data = await getAmountOfLockedTokens()
-          this.liquidity = data
-        }
       } catch (error) {
-        throw new Error('Could not fetch liquidity', error)
+        this.ui.loading = false
       }
     },
   },

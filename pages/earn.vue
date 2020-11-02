@@ -31,81 +31,76 @@
       </div>
 
       <div v-else class="mt-4">
-        <div
-          v-for="(data, i) in liquidity"
-          :key="i"
-          class="flex w-full items-center justify-between px-2"
-        >
-          <div class="flex items-center space-x-2">
-            <double-logo
-              :token0logo="data.token.icon"
-              :token1logo="require(`~/assets/tokens/${data.icon}`)"
-            />
-            <p class="font-medium dark:text-white">
-              {{ data.token.name }} / {{ data.name }}
-            </p>
-          </div>
+        <div v-for="(data, i) in liquidity" :key="i">
+          <div class="flex w-full items-center justify-between p-2">
+            <div class="flex items-center space-x-2">
+              <double-logo
+                :token0logo="data.token.icon"
+                :token1logo="require(`~/assets/tokens/${data.icon}`)"
+              />
+              <p class="font-medium dark:text-white">
+                {{ data.token.name }} / {{ data.name }}
+              </p>
+            </div>
 
-          <button class="focus:outline-none" @click="ui.active = !ui.active">
-            <i
-              class="text-sm dark:text-white"
-              :class="ui.active ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"
-            ></i>
-          </button>
-        </div>
+            <button
+              class="focus:outline-none"
+              @click="data.expanded = !data.expanded"
+            >
+              <i
+                class="text-sm dark:text-white"
+                :class="
+                  data.expanded ? 'fas fa-chevron-up' : 'fas fa-chevron-down'
+                "
+              ></i>
+            </button>
+          </div>
+          <div v-if="data.expanded" class="flex flex-col pt-2">
+            <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+              <div class="w-1/2">
+                <p>Pooled Dai</p>
+              </div>
+              <div class="w-1/2 text-right">
+                <p>{{ Number(data.poolInfo.token0).toFixed(4) }}</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+              <div class="w-1/2">
+                <p>Pooled UND</p>
+              </div>
+              <div class="w-1/2 text-right">
+                <p>{{ Number(data.poolInfo.token1).toFixed(4) }}</p>
+              </div>
+            </div>
 
-        <div v-if="ui.active" class="flex flex-col pt-2">
-          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
-            <div class="w-1/2">
-              <p>Pooled Dai</p>
+            <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
+              <div class="w-1/2">
+                <p>Your pool share</p>
+              </div>
+              <div class="w-1/2 text-right">
+                <p>{{ Number(data.poolInfo.poolShare).toFixed(2) }} %</p>
+              </div>
             </div>
-            <div class="w-1/2 text-right">
-              <p>{{ Number(liquidity.token0).toFixed(4) }}</p>
-            </div>
-          </div>
-          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
-            <div class="w-1/2">
-              <p>Pooled UND</p>
-            </div>
-            <div class="w-1/2 text-right">
-              <p>{{ Number(liquidity.token1).toFixed(4) }}</p>
-            </div>
-          </div>
-          <!-- <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
-            <div class="w-1/2">
-              <p>Your pool tokens</p>
-            </div>
-            <div class="w-1/2 text-right">
-              <p>0.1</p>
-            </div>
-          </div> -->
-          <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
-            <div class="w-1/2">
-              <p>Your pool share</p>
-            </div>
-            <div class="w-1/2 text-right">
-              <p>{{ Number(liquidity.poolShare).toFixed(2) }} %</p>
-            </div>
-          </div>
 
-          <div class="flex items-center py-4">
-            <div class="w-1/2 px-1">
-              <nuxt-link class="w-full" to="/add">
-                <button
-                  class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
-                >
-                  Add
-                </button>
-              </nuxt-link>
-            </div>
-            <div class="w-1/2 px-1">
-              <nuxt-link class="w-full" to="/remove">
-                <button
-                  class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
-                >
-                  Remove
-                </button>
-              </nuxt-link>
+            <div class="flex items-center py-4">
+              <div class="w-1/2 px-1">
+                <nuxt-link class="w-full" to="/add">
+                  <button
+                    class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
+                  >
+                    Add
+                  </button>
+                </nuxt-link>
+              </div>
+              <div class="w-1/2 px-1">
+                <nuxt-link class="w-full" to="/remove">
+                  <button
+                    class="w-full text-sm rounded py-1 bg-light-primary bg-opacity-25 text-light-primary dark:bg-dark-primary dark:text-white"
+                  >
+                    Remove
+                  </button>
+                </nuxt-link>
+              </div>
             </div>
           </div>
         </div>
@@ -149,20 +144,22 @@ export default {
       const userAddress = provider.getSigner().getAddress()
 
       try {
-        this.liquidity = await Promise.all(
-          supportedUTokens.map(async (e) => {
-            const poolTokenContract = new ethers.Contract(
-              e.llcAddress,
-              UniswapLPTABI,
-              signer
-            )
-            const lptBalance = await poolTokenContract.balanceOf(userAddress)
-            if (lptBalance.toString() > 0) {
-              const data = await getAmountOfLockedTokens(e.llcAddress)
-              return data
-            }
-          })
-        )
+        this.liquidity = (
+          await Promise.all(
+            supportedUTokens.map(async (e) => {
+              const poolTokenContract = new ethers.Contract(
+                e.lptAddress,
+                UniswapLPTABI,
+                signer
+              )
+              await poolTokenContract.balanceOf(userAddress)
+              const poolInfo = await getAmountOfLockedTokens(e.lptAddress)
+              return { ...e, poolInfo, expanded: false }
+            })
+          )
+        ).filter((ev) => {
+          return ev.poolInfo.token0 > 0
+        })
       } catch (error) {
         this.ui.loading = false
       }

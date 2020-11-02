@@ -186,6 +186,7 @@ const getAmountOfLockedTokens = async (address) => {
     const poolTokenReserves = await getPoolTokenReserves(address)
     const poolTokenRatio =
       poolTokenBalance.toString() / poolTokenTotalSupply.toString()
+
     return {
       token0: (poolTokenReserves.reserve0 * poolTokenRatio) / 1e18 || 0,
       token1: (poolTokenReserves.reserve0 * poolTokenRatio) / 1e18 || 0,
