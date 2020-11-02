@@ -522,7 +522,21 @@ export default {
       )
       amount = amount.toString()
 
-      console.log(amount)
+      // let minAmount =
+      //   (this.LPTAmount * this.loanRatioPerLPT -
+      //     this.LPTAmount * this.loanRatioPerLPT * 0.2) *
+      //   1e18
+
+      // await this.getLoanRatioPerLPT()
+
+      let minAmount = toFixed(
+        (parseFloat(this.LPTAmount) * this.loanRatioPerLPT -
+          parseFloat(this.LPTAmount) * this.loanRatioPerLPT * 0.02) *
+          1e18
+      )
+
+      minAmount = minAmount.toString()
+      console.log(amount.length, minAmount.length)
 
       const EIP712Signature = await getEIP712Signature(
         poolTokenAddress,
@@ -553,13 +567,21 @@ export default {
             signer
           )
           try {
+            console.log({
+              amount,
+              deadline,
+              v: signature.v,
+              r: signature.r,
+              s: signature.s,
+              minAmount,
+            })
             const mintUND = await UnboundLLCContract.lockLPTWithPermit(
               amount,
-              uToken,
               deadline,
               signature.v,
               signature.r,
-              signature.s
+              signature.s,
+              minAmount
             )
             // close awaiting modal
             this.ui.showAwaiting = false
