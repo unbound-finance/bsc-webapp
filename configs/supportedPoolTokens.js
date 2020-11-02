@@ -4,12 +4,13 @@ export default [
     exchange: 'Uniswap',
     address: '0x6f7400f3c954a873a459cc018cd53a3673db0cb0',
     llcAddress: '0x19571F3fb4E732950d1d6c7048dF55F00cf4439F',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-    currencyTwoLogo:
+    currencyOneLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
     stablecoin: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -20,12 +21,12 @@ export default [
     exchange: 'Uniswap',
     address: '0xb0a2a806ec900bb9fe30bd7f6cadd35d74971542',
     llcAddress: '0x8eDe4b5897f484d0b0fB832a0eDC7D08A942DdA8',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-    currencyTwoLogo:
+    currencyOneLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -36,12 +37,12 @@ export default [
     exchange: 'Uniswap',
     address: '0x78b8ba24b458fd6c74d07ae9fc903a3e7e1585d3',
     llcAddress: '0x490F832243Dd08F2242A46bCf623Ad241143Db57',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+    currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
     stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -57,7 +58,7 @@ export default [
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     stablecoin: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -70,10 +71,10 @@ export default [
     llcAddress: '0xFC53d7cb2b65C1157Db2837459cE74900b2F1D10',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
     stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -85,11 +86,10 @@ export default [
     address: '0xd9628d193fd57fe1222b5c533f40d60fc0275c78',
     llcAddress: '0xC91b5cbbA9003D87003e729269AE4195547F93Ad',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-    currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -100,12 +100,13 @@ export default [
     exchange: 'Uniswap',
     address: '0x2142eb92e8d346893bbbd3ca713d2234bf7431ba',
     llcAddress: '0x7A6Fa5464953990B87285Afa05F097D4B8C910D1',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x05D3606d5c81EB9b7B18530995eC9B29da05FaBa/logo.png',
     currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
     stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -116,12 +117,13 @@ export default [
     exchange: 'Uniswap',
     address: '0xe1fdf0958759b8023ae6234d795f9bb95f1e685e',
     llcAddress: '0x6d468b9DDbDb5111B641447b1E96980ceFBC5B27',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c/logo.png',
     currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
     stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
     uToken: {
-      address: '0x5eC9BC937af5A348852A3C27031eF0e1DB50AE5C',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -149,7 +151,7 @@ export default [
     address: '0x70a14516e7178e3e16ad0f58b3aed855acbed1dd',
     llcAddress: '0x769f3881664976F56d96FbC358c3D50ff208a317',
     currencyOneLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png',
     currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     stablecoin: '0x24Cc33eBd310f9cBd12fA3C8E72b56fF138CA434',
     uToken: {
@@ -165,13 +167,29 @@ export default [
     address: '0xe354c712105855705cf0b60feeac03c46da0c115',
     llcAddress: '0x64c0FEfd3A4fAeA31Cd46c0034ACca1217ce2561',
     currencyOneLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png',
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x514910771AF9Ca656af840dff83E8264EcF986CA/logo.png',
     currencyTwoLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     stablecoin: '0x24Cc33eBd310f9cBd12fA3C8E72b56fF138CA434',
     uToken: {
       address: '0xC692bF3B0525FdfCD52982075D22269de0BcA609',
       symbol: 'uETH',
       icon: 'uEth.svg',
+    },
+  },
+
+  {
+    name: 'TSLA-UND',
+    exchange: 'Uniswap',
+    address: '0xa26a772eed0cfe646eaac98b4212042953418aaa',
+    llcAddress: '0x0Cd83ffcA83f6eEFFa4c8C454783EDeC3eC2e6B8',
+    currencyOneLogo:
+      'https://cdn.freebiesupply.com/logos/large/2x/tesla-motors-logo-png-transparent.png',
+    currencyTwoLogo: 'https://gamma.unbound.finance/_nuxt/img/und.e52ca44.webp',
+    stablecoin: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+    uToken: {
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+      symbol: 'UND',
+      icon: 'und.webp',
     },
   },
 
