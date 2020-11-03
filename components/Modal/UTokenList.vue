@@ -35,9 +35,16 @@
             </div>
             <div>
               <span
+                v-if="type === 'add'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                {{ token.uTokenbalance || 0 }}
+                <span> {{ token.uTokenbalance || 0 }}</span>
+              </span>
+              <span
+                v-if="type === 'remove'"
+                class="text-gray-800 dark:text-gray-200 font-bold font-mono"
+              >
+                <span> {{ token.poolInfo.token1 || 0 }}</span>
               </span>
             </div>
           </div>
@@ -62,6 +69,7 @@ import ERC20ABI from '~/configs/abi/ERC20'
 import config from '~/configs/config'
 
 import { getTokenBalance } from '~/mixins/ERC20'
+import { getAmountOfLockedTokens } from '~/mixins/stake'
 
 export default {
   extends: Modal,
@@ -73,6 +81,10 @@ export default {
     uToken: {
       type: Object,
       default: null,
+    },
+    type: {
+      type: String,
+      default: 'add',
     },
   },
   data() {
@@ -128,6 +140,7 @@ export default {
           const tokenBalance = await getTokenBalance(uToken.token.address)
           const uTokenAllowance = await this.getAllowance(uToken.address)
           const tokenAllowance = await this.getAllowance(uToken.token.address)
+          const poolInfo = await getAmountOfLockedTokens(uToken.lptAddress)
 
           return {
             ...uToken,
@@ -135,6 +148,7 @@ export default {
             tokenBalance: tokenBalance.toFixed,
             uTokenAllowance: uTokenAllowance.toString(),
             tokenAllowance: tokenAllowance.toString(),
+            poolInfo,
           }
         })
       )

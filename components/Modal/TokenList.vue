@@ -99,7 +99,6 @@ export default {
     type: {
       type: String,
       default: 'mint',
-      required: true,
     },
   },
   data() {

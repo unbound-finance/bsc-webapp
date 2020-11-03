@@ -63,6 +63,25 @@
               >
             </p>
           </div>
+          <div
+            v-if="uToken && type == 'remove'"
+            class="flex items-center space-x-2"
+          >
+            <button
+              type="button"
+              class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
+              @click="model = uToken.poolInfo.token1"
+            >
+              Max
+            </button>
+            <p class="text-xs text-gray-500">
+              Balance:
+              <span
+                class="font-mono text-gray-900 dark:text-gray-500 font-medium"
+                >{{ uToken.poolInfo.token1 }}</span
+              >
+            </p>
+          </div>
         </slot>
       </div>
       <form>
@@ -146,7 +165,7 @@
               type="button"
               class="bg-light-primary text-white text-xs font-medium rounded py-1 w-2/3 focus:outline-none"
               @click="
-                type === 'add'
+                type === 'add' || type === 'remove'
                   ? (ui.showUTokenListModal = true)
                   : (ui.showTokenListModal = true)
               "
@@ -167,6 +186,7 @@
     <u-token-list
       v-model="ui.showUTokenListModal"
       :u-token.sync="uToken"
+      :type="type"
     ></u-token-list>
   </div>
 </template>
