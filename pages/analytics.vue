@@ -137,7 +137,7 @@
         >
           <div class="flex flex-col items-center justify-center">
             <div class="text-lg font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(Number(fees.staking), 1) }}
+              ${{ Number(fees.staking) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Staker Fees</span
@@ -146,7 +146,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-lg font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(Number(fees.safu), 1) }}
+              ${{ Number(fees.safu) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >SAFU Fund</span
@@ -155,7 +155,7 @@
 
           <div class="flex flex-col items-center justify-center">
             <div class="text-lg font-medium text-gray-800 dark:text-gray-200">
-              ${{ $numberFormatter(Number(fees.devfund), 1) }}
+              ${{ Number(fees.devfund) }}
             </div>
             <span class="text-xs text-gray-500 dark:text-gray-600"
               >Dev Fund</span
