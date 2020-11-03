@@ -164,21 +164,13 @@
         </div>
 
         <div v-else class="px-2 transition-all ease-in duration-150">
-          <div
-            class="text-2xl font-medium text-gray-800 dark:text-gray-200"
-            :title="
+          <div class="text-2xl font-medium text-gray-800 dark:text-gray-200">
+            ${{
               (
                 Number(fees.staking) +
                 Number(fees.safu) +
                 Number(fees.devfund)
               ).toLocaleString()
-            "
-          >
-            ${{
-              $numberFormatter(
-                Number(fees.staking) + Number(fees.safu) + Number(fees.devfund),
-                1
-              )
             }}
           </div>
         </div>
