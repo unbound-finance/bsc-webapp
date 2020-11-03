@@ -136,8 +136,8 @@ export default {
         data: [],
       },
       functions: {
-        mint: '0x04bb770d',
-        burn: '0x78208601',
+        mint: '0xacc99b37',
+        burn: '0x1fa1a491',
       },
       supportedPoolTokens,
     }
@@ -215,6 +215,7 @@ export default {
             amount: parseInt('0x' + value) / 1e18,
             smartContractFunction: rawFunction,
           }
+          // console.log(data)
           tempArray.push(data)
         }
         this.txTable.data = tempArray
