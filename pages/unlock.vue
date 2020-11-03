@@ -297,10 +297,7 @@ export default {
       )
       rawLPTAmount = rawLPTAmount.toString()
       try {
-        const unlock = await contract.unlockLPT(
-          rawLPTAmount,
-          poolToken.uToken.address
-        )
+        const unlock = await contract.unlockLPT(rawLPTAmount)
         this.ui.showAwaiting = false
         this.txLink = unlock.hash
         this.ui.showSuccess = true

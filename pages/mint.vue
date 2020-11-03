@@ -536,7 +536,19 @@ export default {
       )
 
       minAmount = minAmount.toString()
-      console.log(amount.length, minAmount.length)
+
+      let minAmountFees =
+        (parseFloat(minAmount) * parseFloat(this.llc.fee)) / 1e6
+
+      minAmountFees = minAmountFees.toString()
+
+      const finalMinAmount = toFixed(minAmount - minAmountFees).toString()
+
+      console.log({
+        minAmount,
+        minAmountFees,
+        finalMinAmount,
+      })
 
       const EIP712Signature = await getEIP712Signature(
         poolTokenAddress,
@@ -573,7 +585,7 @@ export default {
               v: signature.v,
               r: signature.r,
               s: signature.s,
-              minAmount,
+              finalMinAmount,
             })
             const mintUND = await UnboundLLCContract.lockLPTWithPermit(
               amount,
@@ -581,7 +593,7 @@ export default {
               signature.v,
               signature.r,
               signature.s,
-              minAmount
+              finalMinAmount
             )
             // close awaiting modal
             this.ui.showAwaiting = false
