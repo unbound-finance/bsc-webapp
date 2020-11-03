@@ -21,9 +21,14 @@
       </nuxt-link>
     </div>
     <div class="mt-4 px-4">
-      <p class="font-medium text-sm dark:text-gray-400">Your Liquidity</p>
+      <p
+        v-if="liquidity.length > 0"
+        class="font-medium text-sm dark:text-gray-400"
+      >
+        Your Liquidity
+      </p>
       <div
-        v-if="!liquidity"
+        v-if="liquidity.length == 0"
         class="h-24 mt-4 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-800"
       >
         <span v-if="ui.loading" class="text-gray-500">Loading...</span>
@@ -128,7 +133,7 @@ export default {
         loading: false,
         active: false,
       },
-      liquidity: null,
+      liquidity: [],
     }
   },
 
@@ -160,6 +165,8 @@ export default {
         ).filter((ev) => {
           return ev.poolInfo.token0 > 0
         })
+
+        this.ui.loading = false
       } catch (error) {
         this.ui.loading = false
       }
