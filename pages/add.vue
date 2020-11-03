@@ -106,14 +106,23 @@
         v-if="isWalletConnected"
         class="font-medium w-full py-2 rounded-md focus:outline-none"
         :class="[
+          !uToken ? getDisabledClass : getActiveClass,
           !uTokenAmount ? getDisabledClass : getActiveClass,
           isSufficentBalance ? getDisabledClass : getActiveClass,
+          uTokenAmount === '0' ? getDisabledClass : getActiveClass,
+          Number(uTokenAmount).toFixed(18) == 0.0
+            ? getDisabledClass
+            : getActiveClass,
         ]"
         :disabled="shouldDisableAddLiquidity"
         @click="addLiquidity(uToken.address, uToken.token.address)"
       >
-        <span v-if="!uTokenAmount">Enter An Amount</span>
+        <span v-if="!uToken">Select Token</span>
+        <span v-else-if="!uTokenAmount">Enter An Amount</span>
         <span v-else-if="isSufficentBalance">Insufficient Liquidity</span>
+        <span v-else-if="Number(uTokenAmount).toFixed(18) == 0.0"
+          >Amount should be greater than 0</span
+        >
         <span
           v-else-if="uToken.uTokenAllowance == 0 || uToken.tokenAllowance == 0"
           >Please Approve Tokens</span
@@ -168,7 +177,10 @@ export default {
 
     shouldDisableAddLiquidity() {
       return (
+        !this.uToken ||
         !this.uTokenAmount ||
+        // eslint-disable-next-line eqeqeq
+        Number(this.uTokenAmount).toFixed(18) == 0.0 ||
         this.isSufficentBalance ||
         !this.uToken.uTokenAllowance ||
         !this.uToken.tokenAllowance
@@ -197,7 +209,6 @@ export default {
         )
         this.ui.showSuccess = true
         this.txLink = approve.hash
-        this.checkAllowances()
       } catch (error) {
         this.ui.showRejected = true
       }
