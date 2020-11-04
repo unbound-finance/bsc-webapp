@@ -178,6 +178,21 @@
                     {{ (llc.loanRate * 100) / 1e6 }}%
                   </p>
                 </div>
+                <div class="flex items-center justify-between">
+                  <p
+                    class="text-sm font-medium text-gray-600 dark:text-gray-400"
+                  >
+                    Minimum Receivable
+                  </p>
+                  <p class="font-medium font-mono dark:text-white">
+                    {{
+                      Number(
+                        parseFloat(LPTAmount) * loanRatioPerLPT -
+                          parseFloat(LPTAmount) * loanRatioPerLPT * 0.02
+                      ).toFixed(4)
+                    }}
+                  </p>
+                </div>
 
                 <div class="flex items-center justify-between pt-4">
                   <p
@@ -291,11 +306,26 @@
             </p>
           </div>
           <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Minimum Receivable
+            </p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{
+                Number(
+                  parseFloat(LPTAmount) * loanRatioPerLPT -
+                    parseFloat(LPTAmount) * loanRatioPerLPT * 0.02
+                ).toFixed(4)
+              }}
+              {{ poolToken.uToken.symbol }}
+            </p>
+          </div>
+          <div class="flex items-center justify-between pb-2">
             <p class="text-sm text-gray-600 dark:text-gray-400">Funding Rate</p>
             <p class="font-medium text-sm dark:text-white font-mono">
               {{ (llc.loanRate * 100) / 1e6 }}%
             </p>
           </div>
+
           <div class="border-b border-gray-200 dark:border-gray-800"></div>
           <p class="py-2 font-medium text-gray-800 dark:text-gray-200">
             Your Position

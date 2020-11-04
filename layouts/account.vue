@@ -93,12 +93,47 @@
         >
           <div class="flex flex-col">
             <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
-            <div class="flex items-center justify-between">
-              <p class="font-medium text-3xl text-accent">
-                {{
-                  liquidity ? liquidity[0].poolInfo.poolShare.toFixed(6) : '0'
-                }}%
-              </p>
+            <div class="flex items-center space-x-6 pt-2">
+              <div class="flex flex-col">
+                <p class="font-medium text-xl text-accent leading-tight">
+                  {{
+                    liquidity
+                      ? liquidity[0].poolInfo.poolShare.toFixed(4)
+                      : '0'
+                  }}%
+                </p>
+                <div v-if="liquidity" class="flex items-center space-x-1">
+                  <img
+                    :src="require(`~/assets/tokens/${liquidity[0].icon}`)"
+                    width="12"
+                    :alt="`${liquidity[0].name} logo`"
+                  />
+                  <span class="text-gray-500 text-xs">{{
+                    liquidity ? liquidity[0].name : ''
+                  }}</span>
+                </div>
+              </div>
+              <div class="flex flex-col">
+                <p class="font-medium text-xl text-accent leading-tight">
+                  {{
+                    liquidity
+                      ? liquidity[1].poolInfo.poolShare.toFixed(4)
+                      : '0'
+                  }}%
+                </p>
+
+                <div v-if="liquidity" class="flex items-center space-x-1">
+                  <img
+                    :src="require(`~/assets/tokens/${liquidity[1].icon}`)"
+                    width="12"
+                    style="max-height: 16px"
+                    :alt="`${liquidity[1].name} logo`"
+                  />
+                  <span class="text-gray-500 text-xs">{{
+                    liquidity ? liquidity[1].name : ''
+                  }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -112,10 +147,12 @@
               <p class="font-medium text-3xl text-accent">
                 $
                 {{
-                  (
-                    parseFloat(collectedFees.safu) +
-                    parseFloat(collectedFees.team)
-                  ).toFixed(3)
+                  liquidity
+                    ? (
+                        parseFloat(collectedFees.safu) +
+                        parseFloat(collectedFees.team)
+                      ).toFixed(4)
+                    : '0'
                 }}
               </p>
             </div>
