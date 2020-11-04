@@ -38,11 +38,22 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   return transaction
 }
 
-const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
+// UETH-ETH
+// DAI-UND
+
+const removeLiquidity = async (
+  tokenA,
+  tokenB,
+  amountA,
+  amountB,
+  LPTAddress
+) => {
+  console.log(tokenA, tokenB, LPTAddress)
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   const userAddress = await signer.getAddress()
-  const nonce = await getNonce(config.contracts.UNDUniswapPool, signer)
+  const nonce = await getNonce(LPTAddress, signer)
+  console.log(nonce)
   const deadline = +new Date() + 10000
   const formatAmountA = ethers.utils.parseEther(amountA).toString().slice(0, 18)
   const formatAmountB = ethers.utils.parseEther(amountB).toString().slice(0, 18)
@@ -53,7 +64,7 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const amountBMin = (formatAmountB - (formatAmountB * 10) / 100).toString()
 
   const signedData = await getEIP712Signature(
-    config.contracts.UNDUniswapPool,
+    LPTAddress,
     config.contracts.uniswapRouter,
     userAddress,
     liquidity,

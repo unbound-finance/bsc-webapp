@@ -250,10 +250,11 @@ export default {
         // amount = amount.toString()
 
         const transaction = await removeLiquidity(
-          this.uToken.token.address,
+          this.uToken.token.address, // ETH
           this.uToken.address,
           this.uTokenAmount,
-          this.uTokenAmount
+          this.uTokenAmount,
+          this.uToken.lptAddress
         )
         this.txLink = transaction.hash
         this.ui.showAwaiting = false
