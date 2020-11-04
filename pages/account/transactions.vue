@@ -28,86 +28,141 @@
         </button>
       </div>
     </div>
-    <div v-if="ui.loading || !getAddress" class="dark:text-gray-600">
-      Loading...
-    </div>
-    <div v-else-if="ui.errorMsg">{{ ui.errorMsg }}</div>
 
-    <div
-      v-else
-      class="shadow overflow-hidden border-b border-gray-200 dark:border-gray-800 dark: sm:rounded-lg"
-    >
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr class="bg-gray-100 dark:bg-gray-800">
-            <th
-              v-for="(data, i) in txTable.headers"
-              :key="i"
-              class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider"
+    <div v-if="ui.errorMsg">{{ ui.errorMsg }}</div>
+
+    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+        <div
+          class="shadow overflow-hidden border-b border-gray-200 dark:border-gray-800 dark: sm:rounded-lg"
+        >
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+              <tr class="bg-white dark:bg-gray-900">
+                <th
+                  v-for="(data, i) in txTable.headers"
+                  :key="i"
+                  class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-600 uppercase tracking-wider"
+                >
+                  {{ data }}
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              v-if="txTable.data && txTable.data.length != 0"
+              class="bg-white bg-opacity-75 dark:bg-gray-900"
             >
-              {{ data }}
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white dark:bg-gray-900">
-          <tr v-for="(data, i) in txTable.data" :key="i">
-            <td class="px-6 py-2 whitespace-no-wrap">
-              <div class="flex items-center">
-                <div>
+              <tr v-for="(data, i) in txTable.data" :key="i">
+                <td class="px-6 py-2 whitespace-no-wrap">
+                  <div class="flex items-center">
+                    <div>
+                      <div
+                        class="text-sm leading-5 text-gray-900 dark:text-gray-500"
+                      >
+                        {{ $dayjs.unix(data.timeStamp).format('DD MMM YYYY') }}
+                      </div>
+                      <div
+                        class="text-sm leading-5 text-gray-500 dark:text-gray-700"
+                      >
+                        {{ $dayjs.unix(data.timeStamp).format('hh:mm:ss a') }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-2 whitespace-no-wrap">
                   <div
                     class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
-                    {{ $dayjs.unix(data.timeStamp).format('DD MMM YYYY') }}
+                    {{ data.blockNumber }}
                   </div>
+                </td>
+                <td class="px-6 py-2 whitespace-no-wrap">
                   <div
-                    class="text-sm leading-5 text-gray-500 dark:text-gray-700"
+                    class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
-                    {{ $dayjs.unix(data.timeStamp).format('hh:mm:ss a') }}
+                    <a
+                      class="text-accent"
+                      :href="`https://kovan.etherscan.io/tx/${data.hash}`"
+                      target="_blank"
+                      >{{
+                        data.hash.substring(0, 16) +
+                        '...' +
+                        data.hash.substring(data.hash.length - 16)
+                      }}</a
+                    >
                   </div>
-                </div>
-              </div>
-            </td>
-            <td class="px-6 py-2 whitespace-no-wrap">
-              <div class="text-sm leading-5 text-gray-900 dark:text-gray-500">
-                {{ data.blockNumber }}
-              </div>
-            </td>
-            <td class="px-6 py-2 whitespace-no-wrap">
-              <div class="text-sm leading-5 text-gray-900 dark:text-gray-500">
-                <a
-                  class="text-accent"
-                  :href="`https://kovan.etherscan.io/tx/${data.hash}`"
-                  target="_blank"
-                  >{{
-                    data.hash.substring(0, 16) +
-                    '...' +
-                    data.hash.substring(data.hash.length - 16)
-                  }}</a
-                >
-              </div>
-            </td>
-            <td class="px-6 py-2 whitespace-no-wrap">
-              <div class="text-sm leading-5 text-gray-900 dark:text-gray-500">
-                {{
-                  data.smartContractFunction === functions.mint
-                    ? 'Mint'
-                    : 'Burn'
-                }}
-              </div>
-            </td>
-            <td class="px-6 py-2 whitespace-no-wrap">
-              <div class="text-sm leading-5 text-gray-900 dark:text-gray-500">
-                {{ data.amount.toFixed(2) }} UND
-              </div>
-            </td>
-            <td class="px-6 py-2 whitespace-no-wrap">
-              <div class="text-sm leading-5 text-gray-900 dark:text-gray-500">
-                {{ parseInt(data.gasUsed * data.gasPrice) / 1e18 }}
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                </td>
+                <td class="px-6 py-2 whitespace-no-wrap">
+                  <div
+                    class="text-sm leading-5 text-gray-900 dark:text-gray-500"
+                  >
+                    {{
+                      data.smartContractFunction === functions.mint
+                        ? 'Mint'
+                        : 'Burn'
+                    }}
+                  </div>
+                </td>
+                <td class="px-6 py-2 whitespace-no-wrap">
+                  <div
+                    class="text-sm leading-5 text-gray-900 dark:text-gray-500"
+                  >
+                    {{ data.amount.toFixed(2) }} UND
+                  </div>
+                </td>
+                <td class="px-6 py-2 whitespace-no-wrap">
+                  <div
+                    class="text-sm leading-5 text-gray-900 dark:text-gray-500"
+                  >
+                    {{ parseInt(data.gasUsed * data.gasPrice) / 1e18 }}
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+
+            <tbody v-else class="bg-white dark:bg-gray-900">
+              <tr>
+                <td class="px-6 py-4">
+                  <content-loader
+                    :height="40"
+                    :primary-opacity="0.25"
+                  ></content-loader>
+                </td>
+                <td class="px-6 py-4">
+                  <content-loader
+                    :height="40"
+                    :primary-opacity="0.25"
+                  ></content-loader>
+                </td>
+                <td class="px-6 py-4">
+                  <content-loader
+                    :height="40"
+                    :primary-opacity="0.25"
+                  ></content-loader>
+                </td>
+                <td class="px-6 py-4">
+                  <content-loader
+                    :height="40"
+                    :primary-opacity="0.25"
+                  ></content-loader>
+                </td>
+                <td class="px-6 py-4">
+                  <content-loader
+                    :height="40"
+                    :primary-opacity="0.25"
+                  ></content-loader>
+                </td>
+                <td class="px-6 py-4">
+                  <content-loader
+                    :height="40"
+                    :primary-opacity="0.25"
+                  ></content-loader>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -115,12 +170,14 @@
 <script>
 import { mapGetters } from 'vuex'
 import { ethers } from 'ethers'
+import { ContentLoader } from 'vue-content-loader'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 
 export default {
   layout: 'account',
+  components: { ContentLoader },
   data() {
     return {
       ui: {
