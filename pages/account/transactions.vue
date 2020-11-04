@@ -2,17 +2,17 @@
   <!-- Transaction History Table -->
   <div class="mt-6">
     <div class="w-full flex items-center justify-end mb-2">
-      <div v-if="!ui.loading" class="flex items-center space-x-4">
+      <div class="flex items-center space-x-4">
         <button
           class="focus:outline-none"
           type="button"
-          :disabled="ui.page === 1 ? true : false"
+          :disabled="ui.loading || ui.page === 1"
           @click="prevPage"
         >
           <i
             class="fas fa-arrow-left text-sm"
             :class="
-              ui.page == 1
+              ui.loading || ui.page == 1
                 ? 'text-gray-500 dark:text-gray-700 cursor-not-allowed'
                 : 'text-accent'
             "
@@ -22,9 +22,17 @@
         <button
           class="focus:outline-none text-accent"
           type="button"
+          :disabled="ui.loading || ui.apiPage == ui.lastPage"
           @click="nextPage"
         >
-          <i class="fas fa-arrow-right text-sm"></i>
+          <i
+            class="fas fa-arrow-right text-sm"
+            :class="
+              ui.loading || ui.apiPage == ui.lastPage
+                ? 'text-gray-500 dark:text-gray-700 cursor-not-allowed'
+                : 'text-accent'
+            "
+          ></i>
         </button>
       </div>
     </div>
@@ -49,7 +57,7 @@
               </tr>
             </thead>
             <tbody
-              v-if="txTable.data && txTable.data.length != 0"
+              v-if="!ui.loading"
               class="bg-white bg-opacity-75 dark:bg-gray-900"
             >
               <tr v-for="(data, i) in txTable.data" :key="i">
@@ -185,6 +193,9 @@ export default {
         liqLoading: false,
         errorMsg: null,
         page: 1,
+        lastPage: -1,
+        apiPage: 1,
+        cachedPages: [],
       },
       showFees: false,
       showLiquidity: false,
@@ -197,6 +208,7 @@ export default {
         burn: '0x1fa1a491',
       },
       supportedPoolTokens,
+      remainingTransactions: [],
     }
   },
 
@@ -207,25 +219,36 @@ export default {
   },
 
   mounted() {
-    this.ui.loading = true
-    this.getTransactions()
+    this.txCallee()
   },
 
   methods: {
     nextPage() {
       this.ui.page++
-      this.getTransactions()
+      if (this.ui.cachedPages[this.ui.page]) {
+        this.txTable.data = this.ui.cachedPages[this.ui.page]
+      } else {
+        this.ui.apiPage++
+        this.txCallee()
+      }
     },
 
     prevPage() {
       this.ui.page--
-      this.getTransactions()
+      this.txTable.data = this.ui.cachedPages[this.ui.page]
     },
 
-    async getTransactions() {
-      this.ui.errorMsg = null
+    async txCallee() {
       this.ui.loading = true
+      this.txTable.data = await this.getTransactions(
+        this.ui.apiPage,
+        this.remainingTransactions
+      )
+      this.ui.cachedPages[this.ui.page] = this.txTable.data
+      this.ui.loading = false
+    },
 
+    async getTransactions(page, result = []) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = await provider.getSigner()
       const address = await signer.getAddress()
@@ -236,47 +259,55 @@ export default {
         address,
         startblock: '0',
         endblock: '99999999',
-        page: this.ui.page,
+        page,
         offset: '10',
         sort: 'desc',
         apikey: 'HUWMR5VJHDQ7EEZYEUWQAAHBNMURE1R1CH',
       }
-      const result = await this.$axios.get(url, { params })
-      if (result.data.status === '0') {
-        this.ui.loading = false
-        this.ui.errorMsg = result.data.message
+
+      const { data } = await this.$axios.get(url, { params })
+      this.ui.apiPage = page
+
+      if (data.status === '0') {
+        this.ui.lastPage = page
+      } else if (data.result.length !== 0) {
+        result.push(...(await this.decodeTransaction(data.result)))
+        if (result.length < 10) {
+          this.ui.apiPage = page + 1
+          await this.getTransactions(page + 1, result)
+        }
       } else {
-        await this.decodeTransaction(result.data.result)
-        this.ui.loading = false
+        this.ui.lastPage = page
       }
+      this.remainingTransactions = result.slice(10)
+      return result.slice(0, 10)
     },
 
     async decodeTransaction(etherScanData) {
-      const tempArray = []
-
-      let i
-      for (i = 0; i < etherScanData.length; i++) {
-        const transaction = await provider.getTransaction(etherScanData[i].hash)
-        const rawFunction = transaction.data.slice(0, 10)
-        if (
-          rawFunction === this.functions.mint ||
-          rawFunction === this.functions.burn
-        ) {
-          const value = transaction.data.slice(10, 74)
-          const data = {
-            blockNumber: etherScanData[i].blockNumber,
-            timeStamp: etherScanData[i].timeStamp,
-            hash: etherScanData[i].hash,
-            gasPrice: etherScanData[i].gasPrice,
-            gasUsed: etherScanData[i].gasUsed,
-            amount: parseInt('0x' + value) / 1e18,
-            smartContractFunction: rawFunction,
-          }
-          // console.log(data)
-          tempArray.push(data)
-        }
-        this.txTable.data = tempArray
-      }
+      return (
+        await Promise.all(
+          etherScanData.map(async (etherscan) => {
+            const transaction = await provider.getTransaction(etherscan.hash)
+            const rawFunction = transaction.data.slice(0, 10)
+            if (
+              rawFunction === this.functions.mint ||
+              rawFunction === this.functions.burn
+            ) {
+              const value = transaction.data.slice(10, 74)
+              return {
+                blockNumber: etherscan.blockNumber,
+                timeStamp: etherscan.timeStamp,
+                hash: etherscan.hash,
+                gasPrice: etherscan.gasPrice,
+                gasUsed: etherscan.gasUsed,
+                amount: parseInt('0x' + value) / 1e18,
+                smartContractFunction: rawFunction,
+              }
+            }
+            return null
+          })
+        )
+      ).filter((e) => !!e)
     },
   },
 }
