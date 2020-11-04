@@ -8,10 +8,9 @@ import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 
 import { getDecimals } from '~/mixins/ERC20'
 
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-
 const getBalanceOfToken = async (tokenAddress) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
   const userAddress = signer.getAddress()
   const getBalance = await contract.balanceOf(userAddress)
@@ -21,6 +20,8 @@ const getBalanceOfToken = async (tokenAddress) => {
 }
 
 const checkLoan = async (LLCAddress, uTokenAddress) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const contract = await new ethers.Contract(
     uTokenAddress,
     UnboundDollarABI,
@@ -34,6 +35,8 @@ const checkLoan = async (LLCAddress, uTokenAddress) => {
 }
 
 const getLockedLPT = async (LPTAddress) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const contract = new ethers.Contract(LPTAddress, UnboundLLCABI, signer)
   const userAddress = signer.getAddress()
   const getLocked = await contract.tokensLocked(userAddress)
@@ -42,6 +45,8 @@ const getLockedLPT = async (LPTAddress) => {
 }
 
 const getTotalLockedLPT = async (LPTAddress, LLCAddress) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   try {
     const contract = await new ethers.Contract(
       LPTAddress,
@@ -58,6 +63,8 @@ const getTotalLockedLPT = async (LPTAddress, LLCAddress) => {
 }
 
 const getLPTPrice = async (poolToken) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const contract = await new ethers.Contract(
     poolToken.address,
     UniswapLPTABI,

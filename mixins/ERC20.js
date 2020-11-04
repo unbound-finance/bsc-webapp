@@ -2,10 +2,9 @@ import { ethers } from 'ethers'
 
 import ERC20ABI from '~/configs/abi/ERC20'
 
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-
 const getTokenBalance = async (tokenAddress) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   try {
     const userAddress = signer.getAddress()
     const poolTokenContract = await new ethers.Contract(
@@ -28,6 +27,8 @@ const getTokenBalance = async (tokenAddress) => {
 }
 
 const getDecimals = async (tokenAddress) => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const token = new ethers.Contract(tokenAddress, ERC20ABI, signer)
   const decimals = await token.decimals()
   return decimals.toString()
