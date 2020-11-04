@@ -15,8 +15,8 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
     UniswapRouterABI,
     signer
   )
-  const formatAmountA = ethers.utils.parseEther(amountA).toString()
-  const formatAmountB = ethers.utils.parseEther(amountB).toString()
+  const formatAmountA = ethers.utils.parseEther(amountA).toString().slice(0, 18)
+  const formatAmountB = ethers.utils.parseEther(amountB).toString().slice(0, 18)
 
   const amountADesired = formatAmountB
   const amountBDesired = formatAmountB
@@ -44,8 +44,8 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const userAddress = await signer.getAddress()
   const nonce = await getNonce(config.contracts.UNDUniswapPool, signer)
   const deadline = +new Date() + 10000
-  const formatAmountA = ethers.utils.parseEther(amountA).toString()
-  const formatAmountB = ethers.utils.parseEther(amountB).toString()
+  const formatAmountA = ethers.utils.parseEther(amountA).toString().slice(0, 18)
+  const formatAmountB = ethers.utils.parseEther(amountB).toString().slice(0, 18)
 
   const liquidity = Math.sqrt(formatAmountA * formatAmountB).toString()
 
@@ -73,7 +73,7 @@ const removeLiquidity = async (tokenA, tokenB, amountA, amountB) => {
       },
       async (error, signedData) => {
         if (error || signedData.error) {
-          return console.log(error)
+          return error
         }
         const signature = ethers.utils.splitSignature(signedData.result)
         const UniswapRouter = await new ethers.Contract(

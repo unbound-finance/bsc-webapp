@@ -216,9 +216,16 @@ export default {
     async addLiquidity(uToken, token) {
       this.ui.showAwaiting = true
       try {
+        // let amount = ethers.utils
+        //   .parseEther(this.uTokenAmount)
+        //   .toString()
+        //   .slice(0, 18)
+
+        // amount = amount.toString()
+
         const transaction = await addLiquidity(
-          token,
-          uToken,
+          this.uToken.token.address,
+          this.uToken.address,
           this.uTokenAmount,
           this.uTokenAmount
         )
