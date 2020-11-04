@@ -146,14 +146,7 @@
             <div class="flex items-center justify-between">
               <p class="font-medium text-3xl text-accent">
                 $
-                {{
-                  liquidity
-                    ? (
-                        parseFloat(collectedFees.safu) +
-                        parseFloat(collectedFees.team)
-                      ).toFixed(4)
-                    : '0'
-                }}
+                {{ totalFeesEarned }}
               </p>
             </div>
           </div>
@@ -207,6 +200,7 @@ import { ethers } from 'ethers'
 
 // import config from '~/configs/config'
 import { getAmountOfLockedTokens } from '~/mixins/stake'
+import { getFeesAccrued } from '~/mixins/analytics'
 
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
@@ -256,33 +250,37 @@ export default {
     ...mapGetters({
       getAddress: 'getAddress',
     }),
+
+    totalFeesEarned() {
+      if (this.liquidity) {
+        const unboundFees =
+          (this.collectedFees * this.liquidity[0].poolInfo.poolShare) / 100
+        const totalFees = unboundFees + (unboundFees * 0.3) / 100
+        return totalFees.toFixed(4)
+      } else {
+        return 0
+      }
+    },
   },
 
   mounted() {
     this.ui.loading = true
     this.getTotalUND()
-    this.getCollectedFees()
     this.fetchLiquidity()
+    this.getCollectedFees()
   },
 
   methods: {
     async getCollectedFees() {
-      try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const signer = provider.getSigner()
-        const UND = new ethers.Contract(
-          config.contracts.unboundDai,
-          UnboundDai,
-          signer
-        )
-        const safu = await UND.balanceOf(config.safuFund)
-        const team = await UND.balanceOf(config.devFund)
-        this.collectedFees.safu = (safu.toString() / 1e18).toFixed(3)
-        this.collectedFees.team = (team.toString() / 1e18).toFixed(3)
-      } catch (error) {
-        throw new Error('Could not fetch fees', error)
-      }
+      const fees = await getFeesAccrued()
+      console.log(fees)
+      console.log(this.totalLiquidity)
+      this.collectedFees = fees.staking
     },
+
+    // async getFees() {
+
+    // },
 
     // async getTotalLiquidity() {
     //   try {

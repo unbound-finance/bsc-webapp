@@ -99,4 +99,35 @@ export const getTVL = async () => {
   return Number(totalLockedLPTValue).toFixed(2)
 }
 
-export const getFeesAccrued = async () => {}
+export const getFeesAccrued = async () => {
+  const unboundToken = await new ethers.Contract(
+    config.contracts.unboundDai,
+    UnboundDai,
+    signer
+  )
+
+  // get total fee stored in the contract
+  const storedFee = await unboundToken.storedFee()
+
+  // get splitting ratio of the storedFee
+  const stakeShares = await unboundToken.stakeShares()
+  // const safuSharesOfStoredFee = await unboundToken.safuSharesOfStoredFee()
+
+  // split stored fee
+  const stakingFees = (storedFee * stakeShares) / 100
+  const staking = (stakingFees / 1e18).toFixed(2)
+
+  // const remainingFee = storedFee - stakingFees
+
+  // const safu = ((remainingFee * safuSharesOfStoredFee) / 100 / 1e18).toFixed(2)
+
+  // this.fees.devfund = (
+  //   (remainingFee - (remainingFee * safuSharesOfStoredFee) / 100) /
+  //   1e18
+  // ).toFixed(2)
+
+  // console.log(safuSharesOfStoredFee.toString())
+  return {
+    staking,
+  }
+}
