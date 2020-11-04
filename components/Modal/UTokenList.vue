@@ -38,13 +38,15 @@
                 v-if="type === 'add'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                <span> {{ token.uTokenbalance || 0 }}</span>
+                <span> {{ (token.poolInfo && token.uTokenbalance) || 0 }}</span>
               </span>
               <span
                 v-if="type === 'remove'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                <span> {{ token.poolInfo.token1 || 0 }}</span>
+                <span>
+                  {{ (token.poolInfo && token.poolInfo.token1) || 0 }}</span
+                >
               </span>
             </div>
           </div>

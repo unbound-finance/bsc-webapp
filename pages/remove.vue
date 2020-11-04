@@ -242,9 +242,16 @@ export default {
     async removeLiquidity() {
       this.ui.showAwaiting = true
       try {
+        // let amount = ethers.utils
+        //   .parseEther(this.uTokenAmount)
+        //   .toString()
+        //   .slice(0, 18)
+
+        // amount = amount.toString()
+
         const transaction = await removeLiquidity(
-          config.contracts.dai,
-          config.contracts.unboundDai,
+          this.uToken.token.address,
+          this.uToken.address,
           this.uTokenAmount,
           this.uTokenAmount
         )
@@ -252,6 +259,10 @@ export default {
         this.ui.showAwaiting = false
         this.ui.showSuccess = true
       } catch (error) {
+        // eslint-disable-next-line eqeqeq
+        if (error.code == 4001) {
+          this.ui.showAwaiting = false
+        }
         this.ui.showAwaiting = false
         this.ui.showRejected = true
       }
