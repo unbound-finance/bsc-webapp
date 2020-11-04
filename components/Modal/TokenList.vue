@@ -47,7 +47,9 @@
                 <loader v-if="ui.loading" color="#2172E5" stroke="4" />
                 <span v-else>
                   {{
-                    (token.balance && Number(token.balance).toFixed(10)) || 0
+                    (token.balance &&
+                      (toFixed(token.balance) || '').slice(0, 14)) ||
+                    0
                   }}</span
                 >
               </span>
@@ -59,7 +61,7 @@
                 <span v-else>
                   {{
                     (token.lockedBalance &&
-                      Number(token.lockedBalance).toFixed(10)) ||
+                      (toFixed(token.lockedBalance) || '').slice(0, 16)) ||
                     0
                   }}</span
                 >
@@ -79,8 +81,8 @@
 
 <script>
 import Modal from '@/components/Modal'
-
 import supportedPoolTokens from '@/configs/supportedPoolTokens'
+import { toFixed } from '~/utils'
 
 import { getTokenBalance } from '~/mixins/ERC20'
 import { getLockedLPT, checkLoan } from '~/mixins/info'
@@ -138,6 +140,7 @@ export default {
     this.getSupportedPoolTokens()
   },
   methods: {
+    toFixed,
     selectToken(poolToken) {
       this.$emit('update:poolToken', poolToken)
       this.selectedToken = poolToken
