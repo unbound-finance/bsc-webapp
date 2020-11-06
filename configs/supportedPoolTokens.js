@@ -1,6 +1,7 @@
 export default [
   {
     name: 'DAI-USDT',
+    category: 'Stablecoins',
     exchange: 'Uniswap',
     address: '0x6f7400f3c954a873a459cc018cd53a3673db0cb0',
     llcAddress: '0x19571F3fb4E732950d1d6c7048dF55F00cf4439F',
@@ -19,6 +20,7 @@ export default [
   {
     name: 'DAI-USDC',
     exchange: 'Uniswap',
+    category: 'Stablecoins',
     address: '0xb0a2a806ec900bb9fe30bd7f6cadd35d74971542',
     llcAddress: '0x8eDe4b5897f484d0b0fB832a0eDC7D08A942DdA8',
     currencyOneLogo:
@@ -35,6 +37,7 @@ export default [
   {
     name: 'USDC-USDT',
     exchange: 'Uniswap',
+    category: 'Stablecoins',
     address: '0x78b8ba24b458fd6c74d07ae9fc903a3e7e1585d3',
     llcAddress: '0x490F832243Dd08F2242A46bCf623Ad241143Db57',
     currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
@@ -51,6 +54,7 @@ export default [
   {
     name: 'ETH-DAI',
     exchange: 'Uniswap',
+    category: 'ETH-Stablecoin',
     address: '0x54870f44414e69af7eb2f3e1e144ebb7c79325b7',
     llcAddress: '0x7A95c0193f2D77A2DD5b01A1069CE3Eb59E77017',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
@@ -67,6 +71,7 @@ export default [
   {
     name: 'ETH-USDT',
     exchange: 'Uniswap',
+    category: 'ETH-Stablecoin',
     address: '0xa338ae6943c03c48f6fb6c7bff012d9206c28558',
     llcAddress: '0xFC53d7cb2b65C1157Db2837459cE74900b2F1D10',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
@@ -83,6 +88,7 @@ export default [
   {
     name: 'ETH-USDC',
     exchange: 'Uniswap',
+    category: 'ETH-Stablecoin',
     address: '0xd9628d193fd57fe1222b5c533f40d60fc0275c78',
     llcAddress: '0xC91b5cbbA9003D87003e729269AE4195547F93Ad',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
@@ -98,6 +104,7 @@ export default [
   {
     name: 'TOMOE-USDT',
     exchange: 'Uniswap',
+    category: 'ERC20-Stablecoin',
     address: '0x2142eb92e8d346893bbbd3ca713d2234bf7431ba',
     llcAddress: '0x7A6Fa5464953990B87285Afa05F097D4B8C910D1',
     currencyOneLogo:
@@ -115,6 +122,7 @@ export default [
   {
     name: 'ENJ-USDT',
     exchange: 'Uniswap',
+    category: 'ERC20-Stablecoin',
     address: '0xe1fdf0958759b8023ae6234d795f9bb95f1e685e',
     llcAddress: '0x6d468b9DDbDb5111B641447b1E96980ceFBC5B27',
     currencyOneLogo:
@@ -132,6 +140,7 @@ export default [
   {
     name: 'WBTC-ETH',
     exchange: 'Uniswap',
+    category: 'ERC20-ETH',
     address: '0x7205d1091a9be1d68d11fb38e3b00ced886dfba5',
     llcAddress: '0xD295B3312Fc30E245D076710ba20d4975d156d67',
     currencyOneLogo:
@@ -148,6 +157,7 @@ export default [
   {
     name: 'UNI-ETH',
     exchange: 'Uniswap',
+    category: 'ERC20-ETH',
     address: '0x70a14516e7178e3e16ad0f58b3aed855acbed1dd',
     llcAddress: '0x769f3881664976F56d96FbC358c3D50ff208a317',
     currencyOneLogo:
@@ -164,6 +174,7 @@ export default [
   {
     name: 'LINK-ETH',
     exchange: 'Uniswap',
+    category: 'ERC20-ETH',
     address: '0xe354c712105855705cf0b60feeac03c46da0c115',
     llcAddress: '0x64c0FEfd3A4fAeA31Cd46c0034ACca1217ce2561',
     currencyOneLogo:
@@ -180,6 +191,7 @@ export default [
   {
     name: 'TSLA-UND',
     exchange: 'Uniswap',
+    category: 'Synthetic-UND',
     address: '0xa26a772eed0cfe646eaac98b4212042953418aaa',
     llcAddress: '0x0Cd83ffcA83f6eEFFa4c8C454783EDeC3eC2e6B8',
     currencyOneLogo:

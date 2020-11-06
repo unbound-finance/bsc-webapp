@@ -21,7 +21,7 @@
         attributeName="transform"
         type="rotate"
         repeatCount="indefinite"
-        dur="1s"
+        :dur="`${speed}s`"
         values="0 50 50;360 50 50"
         keyTimes="0;1"
       ></animateTransform>
@@ -43,6 +43,10 @@ export default {
     stroke: {
       type: [String, Number],
       default: '8',
+    },
+    speed: {
+      type: [String, Number],
+      default: '1',
     },
   },
 }
