@@ -7,10 +7,9 @@ import { getERC20Price, getLPTPrice, getTotalLockedLPT } from '~/mixins/info'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-
 export const getTotalLiquidity = async () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const und = await new ethers.Contract(
     config.contracts.UNDUniswapPool,
     UniswapLPTABI,
@@ -43,6 +42,8 @@ export const getDailyVolume = async () => {}
 export const getMintingFees = async () => {}
 
 export const getCRatio = async () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   // Get total UND and uETH minted
   const und = await new ethers.Contract(
     config.contracts.unboundDai,
@@ -100,6 +101,8 @@ export const getTVL = async () => {
 }
 
 export const getFeesAccrued = async () => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum)
+  const signer = provider.getSigner()
   const unboundToken = await new ethers.Contract(
     config.contracts.unboundDai,
     UnboundDai,

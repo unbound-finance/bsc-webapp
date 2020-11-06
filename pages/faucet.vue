@@ -63,9 +63,6 @@ import { ethers } from 'ethers'
 import UnboundFaucet from '~/configs/abi/UnboundFaucet'
 import config from '~/configs/config'
 
-const provider = new ethers.providers.Web3Provider(window.ethereum)
-const signer = provider.getSigner()
-
 export default {
   data() {
     return {
@@ -86,6 +83,8 @@ export default {
 
   methods: {
     async requestFaucet() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const signer = provider.getSigner()
       this.ui.errorMsg = null
       this.ui.loading = true
       const faucet = await new ethers.Contract(
