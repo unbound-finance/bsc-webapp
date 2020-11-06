@@ -1,24 +1,8 @@
 <template>
   <Modal v-model="modal" :persistent="persistent">
-    <div v-if="ui.loading">
-      <div class="flex flex-col space-y-2 p-4">
-        <loader color="#059991" size="64" speed="2" stroke="4" />
-        <span class="text-gray-600 text-center text-sm">Fetching Tokens</span>
-      </div>
-    </div>
-    <template v-else>
-      <div
-        v-if="tokens || type === 'unlock'"
-        class="flex flex-col space-y-4 p-4"
-      >
+    <template>
+      <div class="flex flex-col space-y-4 p-4">
         <div class="flex justify-between items-center">
-          <button
-            v-if="type === 'mint'"
-            class="text-sm focus:outline-none appearance-none"
-            @click="tokens = null"
-          >
-            Back
-          </button>
           <p class="font-medium dark:text-white">Select Pool Token</p>
           <button
             type="button"
@@ -36,15 +20,19 @@
           placeholder="Search token, address or exchange..."
         />
 
-        <template v-if="searchResult.length != 0">
-          <div
-            v-for="(token, index) in searchResult"
-            :key="index"
-            class="hover:bg-gray-200 dark-hover:bg-gray-800 rounded-md px-2"
-            @click="selectToken(token)"
-          >
+        <template>
+          <div v-for="(tokenList, category) in categories" :key="category">
             <div
-              class="w-full flex items-center justify-between cursor-pointer py-1"
+              class="border-b border-gray-200 dark:border-gray-800 text-gray-600 text-sm my-2"
+            >
+              {{ category }}
+            </div>
+
+            <div
+              v-for="token in tokenList"
+              :key="token.address"
+              class="w-full flex items-center justify-between cursor-pointer py-1 rounded-md px-2 hover:bg-gray-200 dark-hover:bg-gray-800"
+              @click="selectToken(token)"
             >
               <div class="space-x-2 flex items-center">
                 <double-logo
@@ -91,35 +79,11 @@
             </div>
           </div>
         </template>
-        <template v-else>
+        <template v-if="searchResult.length == 0">
           <div class="text-sm text-center p-4 text-gray-600">
             Token Not found.
           </div>
         </template>
-      </div>
-      <div v-else>
-        <div class="flex flex-col p-4">
-          <div class="flex justify-between items-center">
-            <p class="font-medium dark:text-white">Select Category</p>
-            <button
-              type="button"
-              class="focus:outline-none"
-              @click="modal = false"
-            >
-              <i class="fas fa-times text-gray-900 dark:text-gray-500"></i>
-            </button>
-          </div>
-          <div class="mt-4">
-            <div v-for="(tokenList, category) in categories" :key="category">
-              <button
-                class="p-2 w-full text-sm text-left rounded-md hover:bg-gray-200 dark-hover:bg-gray-800 appearance-none focus:outline-none"
-                @click="tokens = tokenList"
-              >
-                {{ category }}
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
     </template>
   </Modal>
@@ -169,12 +133,10 @@ export default {
 
   computed: {
     searchResult() {
-      const tokens =
-        this.type === 'mint' ? this.tokens || [] : this.supportedPoolTokens
       const search = this.search.trim()
       if (search) {
         const regex = new RegExp(search, 'ig')
-        return tokens.filter(
+        return this.supportedPoolTokens.filter(
           ({ name, address, exchange }) =>
             regex.test(name) ||
             (search.slice(0, 2).toLowerCase() === '0x' &&
@@ -182,7 +144,7 @@ export default {
             regex.test(exchange)
         )
       }
-      return tokens
+      return this.supportedPoolTokens
     },
   },
 
@@ -190,12 +152,16 @@ export default {
     modal(a) {
       if (!a) this.tokens = null
     },
+    searchResult() {
+      this.makeCategories()
+    },
   },
 
-  async mounted() {
-    await this.getSupportedPoolTokens()
+  mounted() {
     this.makeCategories()
+    this.getSupportedPoolTokens()
   },
+
   methods: {
     toFixed,
     selectToken(poolToken) {
@@ -205,7 +171,7 @@ export default {
     },
 
     makeCategories() {
-      this.categories = this.supportedPoolTokens.reduce((obj, token) => {
+      this.categories = this.searchResult.reduce((obj, token) => {
         const cat = token.category
 
         if (!obj[cat]) {
@@ -215,6 +181,7 @@ export default {
         return obj
       }, {})
     },
+
     async getSupportedPoolTokens() {
       this.ui.loading = true
       try {
