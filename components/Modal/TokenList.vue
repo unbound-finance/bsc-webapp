@@ -185,7 +185,7 @@ export default {
     async getSupportedPoolTokens() {
       this.ui.loading = true
       try {
-        this.supportedPoolTokens = await Promise.all(
+        const tokenList = await Promise.all(
           supportedPoolTokens.map(async (poolToken) => {
             const balance = await getTokenBalance(poolToken.address)
             const lockedBalance = await getLockedLPT(poolToken.llcAddress)
@@ -205,6 +205,14 @@ export default {
             }
           })
         )
+
+        if (this.type === 'mint') {
+          this.supportedPoolTokens = tokenList
+        } else if (this.type === 'unlock') {
+          const filteredTokenList = tokenList.filter((e) => e.lockedBalance > 0)
+          this.supportedPoolTokens = filteredTokenList
+        }
+
         this.ui.loading = false
         if (this.selectedToken) {
           const updatedToken = this.supportedPoolTokens.find(

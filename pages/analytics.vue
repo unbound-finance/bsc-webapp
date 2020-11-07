@@ -201,17 +201,17 @@
                   >
                     Name
                   </th>
-                  <th
-                    class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Total Locked
-                  </th>
+
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
                     Total Value Locked
                   </th>
-
+                  <th
+                    class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    AMM Total Value Locked
+                  </th>
                   <th
                     class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider"
                   >
@@ -256,8 +256,9 @@
                   <td class="px-6 py-4 whitespace-no-wrap">
                     <div
                       class="text-sm leading-5 text-gray-900 dark:text-gray-200"
+                      :title="data.tvl.toLocaleString()"
                     >
-                      {{ data.lockedLPT }}
+                      {{ $numberFormatter(data.tvl, 1) }}
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-no-wrap">
@@ -270,7 +271,7 @@
                     <div
                       class="text-sm leading-5 text-gray-500 dark:text-gray-700"
                     >
-                      price: {{ data.price.toLocaleString() }}
+                      {{ data.exchange }}
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-no-wrap">

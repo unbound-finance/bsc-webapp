@@ -103,6 +103,7 @@
         <span v-else-if="isSufficientBalance">Insufficient Balance</span>
         <span v-else>Unlock</span>
       </button>
+      <ConnectWalletBtn v-else class="w-full" />
     </div>
 
     <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
@@ -125,8 +126,6 @@ import supportedPoolTokens from '~/configs/supportedPoolTokens'
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
 import { getLockedLPT } from '~/mixins/info'
-
-const provider = new ethers.providers.Web3Provider(window.ethereum)
 
 export default {
   data() {
@@ -285,6 +284,7 @@ export default {
 
     async unlock(poolToken) {
       this.ui.showAwaiting = true
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
         poolToken.llcAddress,

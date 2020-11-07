@@ -4,7 +4,16 @@
       <p class="text-3xl font-bold text-gray-800 dark:text-gray-200">Faucet</p>
 
       <ul class="text-sm text-gray-600 list-disc px-4">
-        <li>This faucet will give you our test tokens on kovan testnet .</li>
+        <li>This faucet will give you our test tokens on kovan testnet.</li>
+        <li>
+          You can get kovan test ethers
+          <a
+            href="https://faucet.kovan.network/"
+            target="_blank"
+            class="text-light-primary dark:text-dark-primary font-medium"
+            >here</a
+          >
+        </li>
         <li>
           These are ETH, DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE. You can
           find token addresses

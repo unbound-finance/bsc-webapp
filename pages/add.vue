@@ -95,7 +95,7 @@
                 Estimated Earning (for a month)
               </p>
               <p class="font-medium text-sm dark:text-white">
-                {{ uTokenAmount * 0.06 }}
+                {{ uTokenAmount * 0.01 }}
               </p>
             </div>
           </div>
