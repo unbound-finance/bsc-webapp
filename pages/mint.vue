@@ -63,8 +63,9 @@
                   </p>
                 </div>
               </div>
-              <span class="text-xs text-right text-gray-500 dark:text-gray-700"
-                >Unbound</span
+              <span
+                class="text-xs text-right text-gray-500 dark:text-gray-700"
+                >{{ poolToken.uToken.displayName }}</span
               >
             </div>
           </template>
@@ -352,14 +353,14 @@
               {{ poolToken.name }}
             </p>
           </div>
-          <!-- <a
+          <a
             :href="`https://${this.$store.state.network}.etherscan.io/address/${poolToken.address}`"
             target="_blank"
             rel="noopener noreferrer"
             class="p-1 mt-2 z-10 w-full text-center border rounded-md border-light-primary dark:border-dark-primary text-xs font-mono text-light-primary dark:text-dark-primary"
           >
             {{ poolToken.name }} Contract Address
-          </a> -->
+          </a>
         </div>
       </div>
     </div>
@@ -666,7 +667,7 @@ export default {
   margin-bottom: 2rem;
   background: rgba(255, 255, 255, 0.75);
   border-radius: 16px;
-  z-index: -1;
+  z-index: 1;
   transform: translateY();
   transition: transform 300ms ease-in-out 0s;
 }

@@ -2,9 +2,11 @@ function abbreviateNumber(num, fixed) {
   if (num === null) {
     return null
   } // terminate early
-  if (num === 0) {
+  if (num === 0 || num === '0') {
     return '0'
   } // terminate early
+
+  if (typeof num === 'string') num = Number(num)
   fixed = !fixed || fixed < 0 ? 0 : fixed // number of decimal places to show
   const b = num.toPrecision(2).split('e') // get power
   const k = b.length === 1 ? 0 : Math.floor(Math.min(b[1].slice(1), 14) / 3) // floor at decimals, ceiling at trillions

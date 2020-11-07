@@ -168,11 +168,20 @@ export default {
     },
 
     isSufficentBalance() {
-      return (
+      if (
         this.uToken &&
-        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.uTokenbalance) &&
+        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.uTokenbalance)
+      ) {
+        return true
+      }
+
+      if (
+        this.uToken &&
         parseFloat(this.uTokenAmount) > parseFloat(this.uToken.tokenBalance)
-      )
+      ) {
+        return true
+      }
+      return false
     },
 
     shouldDisableAddLiquidity() {

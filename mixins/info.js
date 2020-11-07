@@ -142,6 +142,53 @@ const getERC20Price = async (id) => {
   }
 }
 
+const getUniswapTvl = async (address) => {
+  try {
+    const data = JSON.stringify({
+      query: `
+          query($id: String!) {
+            pair(id: $id) {
+              token0 {
+                symbol
+                name
+              }
+            token1 {
+                symbol
+                name
+            }
+            reserve0
+            reserve1
+            reserveUSD
+            }
+          }
+        `,
+      variables: {
+        id: address,
+      },
+    })
+    const config = {
+      method: 'post',
+      url: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data,
+    }
+
+    try {
+      const { data } = await Axios(config)
+      if (!data.data.pair) {
+        return 0
+      }
+      return data.data.pair.reserveUSD
+    } catch (e) {
+      return 0
+    }
+  } catch (error) {
+    throw new Error('Something went wrong', error)
+  }
+}
+
 export {
   getBalanceOfToken,
   checkLoan,
@@ -149,4 +196,5 @@ export {
   getTotalLockedLPT,
   getERC20Price,
   getLPTPrice,
+  getUniswapTvl,
 }

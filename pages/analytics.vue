@@ -264,14 +264,9 @@
                   <td class="px-6 py-4 whitespace-no-wrap">
                     <div
                       class="text-sm leading-5 text-gray-900 dark:text-gray-200"
-                      :title="data.tvl.toLocaleString()"
+                      :title="data.uniswapTvl.toLocaleString()"
                     >
-                      {{ $numberFormatter(data.tvl, 1) }}
-                    </div>
-                    <div
-                      class="text-sm leading-5 text-gray-500 dark:text-gray-700"
-                    >
-                      {{ data.exchange }}
+                      {{ $numberFormatter(data.uniswapTvl, 1) }}
                     </div>
                   </td>
                   <td class="px-6 py-4 whitespace-no-wrap">
@@ -369,7 +364,7 @@ import unboundTokenABI from '~/configs/abi/UnboundDai'
 
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
-import { getTotalLockedLPT, getLPTPrice } from '~/mixins/info'
+import { getTotalLockedLPT, getLPTPrice, getUniswapTvl } from '~/mixins/info'
 import { getTotalLiquidity, getCRatio, getTVL } from '~/mixins/analytics'
 import config from '~/configs/config'
 import { dynamicsort } from '~/utils'
@@ -464,8 +459,6 @@ export default {
         (remainingFee - (remainingFee * safuSharesOfStoredFee) / 100) /
         1e18
       ).toFixed(2)
-
-      console.log(safuSharesOfStoredFee.toString())
     },
 
     async getLoanRatioPerLPT(poolToken) {
@@ -541,6 +534,7 @@ export default {
               const mintingFee = await getLLC(ev.llcAddress)
               const price = await getLPTPrice(ev)
               const tvl = Number(lockedLPT * price)
+              const uniswapTvl = await getUniswapTvl(ev.uniswapAddress)
 
               return {
                 ...ev,
@@ -549,10 +543,12 @@ export default {
                 price: Number(price).toFixed(2),
                 lockedLPT,
                 tvl,
+                uniswapTvl,
               }
             })
           )
         ).sort(dynamicsort('tvl', 'desc'))
+        console.log(this.poolTokens)
       } catch (error) {
         throw new Error('Something went wrong!' + error)
       }
