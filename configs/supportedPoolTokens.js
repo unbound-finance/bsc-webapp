@@ -213,7 +213,7 @@ export default [
   {
     name: 'TSLA-UND',
     exchange: 'Uniswap',
-    category: 'Synthetic-UND',
+    category: 'UND Pool',
     address: '0xa26a772eed0cfe646eaac98b4212042953418aaa',
     llcAddress: '0x0Cd83ffcA83f6eEFFa4c8C454783EDeC3eC2e6B8',
     uniswapAddress: '',

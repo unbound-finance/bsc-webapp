@@ -7,6 +7,8 @@ import config from '~/configs/config'
 
 import { getEIP712Signature, getNonce } from '~/mixins/crypto'
 
+import { toFixed } from '~/utils'
+
 const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
@@ -48,19 +50,19 @@ const removeLiquidity = async (
   amountB,
   LPTAddress
 ) => {
-  console.log(tokenA, tokenB, LPTAddress)
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   const userAddress = await signer.getAddress()
   const nonce = await getNonce(LPTAddress, signer)
-  console.log(nonce)
   const deadline = +new Date() + 10000
-  const formatAmountA = ethers.utils.parseEther(amountA).toString().slice(0, 18)
-  const formatAmountB = ethers.utils.parseEther(amountB).toString().slice(0, 18)
+  const formatAmountA = ethers.utils.parseEther(amountA).toString()
+  const formatAmountB = ethers.utils.parseEther(amountB).toString()
 
-  const liquidity = Math.sqrt(formatAmountA * formatAmountB).toString()
+  let liquidity = Math.sqrt(formatAmountA * formatAmountB).toString()
 
-  const amountAMin = (formatAmountA - (formatAmountA * 10) / 100).toString()
+  liquidity = toFixed(liquidity)
+
+  const amountAMin = (formatAmountA - (formatAmountA * 10) / 100).toString() // 10% slippage
   const amountBMin = (formatAmountB - (formatAmountB * 10) / 100).toString()
 
   const signedData = await getEIP712Signature(

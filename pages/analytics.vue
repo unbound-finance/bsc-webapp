@@ -9,20 +9,11 @@
         <div class="p-2 flex flex-col">
           <div class="w-full flex items-center justify-between">
             <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
-              >Total Liquidity</span
+              >Total uTokens Minted</span
             >
-            <button
-              type="button"
-              class="text-xs text-light-primary dark:text-dark-primary appearance-none focus:outline-none"
-              @click="ui.showLiquidityBreakdown = !ui.showLiquidityBreakdown"
-            >
-              <span v-if="!ui.showLiquidityBreakdown">View Details</span>
-              <i v-else class="fas fa-times text-xs"></i>
-            </button>
           </div>
 
           <div
-            v-if="ui.showLiquidityBreakdown"
             class="w-full px-2 flex items-center space-x-6 mt-2 transition-all ease-in duration-150"
           >
             <div class="flex items-center">
@@ -67,14 +58,14 @@
             </div>
           </div>
 
-          <div v-else class="transition-all ease-in duration-150">
+          <!-- <div v-else class="transition-all ease-in duration-150">
             <div
               class="text-xl font-medium text-gray-800 dark:text-gray-200"
               :title="overview.liquidity.total.toLocaleString()"
             >
               ${{ $numberFormatter(Number(overview.liquidity.total), 1) }}
             </div>
-          </div>
+          </div> -->
         </div>
         <div
           class="border-b border-gray-200 dark:border-gray-800 my-2 -mx-2"
@@ -95,14 +86,26 @@
       <div
         class="flex flex-col w-full md:w-1/3 md:border-r border-gray-200 dark:border-gray-800 px-4"
       >
-        <div class="p-2 flex flex-col">
-          <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
-            >Total Volume (24H)</span
-          >
-          <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-            $0
+        <div class="flex items-center justify-between w-full">
+          <div class="p-2 flex flex-col">
+            <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
+              >24H Volume</span
+            >
+            <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
+              $876K
+            </div>
+          </div>
+
+          <div class="p-2 flex flex-col">
+            <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
+              >Total Volume</span
+            >
+            <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
+              $1.04B
+            </div>
           </div>
         </div>
+
         <div
           class="border-b border-gray-200 dark:border-gray-800 my-2 -mx-2"
         ></div>
