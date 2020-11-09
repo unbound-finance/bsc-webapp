@@ -162,11 +162,11 @@
         <p class="text-sm font-medium dark:text-white">
           -
           {{
-            100 -
             (
+              100 -
               (parseFloat(calcResult.breakEvenPriceWithFees) /
                 parseFloat(calcResult.assetValue)) *
-              100
+                100
             ).toFixed(4)
           }}%
         </p>
