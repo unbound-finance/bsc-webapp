@@ -136,7 +136,7 @@
           {{ Number(calcResult.breakEvenPrice).toFixed(2) }}
         </p>
       </div>
-      <div class="flex items-center justify-between">
+      <!-- <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">
           Fees Earned per {{ selectedPair.asset }} (90 days)
         </p>
@@ -148,15 +148,15 @@
             ).toFixed(2)
           }}
         </p>
-      </div>
+      </div> -->
 
-      <div class="flex items-center justify-between">
+      <!-- <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Net Break Even Price</p>
         <p class="text-sm font-medium dark:text-white">
           $
           {{ calcResult.breakEvenPriceWithFees.toFixed(4) }}
         </p>
-      </div>
+      </div> -->
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Net Break Even Price Percentage</p>
         <p class="text-sm font-medium dark:text-white">
