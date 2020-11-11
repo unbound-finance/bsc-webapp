@@ -6,6 +6,7 @@ import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
 
 import { getEIP712Signature, getNonce } from '~/mixins/crypto'
+import { toFixed } from '~/utils'
 
 const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -48,20 +49,21 @@ const removeLiquidity = async (
   amountB,
   LPTAddress
 ) => {
-  console.log(tokenA, tokenB, LPTAddress)
+  console.log('amountA', amountB)
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   const userAddress = await signer.getAddress()
   const nonce = await getNonce(LPTAddress, signer)
-  console.log(nonce)
   const deadline = +new Date() + 10000
-  const formatAmountA = ethers.utils.parseEther(amountA).toString().slice(0, 18)
-  const formatAmountB = ethers.utils.parseEther(amountB).toString().slice(0, 18)
+  const formatAmountA = toFixed(amountA * 1e18)
+  const formatAmountB = toFixed(amountB * 1e18)
 
-  const liquidity = Math.sqrt(formatAmountA * formatAmountB).toString()
+  const liquidity = toFixed(Math.sqrt(formatAmountA * formatAmountB) - 1 / 1e18)
 
-  const amountAMin = (formatAmountA - (formatAmountA * 10) / 100).toString()
-  const amountBMin = (formatAmountB - (formatAmountB * 10) / 100).toString()
+  const amountAMin = toFixed(formatAmountA - (formatAmountA * 10) / 100)
+  const amountBMin = toFixed(formatAmountB - (formatAmountB * 10) / 100)
+
+  console.log('formatAmountA', formatAmountB)
 
   const signedData = await getEIP712Signature(
     LPTAddress,
@@ -71,6 +73,8 @@ const removeLiquidity = async (
     nonce,
     deadline
   )
+
+  console.log('signedData', signedData)
 
   const web3 = new Web3(window.ethereum)
   const metamaskSigner = await web3.eth.getAccounts()
