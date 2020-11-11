@@ -189,6 +189,87 @@ const getUniswapTvl = async (address) => {
   }
 }
 
+const getTotalVolume = async () => {
+  try {
+    const data = JSON.stringify({
+      query: `
+          query {
+              alls {
+               mintTotal
+               burnTotal
+              }
+          }
+        `,
+    })
+    const config = {
+      method: 'post',
+      url: 'https://api.thegraph.com/subgraphs/name/furuta/und-kovan',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data,
+    }
+
+    try {
+      const { data } = await Axios(config)
+      if (!data.data) {
+        return 0
+      }
+      return (
+        (Number(data.data.alls[0].mintTotal) +
+          Number(data.data.alls[0].burnTotal)) /
+        1e18
+      )
+    } catch (e) {
+      return 0
+    }
+  } catch (error) {
+    throw new Error('Something went wrong', error)
+  }
+}
+
+const getDailyVolume = async () => {
+  try {
+    const data = JSON.stringify({
+      query: `
+          query($count: Int!) {
+            dailies(first: $count) {
+              mintTotal
+              burnTotal
+            }
+          }
+        `,
+      variables: {
+        count: 1,
+      },
+    })
+    const config = {
+      method: 'post',
+      url: 'https://api.thegraph.com/subgraphs/name/furuta/und-kovan',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data,
+    }
+
+    try {
+      const { data } = await Axios(config)
+      if (!data.data) {
+        return 0
+      }
+      return (
+        (Number(data.data.dailies[0].mintTotal) +
+          Number(data.data.dailies[0].burnTotal)) /
+        1e18
+      )
+    } catch (e) {
+      return 0
+    }
+  } catch (error) {
+    throw new Error('Something went wrong', error)
+  }
+}
+
 export {
   getBalanceOfToken,
   checkLoan,
@@ -197,4 +278,6 @@ export {
   getERC20Price,
   getLPTPrice,
   getUniswapTvl,
+  getTotalVolume,
+  getDailyVolume,
 }
