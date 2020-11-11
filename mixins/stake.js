@@ -16,15 +16,17 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
     UniswapRouterABI,
     signer
   )
-  const formatAmountA = ethers.utils.parseEther(amountA).toString().slice(0, 18)
-  const formatAmountB = ethers.utils.parseEther(amountB).toString().slice(0, 18)
+  const formatAmountA = toFixed(amountA * 1e18)
+  const formatAmountB = toFixed(amountB * 1e18)
 
   const amountADesired = formatAmountB
   const amountBDesired = formatAmountB
-  const amountAMin = (formatAmountA - (formatAmountA * 10) / 100).toString()
-  const amountBMin = (formatAmountB - (formatAmountB * 10) / 100).toString()
+  const amountAMin = toFixed(formatAmountA - (formatAmountA * 10) / 100)
+  const amountBMin = toFixed(formatAmountB - (formatAmountB * 10) / 100)
   const to = await signer.getAddress()
   const deadline = +new Date() + 5000
+
+  console.log(amountAMin, amountBMin)
 
   const transaction = await contract.addLiquidity(
     tokenA,
