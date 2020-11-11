@@ -8,8 +8,6 @@ import config from '~/configs/config'
 import { getEIP712Signature, getNonce } from '~/mixins/crypto'
 import { toFixed } from '~/utils'
 
-import { toFixed } from '~/utils'
-
 const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
@@ -60,12 +58,13 @@ const removeLiquidity = async (
   const formatAmountA = toFixed(amountA * 1e18)
   const formatAmountB = toFixed(amountB * 1e18)
 
-  const liquidity = toFixed(Math.sqrt(formatAmountA * formatAmountB) - 1 / 1e18)
+  let liquidity = toFixed(Math.sqrt(formatAmountA * formatAmountB) - 1 / 1e18)
+  liquidity = toFixed(parseInt(liquidity) - 1e15)
 
   const amountAMin = toFixed(formatAmountA - (formatAmountA * 10) / 100)
   const amountBMin = toFixed(formatAmountB - (formatAmountB * 10) / 100)
 
-  console.log('formatAmountA', formatAmountB)
+  console.log('liquidity', liquidity)
 
   const signedData = await getEIP712Signature(
     LPTAddress,
@@ -75,8 +74,6 @@ const removeLiquidity = async (
     nonce,
     deadline
   )
-
-  console.log('signedData', signedData)
 
   const web3 = new Web3(window.ethereum)
   const metamaskSigner = await web3.eth.getAccounts()
