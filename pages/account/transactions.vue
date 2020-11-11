@@ -57,7 +57,7 @@
               </tr>
             </thead>
             <tbody
-              v-if="!ui.loading"
+              v-if="!ui.loading && txTable.data.length > 0"
               class="bg-white bg-opacity-75 dark:bg-gray-900"
             >
               <tr v-for="(data, i) in txTable.data" :key="i">
@@ -128,6 +128,16 @@
               </tr>
             </tbody>
 
+            <tbody v-else-if="!ui.loading && txTable.data.length == 0">
+              <tr class="bg-white dark:bg-gray-900">
+                <td colspan="6">
+                  <div class="text-sm text-center p-4 text-gray-600">
+                    No Transactions Found.
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+
             <tbody v-else class="bg-white dark:bg-gray-900">
               <tr>
                 <td class="px-6 py-4">
@@ -181,7 +191,6 @@ import { ethers } from 'ethers'
 import { ContentLoader } from 'vue-content-loader'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
-const provider = new ethers.providers.Web3Provider(window.ethereum)
 
 export default {
   layout: 'account',
@@ -240,6 +249,10 @@ export default {
 
     async txCallee() {
       this.ui.loading = true
+      if (this.$store.state.address == null) {
+        this.txTable.data = []
+        this.ui.loading = false
+      }
       this.txTable.data = await this.getTransactions(
         this.ui.apiPage,
         this.remainingTransactions
@@ -284,6 +297,8 @@ export default {
     },
 
     async decodeTransaction(etherScanData) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+
       return (
         await Promise.all(
           etherScanData.map(async (etherscan) => {

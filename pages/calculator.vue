@@ -71,14 +71,12 @@
                   </span>
                 </div>
               </li>
-
-              <!-- More options... -->
             </ul>
           </div>
         </div>
       </div>
-      <div class="flex items-center space-x-4 mt-4">
-        <div>
+      <div class="flex items-center w-full mt-4">
+        <div class="w-full">
           <label class="block text-sm leading-5 font-medium text-gray-700 p-1">
             LTV (%)
           </label>
@@ -90,7 +88,7 @@
             required
           />
         </div>
-        <div>
+        <!-- <div>
           <label class="block text-sm leading-5 font-medium text-gray-700 p-1">
             Duration (days)
           </label>
@@ -101,13 +99,13 @@
             placeholder="Enter Days (Eg. 30)"
             required
           />
-        </div>
+        </div> -->
       </div>
       <button
         type="submit"
         class="rounded-md text-light-primary dark:text-dark-primary bg-light-primary bg-opacity-25 text-sm w-full py-2 font-medium mt-4 focus:outline-none"
       >
-        <loader v-if="ui.loading" />
+        <loader v-if="ui.loading" color="#059991" />
         <span v-else>Calculate</span>
       </button>
     </form>
@@ -138,9 +136,9 @@
           {{ Number(calcResult.breakEvenPrice).toFixed(2) }}
         </p>
       </div>
-      <div class="flex items-center justify-between">
+      <!-- <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">
-          Fees Earned per {{ selectedPair.asset }}
+          Fees Earned per {{ selectedPair.asset }} (90 days)
         </p>
         <p class="text-sm font-medium dark:text-white">
           $
@@ -150,25 +148,25 @@
             ).toFixed(2)
           }}
         </p>
-      </div>
+      </div> -->
 
-      <div class="flex items-center justify-between">
+      <!-- <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Net Break Even Price</p>
         <p class="text-sm font-medium dark:text-white">
           $
           {{ calcResult.breakEvenPriceWithFees.toFixed(4) }}
         </p>
-      </div>
+      </div> -->
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Net Break Even Price Percentage</p>
         <p class="text-sm font-medium dark:text-white">
           -
           {{
-            100 -
             (
+              100 -
               (parseFloat(calcResult.breakEvenPriceWithFees) /
                 parseFloat(calcResult.assetValue)) *
-              100
+                100
             ).toFixed(4)
           }}%
         </p>

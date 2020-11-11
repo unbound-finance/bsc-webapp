@@ -8,6 +8,8 @@ import config from '~/configs/config'
 import { getEIP712Signature, getNonce } from '~/mixins/crypto'
 import { toFixed } from '~/utils'
 
+import { toFixed } from '~/utils'
+
 const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
