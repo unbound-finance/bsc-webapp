@@ -91,8 +91,11 @@
             <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
               >24H Volume</span
             >
-            <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-              $876K
+            <div
+              class="font-medium text-gray-800 dark:text-gray-200 text-xl"
+              :title="overview.dailyVolume.toLocaleString()"
+            >
+              ${{ $numberFormatter(overview.dailyVolume) }}
             </div>
           </div>
 
@@ -100,8 +103,11 @@
             <span class="text-xs text-gray-500 dark:text-gray-600 uppercase"
               >Total Volume</span
             >
-            <div class="font-medium text-gray-800 dark:text-gray-200 text-xl">
-              $1.04B
+            <div
+              class="font-medium text-gray-800 dark:text-gray-200 text-xl"
+              :title="overview.totalVolume.toLocaleString()"
+            >
+              ${{ $numberFormatter(overview.totalVolume) }}
             </div>
           </div>
         </div>
@@ -369,7 +375,13 @@ import unboundTokenABI from '~/configs/abi/UnboundDai'
 
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
-import { getTotalLockedLPT, getLPTPrice, getUniswapTvl } from '~/mixins/info'
+import {
+  getTotalLockedLPT,
+  getLPTPrice,
+  getUniswapTvl,
+  getTotalVolume,
+  getDailyVolume,
+} from '~/mixins/info'
 import { getTotalLiquidity, getCRatio, getTVL } from '~/mixins/analytics'
 import config from '~/configs/config'
 import { dynamicsort } from '~/utils'
@@ -391,6 +403,8 @@ export default {
           UNDLiquidity: 0,
           uETHLiquidity: 0,
         },
+        dailyVolume: 0,
+        totalVolume: 0,
         cRatio: 0,
         tvl: 0,
       },
@@ -430,6 +444,8 @@ export default {
       this.overview.liquidity.uETHLiquidity = liquidity.uethLiquidity
       this.overview.cRatio = await getCRatio()
       this.overview.tvl = await getTVL()
+      this.overview.dailyVolume = await getDailyVolume()
+      this.overview.totalVolume = await getTotalVolume()
     },
 
     async getFees() {
