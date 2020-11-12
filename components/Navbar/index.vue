@@ -134,7 +134,7 @@
               >
                 <div class="flex space-x-2 items-center">
                   <i class="fab fa-medium-m text-xs dark:text-gray-500"></i>
-                  <span>Telegram</span>
+                  <span>Medium</span>
                 </div>
               </a>
             </div>
