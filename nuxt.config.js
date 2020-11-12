@@ -72,6 +72,7 @@ export default {
     '@/plugins/vue-tooltip.js',
     '@/plugins/numberFormatter.js',
     '@/plugins/vue-content-loader.js',
+    '@/plugins/directives.js',
   ],
   /*
    ** Auto import components
@@ -109,6 +110,7 @@ export default {
    ** See https://nuxtjs.org/api/configuration-build/
    */
   build: {},
+
   purgeCSS: {
     whitelist: [
       'dark-mode',

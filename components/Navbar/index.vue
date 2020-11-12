@@ -71,7 +71,8 @@
               aria-labelledby="options-menu"
             >
               <a
-                href="#"
+                href="https://unbound.finance/"
+                target="_blank"
                 class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-500 hover:bg-gray-100 dark-hover:bg-gray-800 hover:text-gray-900 dark-hover:text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-900 dark-focus:text-gray-500"
                 role="menuitem"
               >
@@ -81,7 +82,8 @@
                 </div>
               </a>
               <a
-                href="#"
+                href="http://docs.unbound.finance/"
+                target="_blank"
                 class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-500 hover:bg-gray-100 dark-hover:bg-gray-800 hover:text-gray-900 dark-hover:text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-900 dark-focus:text-gray-500"
                 role="menuitem"
               >
@@ -90,7 +92,7 @@
                   <span>Docs</span>
                 </div>
               </a>
-              <a
+              <!-- <a
                 href="#"
                 class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-500 hover:bg-gray-100 dark-hover:bg-gray-800 hover:text-gray-900 dark-hover:text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-900 dark-focus:text-gray-500"
                 role="menuitem"
@@ -99,15 +101,40 @@
                   <i class="fas fa-code text-xs dark:text-gray-500"></i>
                   <span>Code</span>
                 </div>
-              </a>
+              </a> -->
               <a
-                href="#"
+                href="https://twitter.com/unboundfinance"
+                target="_blank"
                 class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-500 hover:bg-gray-100 dark-hover:bg-gray-800 hover:text-gray-900 dark-hover:text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-900 dark-focus:text-gray-500"
                 role="menuitem"
               >
                 <div class="flex space-x-2 items-center">
-                  <i class="fab fa-discord text-xs dark:text-gray-500"></i>
-                  <span>Discord</span>
+                  <i class="fab fa-twitter text-xs dark:text-gray-500"></i>
+                  <span>Twitter</span>
+                </div>
+              </a>
+              <a
+                href="https://t.me/unboundfinance"
+                target="_blank"
+                class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-500 hover:bg-gray-100 dark-hover:bg-gray-800 hover:text-gray-900 dark-hover:text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-900 dark-focus:text-gray-500"
+                role="menuitem"
+              >
+                <div class="flex space-x-2 items-center">
+                  <i
+                    class="fab fa-telegram-plane text-xs dark:text-gray-500"
+                  ></i>
+                  <span>Telegram</span>
+                </div>
+              </a>
+              <a
+                href="https://medium.com/@unboundfinance"
+                target="_blank"
+                class="block px-4 py-2 text-sm leading-5 text-gray-700 dark:text-gray-500 hover:bg-gray-100 dark-hover:bg-gray-800 hover:text-gray-900 dark-hover:text-gray-500 focus:outline-none focus:bg-gray-100 focus:text-gray-900 dark-focus:text-gray-500"
+                role="menuitem"
+              >
+                <div class="flex space-x-2 items-center">
+                  <i class="fab fa-medium-m text-xs dark:text-gray-500"></i>
+                  <span>Telegram</span>
                 </div>
               </a>
             </div>
@@ -137,14 +164,17 @@ export default {
     try {
       window.ethereum.on('accountsChanged', function (networkId) {
         location.reload()
-        // Time to reload your interface with the new networkId
       })
     } catch (error) {}
   },
+
   methods: {
     toggleMode() {
       this.$colorMode.preference =
         this.$colorMode.value === 'light' ? 'dark' : 'light'
+    },
+    closeDrawer() {
+      this.ui.openDrawer = false
     },
   },
 }
