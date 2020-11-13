@@ -16,29 +16,35 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
     UniswapRouterABI,
     signer
   )
-  const formatAmountA = toFixed(amountA * 1e18)
-  const formatAmountB = toFixed(amountB * 1e18)
+  const formatAmountA = toFixed(amountA * 1e18).toString()
+  const formatAmountB = toFixed(amountB * 1e18).toString()
 
   const amountADesired = formatAmountB
   const amountBDesired = formatAmountB
-  const amountAMin = toFixed(formatAmountA - (formatAmountA * 10) / 100)
-  const amountBMin = toFixed(formatAmountB - (formatAmountB * 10) / 100)
+  const amountAMin = toFixed(
+    formatAmountA - (formatAmountA * 10) / 100
+  ).toString()
+  const amountBMin = toFixed(
+    formatAmountB - (formatAmountB * 10) / 100
+  ).toString()
   const to = await signer.getAddress()
   const deadline = +new Date() + 5000
 
-  console.log(amountAMin, amountBMin)
-
-  const transaction = await contract.addLiquidity(
-    tokenA,
-    tokenB,
-    amountADesired,
-    amountBDesired,
-    amountAMin,
-    amountBMin,
-    to,
-    deadline
-  )
-  return transaction
+  try {
+    const transaction = await contract.addLiquidity(
+      tokenA,
+      tokenB,
+      amountADesired,
+      amountBDesired,
+      amountAMin,
+      amountBMin,
+      to,
+      deadline
+    )
+    return transaction
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // UETH-ETH
@@ -57,14 +63,20 @@ const removeLiquidity = async (
   const userAddress = await signer.getAddress()
   const nonce = await getNonce(LPTAddress, signer)
   const deadline = +new Date() + 10000
-  const formatAmountA = toFixed(amountA * 1e18)
-  const formatAmountB = toFixed(amountB * 1e18)
+  const formatAmountA = toFixed(amountA * 1e18).toString()
+  const formatAmountB = toFixed(amountB * 1e18).toString()
 
-  let liquidity = toFixed(Math.sqrt(formatAmountA * formatAmountB) - 1 / 1e18)
-  liquidity = toFixed(parseInt(liquidity) - 1e15)
+  let liquidity = toFixed(
+    Math.sqrt(formatAmountA * formatAmountB) - 1 / 1e18
+  ).toString()
+  liquidity = toFixed(parseInt(liquidity) - 1e15).toString()
 
-  const amountAMin = toFixed(formatAmountA - (formatAmountA * 10) / 100)
-  const amountBMin = toFixed(formatAmountB - (formatAmountB * 10) / 100)
+  const amountAMin = toFixed(
+    formatAmountA - (formatAmountA * 10) / 100
+  ).toString()
+  const amountBMin = toFixed(
+    formatAmountB - (formatAmountB * 10) / 100
+  ).toString()
 
   console.log('liquidity', liquidity)
 
