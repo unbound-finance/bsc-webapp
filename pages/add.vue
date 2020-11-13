@@ -232,7 +232,6 @@ export default {
           msg: 'Approving...',
         }
         await contract.on('Approval', (owner, spender, value) => {
-          console.log(owner, spender, value.toString())
           this.uToken.tokenAllowance = value.toString()
           this.approveState = {
             cd: false,

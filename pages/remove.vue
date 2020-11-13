@@ -50,10 +50,16 @@
               <button
                 v-if="uToken && uToken.tokenAllowance == 0"
                 type="button"
-                class="px-2 py-1 text-sm rounded border border-light-primary dark:border-dark-primary bg-opacity-25 text-light-primary dark:text-white focus:outline-none"
+                class="px-2 py-1 text-sm rounded border focus:outline-none"
+                :class="
+                  approveState.cd
+                    ? 'border-gray-600 dark:border-gray-700 text-gray-600 dark:text-gray-700 cursor-not-allowed'
+                    : 'border-light-primary dark:border-dark-primary text-light-primary dark:text-dark-primary'
+                "
+                :disabled="approveState.cd"
                 @click="approve(uToken.token.address)"
               >
-                Approve
+                {{ approveState.msg }}
               </button>
               <div class="flex items-center">
                 <img :src="uToken.token.icon" width="16" />
@@ -119,9 +125,9 @@
       >
         <span v-if="!uToken">Select Token</span>
         <span v-else-if="!uTokenAmount">Enter An Amount</span>
-        <span v-else-if="isSufficentBalance"
-          >Insufficient Locked Liquidity</span
-        >
+        <span v-else-if="isSufficentBalance.cd">{{
+          isSufficentBalance.msg
+        }}</span>
         <span v-else-if="Number(uTokenAmount).toFixed(18) == 0.0"
           >Amount should be greater than 0</span
         >
@@ -162,6 +168,10 @@ export default {
       uTokenAmount: null,
       txLink: '',
       liquidity: null,
+      approveState: {
+        cd: false,
+        msg: 'Approve',
+      },
     }
   },
 
@@ -169,12 +179,22 @@ export default {
     isWalletConnected() {
       return !!this.$store.state.address
     },
+
     isSufficentBalance() {
-      return (
-        this.uToken &&
-        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.uTokenbalance) &&
-        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.tokenBalance)
-      )
+      if (
+        this.liquidity &&
+        parseFloat(this.uTokenAmount) > parseFloat(this.liquidity.token0)
+      ) {
+        return { cd: true, msg: `Insufficient Liquidity` }
+      } else if (
+        this.liquidity &&
+        parseFloat(this.uTokenAmount) > parseFloat(this.liquidity.token1)
+      ) {
+        return {
+          cd: true,
+          msg: `Insufficient Liquidity`,
+        }
+      } else return false
     },
     shouldDisableRemove() {
       return (
@@ -182,7 +202,7 @@ export default {
         !this.uTokenAmount ||
         // eslint-disable-next-line eqeqeq
         Number(this.uTokenAmount).toFixed(18) == 0.0 ||
-        this.isSufficentBalance ||
+        this.isSufficentBalance.cd ||
         !this.uToken.uTokenAllowance ||
         !this.uToken.tokenAllowance
       )
@@ -228,12 +248,20 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       try {
         const totalSupply = contract.totalSupply()
-        const approve = await contract.approve(
-          config.contracts.uniswapRouter,
-          totalSupply
-        )
-        this.ui.showSuccess = true
-        this.txLink = approve.hash
+        await contract.approve(config.contracts.uniswapRouter, totalSupply)
+        // this.ui.showSuccess = true
+        // this.txLink = approve.hash
+        this.approveState = {
+          cd: true,
+          msg: 'Approving...',
+        }
+        await contract.on('Approval', (owner, spender, value) => {
+          this.uToken.tokenAllowance = value.toString()
+          this.approveState = {
+            cd: false,
+            msg: 'Approve',
+          }
+        })
       } catch (error) {
         this.ui.showRejected = true
       }
