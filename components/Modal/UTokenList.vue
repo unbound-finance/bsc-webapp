@@ -38,13 +38,17 @@
                 v-if="type === 'add'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                <span> {{ (token.poolInfo && token.uTokenbalance) || 0 }}</span>
+                <loader v-if="ui.loading" color="#2172E5" stroke="4" />
+                <span v-else>
+                  {{ (token.poolInfo && token.uTokenbalance) || 0 }}</span
+                >
               </span>
               <span
                 v-if="type === 'remove'"
                 class="text-gray-800 dark:text-gray-200 font-bold font-mono"
               >
-                <span>
+                <loader v-if="ui.loading" color="#2172E5" stroke="4" />
+                <span v-else>
                   {{ (token.poolInfo && token.poolInfo.token1) || 0 }}</span
                 >
               </span>
@@ -93,6 +97,9 @@ export default {
     return {
       search: '',
       supportedUTokens,
+      ui: {
+        loading: false,
+      },
     }
   },
 
@@ -119,6 +126,7 @@ export default {
   methods: {
     selectToken(uToken) {
       this.$emit('update:uToken', uToken)
+      this.selectedToken = uToken
       this.modal = false
     },
 
@@ -136,6 +144,8 @@ export default {
     },
 
     async getSupportedUTokens() {
+      this.ui.loading = true
+
       this.supportedUTokens = await Promise.all(
         supportedUTokens.map(async (uToken) => {
           const uTokenbalance = await getTokenBalance(uToken.address)
@@ -154,6 +164,14 @@ export default {
           }
         })
       )
+
+      this.ui.loading = false
+      if (this.selectedToken) {
+        const updatedToken = this.supportedUTokens.find(
+          ({ address }) => this.selectedToken.address === address
+        )
+        this.$emit('update:uToken', updatedToken)
+      }
     },
   },
 }
