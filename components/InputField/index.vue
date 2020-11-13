@@ -130,10 +130,16 @@
               <button
                 v-if="uToken.uTokenAllowance == '0' && uToken"
                 type="button"
-                class="px-2 py-1 rounded border border-light-primary dark:border-dark-primary text-xs text-light-primary dark:text-dark-primary appearance-none focus:outline-none"
+                class="px-2 py-1 rounded border text-sm appearance-none focus:outline-none"
+                :class="
+                  approveState.cd
+                    ? 'border-gray-600 dark:border-gray-700 text-gray-600 dark:text-gray-700 cursor-not-allowed'
+                    : 'border-light-primary dark:border-dark-primary text-light-primary dark:text-dark-primary'
+                "
+                :disabled="approveState.cd"
                 @click="approve(uToken.address)"
               >
-                Approve
+                {{ approveState.msg }}
               </button>
               <button
                 type="button"
@@ -231,6 +237,10 @@ export default {
       poolToken: null,
       uToken: null,
       LPTBalance: 0,
+      approveState: {
+        cd: false,
+        msg: 'Approve',
+      },
     }
   },
   computed: {
@@ -240,6 +250,14 @@ export default {
       if (blur) listeners.blur = blur
       if (focus) listeners.focus = focus
       return listeners
+    },
+
+    getDisabledClass() {
+      return 'bg-gray-500 dark:bg-gray-900 text-gray-600 dark:text-gray-700 cursor-not-allowed'
+    },
+
+    getActiveClass() {
+      return 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
     },
   },
   watch: {
@@ -266,13 +284,21 @@ export default {
       const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
       try {
         const totalSupply = contract.totalSupply()
-        const approve = await contract.approve(
-          config.contracts.uniswapRouter,
-          totalSupply
-        )
-        this.ui.showSuccess = true
-        this.txLink = approve.hash
-        this.checkAllowances()
+        await contract.approve(config.contracts.uniswapRouter, totalSupply)
+        // this.ui.showSuccess = true
+        // this.txLink = approve.hash
+        this.approveState = {
+          cd: true,
+          msg: 'Approving...',
+        }
+        await contract.on('Approval', (owner, spender, value) => {
+          console.log(owner, spender, value.toString())
+          this.uToken.uTokenAllowance = value.toString()
+          this.approveState = {
+            cd: false,
+            msg: 'Approve',
+          }
+        })
       } catch (error) {
         this.ui.showRejected = true
       }
