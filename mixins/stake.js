@@ -66,10 +66,11 @@ const removeLiquidity = async (
   const formatAmountA = toFixed(amountA * 1e18).toString()
   const formatAmountB = toFixed(amountB * 1e18).toString()
 
-  let liquidity = toFixed(
+  const liquidity = toFixed(
     Math.sqrt(formatAmountA * formatAmountB) - 1 / 1e18
   ).toString()
-  liquidity = toFixed(parseInt(liquidity) - 1e15).toString()
+  // console.log('starting liq', liquidity)
+  // liquidity = toFixed(parseInt(liquidity) - 1e18).toString()
 
   const amountAMin = toFixed(
     formatAmountA - (formatAmountA * 10) / 100
@@ -77,8 +78,6 @@ const removeLiquidity = async (
   const amountBMin = toFixed(
     formatAmountB - (formatAmountB * 10) / 100
   ).toString()
-
-  console.log('liquidity', liquidity)
 
   const signedData = await getEIP712Signature(
     LPTAddress,

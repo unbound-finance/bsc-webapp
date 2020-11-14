@@ -28,6 +28,7 @@
     "sass-loader": "^10.0.1",
     "tailwindcss-dark-mode": "^1.1.6",
     "v-tooltip": "^2.0.3",
+    "vue-async-computed": "^3.9.0",
     "vue-content-loader": "^0.2.3",
     "vue-tailwind": "^1.2.6",
     "web3": "^1.2.11"
