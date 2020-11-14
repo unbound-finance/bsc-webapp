@@ -156,9 +156,11 @@
                       :alt="`${poolToken.uToken.symbol} logo`"
                       style="max-width: 24px; max-height: 24px"
                     />
-                    <span class="text-3xl font-mono dark:text-white">{{
-                      Number(uTokenAmount).toFixed(2)
-                    }}</span>
+                    <span
+                      class="font-mono dark:text-white"
+                      :class="uTokenTextSize"
+                      >{{ uTokenAmount }}</span
+                    >
                   </div>
                   <p class="text-2xl font-mono font-medium dark:text-white">
                     {{ poolToken.uToken.symbol }}
@@ -458,8 +460,12 @@ export default {
       return 'text-md'
     },
 
-    decimalsCount() {
-      return countDecimals(this.LPTAmount)
+    uTokenTextSize() {
+      const decimals = countDecimals(this.uTokenAmount)
+      if (decimals >= 0 && decimals <= 6) return 'text-3xl'
+      else if (decimals >= 6 && decimals <= 12) return 'text-xl'
+      else if (decimals > 12 && decimals <= 18) return 'text-lg'
+      return 'text-md'
     },
   },
 
