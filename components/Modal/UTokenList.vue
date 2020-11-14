@@ -144,33 +144,38 @@ export default {
     },
 
     async getSupportedUTokens() {
-      this.ui.loading = true
+      try {
+        this.ui.loading = true
 
-      this.supportedUTokens = await Promise.all(
-        supportedUTokens.map(async (uToken) => {
-          const uTokenbalance = await getTokenBalance(uToken.address)
-          const tokenBalance = await getTokenBalance(uToken.token.address)
-          const uTokenAllowance = await this.getAllowance(uToken.address)
-          const tokenAllowance = await this.getAllowance(uToken.token.address)
-          const poolInfo = await getAmountOfLockedTokens(uToken.lptAddress)
+        this.supportedUTokens = await Promise.all(
+          supportedUTokens.map(async (uToken) => {
+            const uTokenbalance = await getTokenBalance(uToken.address)
+            const tokenBalance = await getTokenBalance(uToken.token.address)
+            const uTokenAllowance = await this.getAllowance(uToken.address)
+            const tokenAllowance = await this.getAllowance(uToken.token.address)
+            const poolInfo = await getAmountOfLockedTokens(uToken.lptAddress)
 
-          return {
-            ...uToken,
-            uTokenbalance: uTokenbalance.toFixed,
-            tokenBalance: tokenBalance.toFixed,
-            uTokenAllowance: uTokenAllowance.toString(),
-            tokenAllowance: tokenAllowance.toString(),
-            poolInfo,
-          }
-        })
-      )
-
-      this.ui.loading = false
-      if (this.selectedToken) {
-        const updatedToken = this.supportedUTokens.find(
-          ({ address }) => this.selectedToken.address === address
+            return {
+              ...uToken,
+              uTokenbalance: uTokenbalance.formatted,
+              tokenBalance: tokenBalance.formatted,
+              uTokenAllowance: uTokenAllowance.toString(),
+              tokenAllowance: tokenAllowance.toString(),
+              poolInfo,
+            }
+          })
         )
-        this.$emit('update:uToken', updatedToken)
+
+        this.ui.loading = false
+        if (this.selectedToken) {
+          const updatedToken = this.supportedUTokens.find(
+            ({ address }) => this.selectedToken.address === address
+          )
+          this.$emit('update:uToken', updatedToken)
+        }
+      } catch (error) {
+        this.ui.loading = false
+        throw new Error('Something went wrong!')
       }
     },
   },

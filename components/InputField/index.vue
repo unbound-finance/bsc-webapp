@@ -11,7 +11,7 @@
             <button
               type="button"
               class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
-              @click="model = poolToken.balance"
+              @click="model = poolToken.balance.slice(0, 18)"
             >
               Max
             </button>
@@ -30,7 +30,7 @@
             <button
               type="button"
               class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
-              @click="model = poolToken.lockedBalance"
+              @click="model = poolToken.lockedBalance.slice(0, 18)"
             >
               Max
             </button>
@@ -51,7 +51,7 @@
             <button
               type="button"
               class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
-              @click="model = uToken.uTokenbalance"
+              @click="model = uToken.uTokenbalance.slice(0, 18)"
             >
               Max
             </button>
@@ -70,7 +70,7 @@
             <button
               type="button"
               class="appearance-none text-xs leading-tight text-light-primary dark:text-dark-primary hover:underline focus:outline-none"
-              @click="model = uToken.poolInfo.token1"
+              @click="model = uToken.poolInfo.token1.toString().slice(0, 18)"
             >
               Max
             </button>
@@ -78,7 +78,7 @@
               Balance:
               <span
                 class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-                >{{ uToken.poolInfo.token1 }}</span
+                >{{ uToken.poolInfo && uToken.poolInfo.token1 }}</span
               >
             </p>
           </div>
