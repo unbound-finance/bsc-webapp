@@ -116,6 +116,7 @@
           !uTokenAmount ? getDisabledClass : getActiveClass,
           isSufficentBalance ? getDisabledClass : getActiveClass,
           uTokenAmount === '0' ? getDisabledClass : getActiveClass,
+          shouldDisableRemove ? getDisabledClass : getActiveClass,
           Number(uTokenAmount).toFixed(18) == 0.0
             ? getDisabledClass
             : getActiveClass,
@@ -132,7 +133,9 @@
           >Amount should be greater than 0</span
         >
         <span
-          v-else-if="uToken.uTokenAllowance == 0 || uToken.tokenAllowance == 0"
+          v-else-if="
+            uToken.uTokenAllowance == '0' || uToken.tokenAllowance == '0'
+          "
           >Please Approve Tokens</span
         >
         <span v-else>Remove Liquidity</span>
@@ -203,8 +206,8 @@ export default {
         // eslint-disable-next-line eqeqeq
         Number(this.uTokenAmount).toFixed(18) == 0.0 ||
         this.isSufficentBalance.cd ||
-        !this.uToken.uTokenAllowance ||
-        !this.uToken.tokenAllowance
+        this.uToken.uTokenAllowance === '0' ||
+        this.uToken.tokenAllowance === '0'
       )
     },
     getDisabledClass() {
