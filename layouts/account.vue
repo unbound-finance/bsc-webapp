@@ -15,7 +15,7 @@
                   liquidity
                     ? Number(
                         liquidity[0].poolInfo.totalLiquidity +
-                          liquidity[1].poolInfo.totalLiquidity
+                          liquidity[1].poolInfo.totalLiquidity * ethPrice
                       ).toFixed(2)
                     : '0'
                 }}
@@ -243,6 +243,7 @@ export default {
         team: '',
       },
       supportedPoolTokens,
+      ethPrice: 0,
     }
   },
 
@@ -261,6 +262,11 @@ export default {
         return 0
       }
     },
+  },
+
+  async created() {
+    this.ethPrice = await this.$ethPrice()
+    console.log(this.ethPrice)
   },
 
   mounted() {
