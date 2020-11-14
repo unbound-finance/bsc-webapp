@@ -136,9 +136,9 @@
                       :token0logo="poolToken.currencyOneLogo"
                       :token1logo="poolToken.currencyTwoLogo"
                     />
-                    <span class="text-3xl font-mono dark:text-white">
-                      {{ Number(LPTAmount).toFixed(2) }}
-                    </span>
+                    <div class="font-mono dark:text-white" :class="lptTextSize">
+                      {{ LPTAmount }}
+                    </div>
                   </div>
                   <p class="text-2xl font-mono font-medium dark:text-white">
                     {{ poolToken.name }}
@@ -373,7 +373,7 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 
-import { toFixed } from '~/utils'
+import { toFixed, countDecimals } from '~/utils'
 
 import UnboundDaiABI from '~/configs/abi/UnboundDai.js'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
@@ -448,6 +448,18 @@ export default {
 
     getActiveClass() {
       return 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
+    },
+
+    lptTextSize() {
+      const decimals = countDecimals(this.LPTAmount)
+      if (decimals >= 0 && decimals <= 6) return 'text-3xl'
+      else if (decimals >= 6 && decimals <= 12) return 'text-xl'
+      else if (decimals > 12 && decimals <= 18) return 'text-lg'
+      return 'text-md'
+    },
+
+    decimalsCount() {
+      return countDecimals(this.LPTAmount)
     },
   },
 

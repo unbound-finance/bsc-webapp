@@ -34,3 +34,20 @@ export function toFixed(x) {
   }
   return x
 }
+
+export function countDecimals(value) {
+  if (!value) return ''
+  const text = value.toString()
+  // verify if number 0.000005 is represented as "5e-6"
+  if (text.includes('e-')) {
+    // eslint-disable-next-line no-unused-vars
+    const [base, trail] = text.split('e-')
+    const deg = parseInt(trail, 10)
+    return deg
+  }
+  // count decimals for number in representation like "0.123456"
+  if (Math.floor(value) !== value) {
+    return value.toString().split('.')[1].length || 0
+  }
+  return 0
+}
