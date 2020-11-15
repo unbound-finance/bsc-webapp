@@ -48,14 +48,14 @@
         >
           <template v-slot:append>
             <div class="flex flex-col">
-              <div class="flex items-center focus:outline-none">
+              <div class="flex items-center justify-end focus:outline-none">
                 <img
                   :src="require(`~/assets/tokens/${poolToken.uToken.icon}`)"
                   width="16"
                   :alt="`${poolToken.uToken.symbol} logo`"
                   style="max-width: 16px; max-height: 22px"
                 />
-                <div class="flex items-center p-1">
+                <div class="flex items-center pl-1">
                   <p
                     class="text-gray-900 dark:text-gray-500 font-semibold text-right"
                   >
@@ -64,7 +64,7 @@
                 </div>
               </div>
               <span
-                class="text-xs text-right text-gray-500 dark:text-gray-700"
+                class="text-xs whitespace-no-wrap text-right text-gray-500 dark:text-gray-700"
                 >{{ poolToken.uToken.displayName }}</span
               >
             </div>
@@ -464,17 +464,17 @@ export default {
     lptTextSize() {
       const decimals = countDecimals(this.LPTAmount)
       if (decimals >= 0 && decimals <= 6) return 'text-3xl'
-      else if (decimals >= 6 && decimals <= 12) return 'text-xl'
-      else if (decimals > 12 && decimals <= 18) return 'text-lg'
-      return 'text-md'
+      else if (decimals >= 6 && decimals <= 12) return 'text-2xl'
+      else if (decimals > 12 && decimals <= 18) return 'text-xl'
+      return 'text-lg'
     },
 
     uTokenTextSize() {
       const decimals = countDecimals(this.uTokenAmount)
       if (decimals >= 0 && decimals <= 6) return 'text-3xl'
-      else if (decimals >= 6 && decimals <= 12) return 'text-xl'
-      else if (decimals > 12 && decimals <= 18) return 'text-lg'
-      return 'text-md'
+      else if (decimals >= 6 && decimals <= 12) return 'text-2xl'
+      else if (decimals > 12 && decimals <= 18) return 'text-xl'
+      return 'text-lg'
     },
   },
 

@@ -38,7 +38,7 @@ export function toFixed(x) {
 export function countDecimals(value) {
   if (!value) return ''
   const text = value.toString()
-  let val = 0
+  let val = value
 
   if (typeof value === 'string') {
     val = Number(value)
