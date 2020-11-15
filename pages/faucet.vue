@@ -4,6 +4,7 @@
       <p class="text-3xl font-bold text-gray-800 dark:text-gray-200">Faucet</p>
 
       <ul class="text-sm text-gray-600 list-disc px-4">
+        <li>You would need Kovan ETH to get started.</li>
         <li>This faucet will give you our test tokens on kovan testnet.</li>
         <!-- <li>
           You can get kovan test ethers
