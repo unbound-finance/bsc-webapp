@@ -51,12 +51,15 @@
         <button
           type="button"
           class="w-full font-medium rounded-lg py-4 appearance-none focus:outline-none"
+          :title="
+            ui.showRequestEth == false ? 'You already have kovan ETH' : ''
+          "
           :class="ui.showRequestEth ? getActiveClass : getDisabledClass"
           :disabled="ui.showRequestEth == false"
           @click="requestKeth"
         >
           <loader v-if="ui.ethLoading" />
-          <span v-else>Request ETH</span>
+          <span v-else>Request KETH</span>
         </button>
 
         <button

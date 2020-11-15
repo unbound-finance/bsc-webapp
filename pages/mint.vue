@@ -136,13 +136,19 @@
                       :token0logo="poolToken.currencyOneLogo"
                       :token1logo="poolToken.currencyTwoLogo"
                     />
-                    <div class="font-mono dark:text-white" :class="lptTextSize">
-                      {{ LPTAmount }}
+                    <div class="flex flex-col">
+                      <span
+                        class="font-mono dark:text-white"
+                        :class="lptTextSize"
+                        >{{ LPTAmount }}</span
+                      >
+                      <p
+                        class="font-mono font-medium text-gray-600 dark:text-gray-700"
+                      >
+                        {{ poolToken.name }}
+                      </p>
                     </div>
                   </div>
-                  <p class="text-2xl font-mono font-medium dark:text-white">
-                    {{ poolToken.name }}
-                  </p>
                 </div>
                 <i
                   class="fas fa-arrow-down text-xs my-2 text-gray-600 dark:text-gray-700 mx-2"
@@ -156,15 +162,19 @@
                       :alt="`${poolToken.uToken.symbol} logo`"
                       style="max-width: 24px; max-height: 24px"
                     />
-                    <span
-                      class="font-mono dark:text-white"
-                      :class="uTokenTextSize"
-                      >{{ uTokenAmount }}</span
-                    >
+                    <div class="flex flex-col">
+                      <span
+                        class="font-mono dark:text-white"
+                        :class="uTokenTextSize"
+                        >{{ uTokenAmount }}</span
+                      >
+                      <p
+                        class="font-mono font-medium text-gray-600 dark:text-gray-700"
+                      >
+                        {{ poolToken.uToken.symbol }}
+                      </p>
+                    </div>
                   </div>
-                  <p class="text-2xl font-mono font-medium dark:text-white">
-                    {{ poolToken.uToken.symbol }}
-                  </p>
                 </div>
               </div>
             </div>
@@ -351,8 +361,7 @@
               Currently Locked
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ toFixed(poolToken.lockedBalance || '').slice(0, 8) }}
-              {{ poolToken.name }}
+              {{ toFixed(poolToken.lockedBalance || '').slice(0, 18) }}
             </p>
           </div>
           <a
