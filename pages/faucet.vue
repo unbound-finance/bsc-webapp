@@ -5,7 +5,7 @@
 
       <ul class="text-sm text-gray-600 list-disc px-4">
         <li>This faucet will give you our test tokens on kovan testnet.</li>
-        <li>
+        <!-- <li>
           You can get kovan test ethers
           <a
             href="https://faucet.kovan.network/"
@@ -13,7 +13,7 @@
             class="text-light-primary dark:text-dark-primary font-medium"
             >here</a
           >
-        </li>
+        </li> -->
         <li>
           These are ETH, DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE. You can
           find token addresses
@@ -49,7 +49,9 @@
       <div v-if="isWalletConnected" class="flex items-center space-x-2">
         <button
           type="button"
-          class="w-full font-medium bg-gradient-to-r from-light-primary to-dark-primary text-white rounded-lg py-4 appearance-none focus:outline-none"
+          class="w-full font-medium rounded-lg py-4 appearance-none focus:outline-none"
+          :class="ui.showRequestEth ? getActiveClass : getDisabledClass"
+          :disabled="ui.showRequestEth == false"
           @click="requestKeth"
         >
           <loader v-if="ui.ethLoading" />
@@ -96,7 +98,7 @@ export default {
         showSuccess: false,
         errorMsg: null,
         successMsg: null,
-        showRequestEth: false,
+        showRequestEth: true,
       },
       txLink: null,
     }
@@ -106,12 +108,19 @@ export default {
     isWalletConnected() {
       return !!this.$store.state.address
     },
+    getDisabledClass() {
+      return 'bg-gray-300 dark:bg-gray-800 text-gray-600 dark:text-gray-600 cursor-not-allowed'
+    },
+
+    getActiveClass() {
+      return 'bg-gradient-to-r from-light-primary to-dark-primary text-white'
+    },
   },
 
   async mounted() {
     const ethBalance = await this.ethBalance()
-    if (!ethBalance) {
-      this.ui.showRequestEth = true
+    if (ethBalance) {
+      this.ui.showRequestEth = false
     }
   },
 
@@ -146,10 +155,10 @@ export default {
             address: signer,
           }
         )
-        console.log(data)
         this.ui.successMsg = `0.05 kovan ETH sent. Please wait for the transaction to get confirmed before requesting the pool tokens.`
         this.txLink = `https://kovan.etherscan.io/tx/${data.hash}`
         this.ui.ethLoading = false
+        this.ui.showRequestEth = false
         // this.ui.showRequestEth = false
       } catch (error) {
         this.ui.errorMsg = 'You can request kovan ETH only once in 24 hours.'
