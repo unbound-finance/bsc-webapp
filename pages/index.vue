@@ -37,7 +37,6 @@
 
 <script>
 export default {
-  middleware: 'isAuthenticated',
   data() {
     return {
       pages: [
