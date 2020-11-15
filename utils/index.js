@@ -38,6 +38,12 @@ export function toFixed(x) {
 export function countDecimals(value) {
   if (!value) return ''
   const text = value.toString()
+  let val = 0
+
+  if (typeof value === 'string') {
+    val = Number(value)
+  }
+
   // verify if number 0.000005 is represented as "5e-6"
   if (text.includes('e-')) {
     // eslint-disable-next-line no-unused-vars
@@ -46,8 +52,8 @@ export function countDecimals(value) {
     return deg
   }
   // count decimals for number in representation like "0.123456"
-  if (Math.floor(value) !== value) {
-    return value.toString().split('.')[1].length || 0
+  if (Math.floor(val) !== val) {
+    return val.toString().split('.')[1].length || 0
   }
   return 0
 }
