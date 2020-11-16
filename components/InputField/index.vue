@@ -92,7 +92,8 @@
             v-model="model"
             type="number"
             placeholder="0.00"
-            class="font-mono text-3xl pr-4 appearance-none bg-transparent text-gray-900 dark:text-gray-200 font-medium w-full leading-tight focus:outline-none"
+            class="font-mono text-3xl pr-4 appearance-none bg-transparent text-gray-900 dark:text-gray-200 font-medium leading-tight focus:outline-none"
+            style="min-width: 0"
             :class="readonly ? 'cursor-not-allowed' : ''"
             :readonly="readonly"
             v-on="listeners"
@@ -169,7 +170,7 @@
             <button
               v-else
               type="button"
-              class="bg-light-primary text-white text-xs font-medium rounded py-1 w-2/3 focus:outline-none"
+              class="bg-light-primary text-white text-xs font-medium rounded py-1 whitespace-no-wrap px-2 md:px-4 focus:outline-none"
               @click="
                 type === 'add' || type === 'remove'
                   ? (ui.showUTokenListModal = true)
