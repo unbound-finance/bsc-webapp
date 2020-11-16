@@ -212,11 +212,11 @@ export default {
     },
 
     getDisabledClass() {
-      return 'bg-gray-500 dark:bg-gray-900 text-gray-600 dark:text-gray-700 cursor-not-allowed'
+      return 'bg-gray-300 dark:bg-gray-900 text-gray-600 dark:text-gray-700 cursor-not-allowed'
     },
 
     getActiveClass() {
-      return 'bg-light-primary text-light-primary dark:bg-dark-primary bg-opacity-25 dark:text-white'
+      return 'bg-light-primary text-white dark:bg-dark-primary'
     },
   },
 
