@@ -196,7 +196,7 @@ import { ethers } from 'ethers'
 
 // import config from '~/configs/config'
 import { getAmountOfLockedTokens } from '~/mixins/stake'
-import { getFeesAccrued, getCRatio } from '~/mixins/analytics'
+import { getFeesAccrued } from '~/mixins/analytics'
 
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
@@ -205,7 +205,12 @@ import UnboundDai from '~/configs/abi/UnboundDai'
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 import supportedUTokens from '~/configs/supportedUTokens'
 
-import { getLockedLPT, checkLoan, getLPTPrice } from '~/mixins/info'
+import {
+  getLockedLPT,
+  checkLoan,
+  getLPTPrice,
+  getERC20Price,
+} from '~/mixins/info'
 
 // const txDecoder = require('ethereum-tx-decoder')
 
@@ -312,9 +317,10 @@ export default {
       const und = []
       const uEth = []
       const tvl = []
-      const cRatio = await getCRatio()
 
       try {
+        const ethPrice = await getERC20Price('ethereum')
+
         await Promise.all(
           supportedPoolTokens.map(async (e) => {
             const lockedLPT = await getLockedLPT(e.llcAddress)
@@ -337,12 +343,10 @@ export default {
         const uEthMinted = uEth.reduce((a, b) => a + b || 0, 0)
         const totalValueLocked = tvl.reduce((a, b) => a + b || 0, 0)
 
-        this.accountInfo = {
-          totalValueLocked,
-          undMinted,
-          uEthMinted,
-          cRatio,
-        }
+        const uEthMintedUsd = Number(uEthMinted * ethPrice)
+        const cRatio = Number(
+          (totalValueLocked / (undMinted + uEthMintedUsd)) * 100
+        ).toFixed(2)
 
         console.log({
           totalValueLocked,
@@ -350,6 +354,13 @@ export default {
           uEthMinted,
           cRatio,
         })
+
+        this.accountInfo = {
+          totalValueLocked,
+          undMinted,
+          uEthMinted,
+          cRatio,
+        }
       } catch (error) {
         console.log(error)
       }
