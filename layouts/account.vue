@@ -8,19 +8,16 @@
           :class="showFees ? '' : 'border'"
         >
           <div class="flex flex-col">
-            <p class="font-medium text-sm text-gray-600">Total Liquidity</p>
+            <p class="font-medium text-sm text-gray-600">Total Locked</p>
             <div class="flex items-center justify-between">
               <p class="font-medium text-3xl text-accent">
                 ${{
-                  liquidity
-                    ? Number(
-                        liquidity[0].poolInfo.totalLiquidity +
-                          liquidity[1].poolInfo.totalLiquidity * ethPrice
-                      ).toFixed(2)
+                  accountInfo
+                    ? Number(accountInfo.totalValueLocked).toFixed(2)
                     : '0'
                 }}
               </p>
-              <button
+              <!-- <button
                 class="focus:outline-none"
                 @click="showLiquidity = !showLiquidity"
               >
@@ -28,9 +25,9 @@
                   class="fas text-gray-600 px-4"
                   :class="showLiquidity ? 'fa-chevron-up' : 'fa-chevron-down'"
                 ></i>
-              </button>
+              </button> -->
             </div>
-            <div v-if="showLiquidity" class="transition-all duration-200">
+            <!-- <div v-if="showLiquidity" class="transition-all duration-200">
               <div
                 class="mt-4 border-b border-gray-200 dark:border-gray-800 w-full"
               ></div>
@@ -84,7 +81,7 @@
                   </p>
                 </div>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <div
@@ -92,15 +89,13 @@
           :class="showLiquidity ? '' : 'border'"
         >
           <div class="flex flex-col">
-            <p class="font-medium text-sm text-gray-600">Total Pool Share</p>
+            <p class="font-medium text-sm text-gray-600">Total Minted</p>
             <div class="flex items-center space-x-6 pt-2">
               <div class="flex flex-col">
                 <p class="font-medium text-xl text-accent leading-tight">
                   {{
-                    liquidity
-                      ? liquidity[0].poolInfo.poolShare.toFixed(4)
-                      : '0'
-                  }}%
+                    accountInfo ? Number(accountInfo.undMinted).toFixed(4) : '0'
+                  }}
                 </p>
                 <div v-if="liquidity" class="flex items-center space-x-1">
                   <img
@@ -116,10 +111,10 @@
               <div class="flex flex-col">
                 <p class="font-medium text-xl text-accent leading-tight">
                   {{
-                    liquidity
-                      ? liquidity[1].poolInfo.poolShare.toFixed(4)
+                    accountInfo
+                      ? Number(accountInfo.uEthMinted).toFixed(4)
                       : '0'
-                  }}%
+                  }}
                 </p>
 
                 <div v-if="liquidity" class="flex items-center space-x-1">
@@ -142,11 +137,12 @@
           :class="showLiquidity ? '' : 'border'"
         >
           <div class="flex flex-col">
-            <p class="font-medium text-sm text-gray-600">Total Fees Earned</p>
+            <p class="font-medium text-sm text-gray-600">
+              Collatralization Ratio
+            </p>
             <div class="flex items-center justify-between">
               <p class="font-medium text-3xl text-accent">
-                $
-                {{ totalFeesEarned }}
+                {{ accountInfo ? Number(accountInfo.cRatio) : '0' }}%
               </p>
             </div>
           </div>
@@ -200,7 +196,7 @@ import { ethers } from 'ethers'
 
 // import config from '~/configs/config'
 import { getAmountOfLockedTokens } from '~/mixins/stake'
-import { getFeesAccrued } from '~/mixins/analytics'
+import { getFeesAccrued, getCRatio } from '~/mixins/analytics'
 
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import config from '~/configs/config'
@@ -208,6 +204,8 @@ import UnboundDai from '~/configs/abi/UnboundDai'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 import supportedUTokens from '~/configs/supportedUTokens'
+
+import { getLockedLPT, checkLoan, getLPTPrice } from '~/mixins/info'
 
 // const txDecoder = require('ethereum-tx-decoder')
 
@@ -244,6 +242,7 @@ export default {
       },
       supportedPoolTokens,
       ethPrice: 0,
+      accountInfo: {},
     }
   },
 
@@ -266,21 +265,19 @@ export default {
 
   async created() {
     this.ethPrice = await this.$ethPrice()
-    console.log(this.ethPrice)
   },
 
   mounted() {
     this.ui.loading = true
-    this.getTotalUND()
+    this.getAccountInfo()
     this.fetchLiquidity()
+    this.getTotalUND()
     this.getCollectedFees()
   },
 
   methods: {
     async getCollectedFees() {
       const fees = await getFeesAccrued()
-      console.log(fees)
-      console.log(this.totalLiquidity)
       this.collectedFees = fees.staking
     },
 
@@ -309,6 +306,53 @@ export default {
         const supply = await UND.totalSupply()
         this.totalMinted = (supply / 1e18).toFixed(2)
       } catch (error) {}
+    },
+
+    async getAccountInfo() {
+      const und = []
+      const uEth = []
+      const tvl = []
+      const cRatio = await getCRatio()
+
+      try {
+        await Promise.all(
+          supportedPoolTokens.map(async (e) => {
+            const lockedLPT = await getLockedLPT(e.llcAddress)
+            const price = await getLPTPrice(e)
+            const value = Number(lockedLPT * price)
+            const loan = await checkLoan(e.llcAddress, e.uToken.address)
+            const minted = { minted: loan, symbol: e.uToken.symbol }
+
+            tvl.push(value)
+
+            if (minted.symbol === 'UND') {
+              und.push(Number(minted.minted))
+            } else if (minted.symbol === 'uETH') {
+              uEth.push(Number(minted.minted))
+            }
+          })
+        )
+
+        const undMinted = und.reduce((a, b) => a + b || 0, 0)
+        const uEthMinted = uEth.reduce((a, b) => a + b || 0, 0)
+        const totalValueLocked = tvl.reduce((a, b) => a + b || 0, 0)
+
+        this.accountInfo = {
+          totalValueLocked,
+          undMinted,
+          uEthMinted,
+          cRatio,
+        }
+
+        console.log({
+          totalValueLocked,
+          undMinted,
+          uEthMinted,
+          cRatio,
+        })
+      } catch (error) {
+        console.log(error)
+      }
     },
 
     async fetchLiquidity() {

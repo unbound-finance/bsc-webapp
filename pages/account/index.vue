@@ -85,7 +85,7 @@
               </tr>
             </tbody>
 
-            <tbody v-else class="bg-white dark:bg-gray-900">
+            <tbody v-else-if="ui.loading" class="bg-white dark:bg-gray-900">
               <tr>
                 <td class="px-6 py-4">
                   <content-loader
@@ -113,6 +113,16 @@
                 </td>
               </tr>
             </tbody>
+
+            <tbody v-else>
+              <tr class="bg-white dark:bg-gray-900">
+                <td colspan="6">
+                  <div class="text-sm text-center p-4 text-gray-600">
+                    Asset Not found.
+                  </div>
+                </td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
@@ -136,6 +146,7 @@ export default {
     return {
       ui: {
         errorMsg: null,
+        loading: false,
       },
       LPTTable: {
         headers: ['LP Token Name', 'Locked LPT', 'Token Minted', ''],
@@ -156,6 +167,7 @@ export default {
 
   methods: {
     async getPoolTokens() {
+      this.ui.loading = true
       try {
         this.LPTTable.data = (
           await Promise.all(
@@ -175,8 +187,14 @@ export default {
               }
             })
           )
-        ).sort(dynamicsort('locked', 'desc'))
-      } catch (error) {}
+        )
+          .sort(dynamicsort('locked', 'desc'))
+          .filter((el) => el.locked > 0)
+
+        this.ui.loading = false
+      } catch (error) {
+        this.ui.loading = false
+      }
     },
   },
 }
