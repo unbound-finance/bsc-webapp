@@ -348,13 +348,6 @@ export default {
           (totalValueLocked / (undMinted + uEthMintedUsd)) * 100
         ).toFixed(2)
 
-        console.log({
-          totalValueLocked,
-          undMinted,
-          uEthMinted,
-          cRatio,
-        })
-
         this.accountInfo = {
           totalValueLocked,
           undMinted,
