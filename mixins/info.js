@@ -195,8 +195,8 @@ const getTotalVolume = async () => {
       query: `
           query {
               alls {
-               mintTotal
-               burnTotal
+               lockUSD
+               unlockUSD
               }
           }
         `,
@@ -216,9 +216,7 @@ const getTotalVolume = async () => {
         return 0
       }
       return (
-        (Number(data.data.alls[0].mintTotal) +
-          Number(data.data.alls[0].burnTotal)) /
-        1e18
+        Number(data.data.alls[0].lockUSD) + Number(data.data.alls[0].unlockUSD)
       )
     } catch (e) {
       return 0
@@ -232,16 +230,14 @@ const getDailyVolume = async () => {
   try {
     const data = JSON.stringify({
       query: `
-          query($count: Int!) {
-            dailies(first: $count) {
-              mintTotal
-              burnTotal
+          query {
+            dailies(first: ${1}, orderBy: ${'date'}, orderDirection: ${'desc'}) {
+              date
+              lockUSD
+              unlockUSD
             }
           }
         `,
-      variables: {
-        count: 1,
-      },
     })
     const config = {
       method: 'post',
@@ -258,9 +254,8 @@ const getDailyVolume = async () => {
         return 0
       }
       return (
-        (Number(data.data.dailies[0].mintTotal) +
-          Number(data.data.dailies[0].burnTotal)) /
-        1e18
+        Number(data.data.dailies[0].lockUSD) +
+        Number(data.data.dailies[0].unlockUSD)
       )
     } catch (e) {
       return 0
