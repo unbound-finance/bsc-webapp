@@ -2,7 +2,7 @@
   <!-- Transaction History Table -->
   <div class="mt-6">
     <div class="w-full flex items-center justify-end mb-2">
-      <div class="flex items-center space-x-4">
+      <!-- <div class="flex items-center space-x-4">
         <button
           class="focus:outline-none"
           type="button"
@@ -34,10 +34,10 @@
             "
           ></i>
         </button>
-      </div>
+      </div> -->
     </div>
 
-    <div v-if="ui.errorMsg">{{ ui.errorMsg }}</div>
+    <!-- <div v-if="ui.errorMsg">{{ ui.errorMsg }}</div> -->
 
     <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -67,35 +67,35 @@
                       <div
                         class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                       >
-                        {{ $dayjs.unix(data.timeStamp).format('DD MMM YYYY') }}
+                        {{ $dayjs.unix(data.blockTime).format('DD MMM YYYY') }}
                       </div>
                       <div
                         class="text-sm leading-5 text-gray-500 dark:text-gray-700"
                       >
-                        {{ $dayjs.unix(data.timeStamp).format('hh:mm:ss a') }}
+                        {{ $dayjs.unix(data.blockTime).format('hh:mm:ss a') }}
                       </div>
                     </div>
                   </div>
                 </td>
-                <td class="px-6 py-2 whitespace-no-wrap">
+                <!-- <td class="px-6 py-2 whitespace-no-wrap">
                   <div
                     class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
                     {{ data.blockNumber }}
                   </div>
-                </td>
+                </td> -->
                 <td class="px-6 py-2 whitespace-no-wrap">
                   <div
                     class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
                     <a
                       class="text-accent"
-                      :href="`https://kovan.etherscan.io/tx/${data.hash}`"
+                      :href="`https://kovan.etherscan.io/tx/${data.id}`"
                       target="_blank"
                       >{{
-                        data.hash.substring(0, 16) +
+                        data.id.substring(0, 16) +
                         '...' +
-                        data.hash.substring(data.hash.length - 16)
+                        data.id.substring(data.id.length - 16)
                       }}</a
                     >
                   </div>
@@ -104,27 +104,34 @@
                   <div
                     class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
-                    {{
+                    {{ data.type }}
+                    <!-- {{
                       data.smartContractFunction === functions.mint
                         ? 'Mint'
                         : 'Burn'
-                    }}
+                    }} -->
                   </div>
                 </td>
                 <td class="px-6 py-2 whitespace-no-wrap">
                   <div
                     class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
-                    {{ data.amount.toFixed(2) }} UND
+                    {{ Number(data.uTokenAmount).toFixed(2) }}
+                    {{
+                      data.uTokenAddress ==
+                      '0xa729d5ca5bce0d275b69728881f5bb86511ea70b'
+                        ? 'UND'
+                        : 'uETH'
+                    }}
                   </div>
                 </td>
-                <td class="px-6 py-2 whitespace-no-wrap">
+                <!-- <td class="px-6 py-2 whitespace-no-wrap">
                   <div
                     class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
                     {{ parseInt(data.gasUsed * data.gasPrice) / 1e18 }}
                   </div>
-                </td>
+                </td> -->
               </tr>
             </tbody>
 
@@ -164,7 +171,7 @@
                     :primary-opacity="0.25"
                   ></content-loader>
                 </td>
-                <td class="px-6 py-4">
+                <!-- <td class="px-6 py-4">
                   <content-loader
                     :height="40"
                     :primary-opacity="0.25"
@@ -175,7 +182,7 @@
                     :height="40"
                     :primary-opacity="0.25"
                   ></content-loader>
-                </td>
+                </td> -->
               </tr>
             </tbody>
           </table>
@@ -191,6 +198,7 @@ import { ethers } from 'ethers'
 import { ContentLoader } from 'vue-content-loader'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
+import { getTransactions } from '~/mixins/info'
 
 export default {
   layout: 'account',
@@ -209,7 +217,7 @@ export default {
       showFees: false,
       showLiquidity: false,
       txTable: {
-        headers: ['Date', 'Block', 'Txn Hash', 'Type', 'Amount', 'Txn Fees'],
+        headers: ['Date', 'Txn Hash', 'Type', 'Amount'],
         data: [],
       },
       functions: {
@@ -249,81 +257,85 @@ export default {
 
     async txCallee() {
       this.ui.loading = true
-      if (this.$store.state.address == null) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const address = await provider.getSigner().getAddress()
+      if (!address) {
         this.txTable.data = []
         this.ui.loading = false
       }
-      this.txTable.data = await this.getTransactions(
-        this.ui.apiPage,
-        this.remainingTransactions
-      )
-      this.ui.cachedPages[this.ui.page] = this.txTable.data
+      this.txTable.data = await getTransactions()
+
+      // await this.getTransactions(
+      //   this.ui.apiPage,
+      //   this.remainingTransactions
+      // )
+      // this.ui.cachedPages[this.ui.page] = this.txTable.data
       this.ui.loading = false
     },
 
-    async getTransactions(page, result = []) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = await provider.getSigner()
-      const address = await signer.getAddress()
-      const url = 'https://api-kovan.etherscan.io/api'
-      const params = {
-        module: 'account',
-        action: 'txlist',
-        address,
-        startblock: '0',
-        endblock: '99999999',
-        page,
-        offset: '10',
-        sort: 'desc',
-        apikey: 'HUWMR5VJHDQ7EEZYEUWQAAHBNMURE1R1CH',
-      }
+    // async getTransactions(page, result = []) {
+    //   const provider = new ethers.providers.Web3Provider(window.ethereum)
+    //   const signer = await provider.getSigner()
+    //   const address = await signer.getAddress()
+    //   const url = 'https://api-kovan.etherscan.io/api'
+    //   const params = {
+    //     module: 'account',
+    //     action: 'txlist',
+    //     address,
+    //     startblock: '0',
+    //     endblock: '99999999',
+    //     page,
+    //     offset: '10',
+    //     sort: 'desc',
+    //     apikey: 'HUWMR5VJHDQ7EEZYEUWQAAHBNMURE1R1CH',
+    //   }
 
-      const { data } = await this.$axios.get(url, { params })
-      this.ui.apiPage = page
+    //   const { data } = await this.$axios.get(url, { params })
+    //   this.ui.apiPage = page
 
-      if (data.status === '0') {
-        this.ui.lastPage = page
-      } else if (data.result.length !== 0) {
-        result.push(...(await this.decodeTransaction(data.result)))
-        if (result.length < 10) {
-          this.ui.apiPage = page + 1
-          await this.getTransactions(page + 1, result)
-        }
-      } else {
-        this.ui.lastPage = page
-      }
-      this.remainingTransactions = result.slice(10)
-      return result.slice(0, 10)
-    },
+    //   if (data.status === '0') {
+    //     this.ui.lastPage = page
+    //   } else if (data.result.length !== 0) {
+    //     result.push(...(await this.decodeTransaction(data.result)))
+    //     if (result.length < 10) {
+    //       this.ui.apiPage = page + 1
+    //       await this.getTransactions(page + 1, result)
+    //     }
+    //   } else {
+    //     this.ui.lastPage = page
+    //   }
+    //   this.remainingTransactions = result.slice(10)
+    //   return result.slice(0, 10)
+    // },
 
-    async decodeTransaction(etherScanData) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // async decodeTransaction(etherScanData) {
+    //   const provider = new ethers.providers.Web3Provider(window.ethereum)
 
-      return (
-        await Promise.all(
-          etherScanData.map(async (etherscan) => {
-            const transaction = await provider.getTransaction(etherscan.hash)
-            const rawFunction = transaction.data.slice(0, 10)
-            if (
-              rawFunction === this.functions.mint ||
-              rawFunction === this.functions.burn
-            ) {
-              const value = transaction.data.slice(10, 74)
-              return {
-                blockNumber: etherscan.blockNumber,
-                timeStamp: etherscan.timeStamp,
-                hash: etherscan.hash,
-                gasPrice: etherscan.gasPrice,
-                gasUsed: etherscan.gasUsed,
-                amount: parseInt('0x' + value) / 1e18,
-                smartContractFunction: rawFunction,
-              }
-            }
-            return null
-          })
-        )
-      ).filter((e) => !!e)
-    },
+    //   return (
+    //     await Promise.all(
+    //       etherScanData.map(async (etherscan) => {
+    //         const transaction = await provider.getTransaction(etherscan.hash)
+    //         const rawFunction = transaction.data.slice(0, 10)
+    //         if (
+    //           rawFunction === this.functions.mint ||
+    //           rawFunction === this.functions.burn
+    //         ) {
+    //           const value = transaction.data.slice(10, 74)
+    //           return {
+    //             blockNumber: etherscan.blockNumber,
+    //             timeStamp: etherscan.timeStamp,
+    //             hash: etherscan.hash,
+    //             gasPrice: etherscan.gasPrice,
+    //             gasUsed: etherscan.gasUsed,
+    //             amount: parseInt('0x' + value) / 1e18,
+    //             smartContractFunction: rawFunction,
+    //           }
+    //         }
+    //         return null
+    //       })
+    //     )
+    //   ).filter((e) => !!e)
+    // },
   },
 }
 </script>

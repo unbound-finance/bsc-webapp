@@ -265,6 +265,52 @@ const getDailyVolume = async () => {
   }
 }
 
+const getTransactions = async () => {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const address = await provider.getSigner().getAddress()
+
+    const data = JSON.stringify({
+      query: `
+          query($id: String!) {
+            user(id: $id) {
+              transactions(first: ${20}, orderBy: ${'blockTime'}, orderDirection: ${'desc'}){
+                id
+                blockTime
+                uTokenAddress
+                uTokenAmount
+                type
+              }
+            }
+          }
+        `,
+      variables: {
+        id: address.toLocaleLowerCase(),
+      },
+    })
+    const config = {
+      method: 'post',
+      url: 'https://api.thegraph.com/subgraphs/name/furuta/und-kovan',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data,
+    }
+
+    try {
+      const { data } = await Axios(config)
+      if (!data.data) {
+        return []
+      }
+      return data.data.user.transactions
+    } catch (e) {
+      return []
+    }
+  } catch (error) {
+    throw new Error('Something went wrong', error)
+  }
+}
+
 export {
   getBalanceOfToken,
   checkLoan,
@@ -275,4 +321,5 @@ export {
   getUniswapTvl,
   getTotalVolume,
   getDailyVolume,
+  getTransactions,
 }
