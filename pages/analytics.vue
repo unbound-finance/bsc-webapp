@@ -569,7 +569,7 @@ export default {
             })
           )
         ).sort(dynamicsort('tvl', 'desc'))
-        console.log(this.poolTokens)
+        // console.log(this.poolTokens)
       } catch (error) {
         throw new Error('Something went wrong!' + error)
       }
