@@ -209,7 +209,7 @@ import {
   getLockedLPT,
   checkLoan,
   getLPTPrice,
-  getERC20Price,
+  getEthPrice,
 } from '~/mixins/info'
 
 // const txDecoder = require('ethereum-tx-decoder')
@@ -319,7 +319,7 @@ export default {
       const tvl = []
 
       try {
-        const ethPrice = await getERC20Price('ethereum')
+        const ethPrice = await getEthPrice()
 
         await Promise.all(
           supportedPoolTokens.map(async (e) => {

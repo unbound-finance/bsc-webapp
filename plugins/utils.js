@@ -1,8 +1,8 @@
-import { getERC20Price } from '~/mixins/info'
+import { getEthPrice } from '~/mixins/info'
 
 export default (_, inject) => {
   const ethPrice = async () => {
-    const price = await getERC20Price('ethereum')
+    const price = await getEthPrice()
     return price
   }
 

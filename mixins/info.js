@@ -96,7 +96,7 @@ const getLPTPrice = async (poolToken) => {
     }
 
     if (poolToken.uToken.symbol === 'uETH') {
-      const ethPrice = await getERC20Price('ethereum')
+      const ethPrice = await getEthPrice()
       return (totalValue / LPTTotalSupply).toFixed(4).slice(0, -1) * ethPrice
     } else {
       return (totalValue / LPTTotalSupply).toFixed(4).slice(0, -1)
@@ -121,7 +121,7 @@ const getLPTPrice = async (poolToken) => {
     }
 
     if (poolToken.uToken.symbol === 'uETH') {
-      const ethPrice = await getERC20Price('ethereum')
+      const ethPrice = await getEthPrice()
       return (totalValue / LPTTotalSupply).toFixed(4).slice(0, -1) * ethPrice
     } else {
       return (totalValue / LPTTotalSupply).toFixed(4).slice(0, -1)
@@ -129,16 +129,40 @@ const getLPTPrice = async (poolToken) => {
   }
 }
 
-const getERC20Price = async (id) => {
-  // id: 'ethereum'
+const getEthPrice = async () => {
   try {
-    const { data } = await Axios.get(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`
-    )
-    const { usd } = data[id]
-    return usd
+    const data = JSON.stringify({
+      query: `
+          query($id: String!) {
+            pair(id: $id) {
+              token1Price
+            }
+          }
+        `,
+      variables: {
+        id: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
+      },
+    })
+    const config = {
+      method: 'post',
+      url: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      data,
+    }
+
+    try {
+      const { data } = await Axios(config)
+      if (!data.data) {
+        return 0
+      }
+      return Number(data.data.pair.token1Price).toFixed(2)
+    } catch (e) {
+      return 0
+    }
   } catch (error) {
-    throw new Error('Error fetching price.')
+    throw new Error('Something went wrong', error)
   }
 }
 
@@ -316,7 +340,7 @@ export {
   checkLoan,
   getLockedLPT,
   getTotalLockedLPT,
-  getERC20Price,
+  getEthPrice,
   getLPTPrice,
   getUniswapTvl,
   getTotalVolume,

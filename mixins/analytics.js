@@ -3,7 +3,7 @@ import config from '@/configs/config'
 import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
 import UnboundDai from '~/configs/abi/UnboundDai'
 
-import { getERC20Price, getLPTPrice, getTotalLockedLPT } from '~/mixins/info'
+import { getEthPrice, getLPTPrice, getTotalLockedLPT } from '~/mixins/info'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
@@ -26,7 +26,7 @@ export const getTotalLiquidity = async () => {
   const undLiquidity = (ethers.BigNumber.from(undReserve[0]) * 2) / 1e18
   const uethLiquidity = (ethers.BigNumber.from(uethReserve[0]) * 2) / 1e18
 
-  const ethPrice = await getERC20Price('ethereum')
+  const ethPrice = await getEthPrice()
   const uethLiquidityInUsd = Number(uethLiquidity * ethPrice)
 
   return {
@@ -59,7 +59,7 @@ export const getCRatio = async () => {
 
   const totalUND = await und.totalSupply()
   const totalUETH = await ueth.totalSupply()
-  const ethPrice = await getERC20Price('ethereum')
+  const ethPrice = await getEthPrice()
 
   const totalUTokensMinted = totalUND / 1e18 + (totalUETH / 1e18) * ethPrice
 
