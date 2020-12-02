@@ -158,8 +158,8 @@ export default {
           ethereum.autoRefreshOnNetworkChange = false
 
           // Reload browser tab when newtork changed
-          ethereum.on('chainChanged', (chainId) => {
-            window.location.reload()
+          ethereum.on('chainChanged', async (chainId) => {
+            await this.getNetwork()
           })
         }
       } catch (error) {
@@ -176,8 +176,8 @@ export default {
           ethereum.autoRefreshOnNetworkChange = false
 
           // Reload browser tab when account changed
-          ethereum.on('accountsChanged', (accounts) => {
-            window.location.reload()
+          ethereum.on('accountsChanged', async (accounts) => {
+            await this.isConnected()
           })
         }
       } catch (error) {
