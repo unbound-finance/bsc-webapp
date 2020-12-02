@@ -21,7 +21,7 @@
           <a
             href="https://www.notion.so/Unbound-Testnet-06c16fd6fcb4479da2cb3b03389b5c39"
             target="_blank"
-            class="text-light-primary dark:text-dark-primary font-medium"
+            class="text-light-primary dark:text-dark-primary font-medium underline"
             >here</a
           >
         </li>
@@ -36,7 +36,7 @@
           The Uniswap pools that we support on testent are
           <nuxt-link
             to="/analytics"
-            class="text-light-primary dark:text-dark-primary font-medium"
+            class="text-light-primary dark:text-dark-primary font-medium underline"
             >here</nuxt-link
           >
         </li>
