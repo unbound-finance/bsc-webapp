@@ -85,7 +85,7 @@
       </input-field>
 
       <!-- Show fees -->
-      <div
+      <!-- <div
         v-if="uTokenAmount"
         class="bg-gray-300 dark:bg-gray-800 rounded-lg w-full border border-gray-300 dark:border-gray-800"
       >
@@ -106,7 +106,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <button
         v-if="isWalletConnected"
