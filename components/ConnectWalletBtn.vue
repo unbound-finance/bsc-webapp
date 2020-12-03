@@ -145,7 +145,7 @@ export default {
     this.isConnected()
     this.getNetwork()
     this.reloadOnNetChange()
-    this.reloadOnAccChange()
+    // this.reloadOnAccChange()
   },
 
   methods: {
@@ -167,23 +167,23 @@ export default {
       }
     },
 
-    reloadOnAccChange() {
-      try {
-        if (window.ethereum || window.web3) {
-          const ethereum = window.ethereum || window.web3
+    // reloadOnAccChange() {
+    //   try {
+    //     if (window.ethereum || window.web3) {
+    //       const ethereum = window.ethereum || window.web3
 
-          // Silence the metamask warning 🤫
-          ethereum.autoRefreshOnNetworkChange = false
+    //       // Silence the metamask warning 🤫
+    //       ethereum.autoRefreshOnNetworkChange = false
 
-          // Reload browser tab when account changed
-          ethereum.on('accountsChanged', async (accounts) => {
-            await this.isConnected()
-          })
-        }
-      } catch (error) {
-        console.log('Something went wrong!', error)
-      }
-    },
+    //       // Reload browser tab when account changed
+    //       ethereum.on('accountsChanged', async (accounts) => {
+    //         await this.isConnected()
+    //       })
+    //     }
+    //   } catch (error) {
+    //     console.log('Something went wrong!', error)
+    //   }
+    // },
 
     async getNetwork() {
       try {
