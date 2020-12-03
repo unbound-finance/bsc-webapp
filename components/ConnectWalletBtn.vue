@@ -195,6 +195,8 @@ export default {
 
           if (this.network !== 'kovan') {
             this.ui.showChgNetDialog = true
+          } else {
+            this.ui.showChgNetDialog = false
           }
         }
       } catch (error) {
