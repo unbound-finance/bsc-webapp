@@ -181,7 +181,7 @@ export default {
           })
         }
       } catch (error) {
-        console.log(error)
+        console.log('Something went wrong!', error)
       }
     },
 
