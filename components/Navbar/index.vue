@@ -160,14 +160,6 @@ export default {
     },
   },
 
-  mounted() {
-    try {
-      window.ethereum.on('accountsChanged', function (networkId) {
-        location.reload()
-      })
-    } catch (error) {}
-  },
-
   methods: {
     toggleMode() {
       this.$colorMode.preference =

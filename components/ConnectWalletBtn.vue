@@ -10,7 +10,7 @@
     <button
       v-else
       class="w-full px-6 py-2 font-semibold rounded text-light-primary dark:text-white bg-light-primary dark:bg-dark-primary bg-opacity-25 focus:outline-none"
-      @click="connectWallet"
+      @click="connectMetamask"
     >
       Connect Wallet
     </button>
@@ -145,7 +145,7 @@ export default {
     this.isConnected()
     this.getNetwork()
     this.reloadOnNetChange()
-    // this.reloadOnAccChange()
+    this.reloadOnAccChange()
   },
 
   methods: {
@@ -167,23 +167,23 @@ export default {
       }
     },
 
-    // reloadOnAccChange() {
-    //   try {
-    //     if (window.ethereum || window.web3) {
-    //       const ethereum = window.ethereum || window.web3
+    reloadOnAccChange() {
+      try {
+        if (window.ethereum || window.web3) {
+          const ethereum = window.ethereum || window.web3
 
-    //       // Silence the metamask warning 🤫
-    //       ethereum.autoRefreshOnNetworkChange = false
+          // Silence the metamask warning 🤫
+          ethereum.autoRefreshOnNetworkChange = false
 
-    //       // Reload browser tab when account changed
-    //       ethereum.on('accountsChanged', async (accounts) => {
-    //         await this.isConnected()
-    //       })
-    //     }
-    //   } catch (error) {
-    //     console.log('Something went wrong!', error)
-    //   }
-    // },
+          // Reload browser tab when account changed
+          ethereum.on('accountsChanged', (accounts) => {
+            this.$store.commit('getProvider', accounts[0])
+          })
+        }
+      } catch (error) {
+        console.log('Something went wrong!', error)
+      }
+    },
 
     async getNetwork() {
       try {
@@ -221,58 +221,41 @@ export default {
       }
     },
 
-    async connectWallet() {
-      const { ethereum } = window
-      if (!ethereum) {
-        this.ui.showError = true
-      } else {
-        this.ui.showError = false
+    async connectMetamask() {
+      if (window.ethereum) {
         try {
-          const address = await ethereum.request({
-            method: 'eth_requestAccounts',
-          })
-          this.$store.commit('getProvider', address[0])
+          // Request account access if needed
+          await window.ethereum.enable()
+          const provider = await new ethers.providers.Web3Provider(
+            window.ethereum
+          )
+          const address = await provider.getSigner().getAddress()
+          this.address = address
+
+          // Store provider in state
+          this.$store.commit('getProvider', address)
+          this.$emit('connected', address)
+          // Acccounts now exposed
         } catch (error) {
           console.log(error)
+          // this.isMetamaskConnected()
+          // User denied account access...
+          // alert('Please allow access for the app to work')
         }
+      } else if (window.web3) {
+        window.web3 = new Web3(window.web3.currentProvider)
+        const provider = await new ethers.providers.Web3Provider(
+          window.ethereum
+        )
+        console.log(this.getNetwork())
+        const address = await provider.getSigner().getAddress()
+        this.address = address
+        this.$emit('connected', address)
+        // Acccounts always exposed
+      } else {
+        this.ui.showError = true
       }
     },
-
-    // async connectMetamask() {
-    //   if (window.ethereum) {
-    //     try {
-    //       // Request account access if needed
-    //       await window.ethereum.enable()
-    //       const provider = await new ethers.providers.Web3Provider(
-    //         window.ethereum
-    //       )
-    //       const address = await provider.getSigner().getAddress()
-    //       this.address = address
-
-    //       // Store provider in state
-    //       this.$store.commit('getProvider', address)
-    //       this.$emit('connected', address)
-    //       // Acccounts now exposed
-    //     } catch (error) {
-    //       console.log(error)
-    //       // this.isMetamaskConnected()
-    //       // User denied account access...
-    //       // alert('Please allow access for the app to work')
-    //     }
-    //   } else if (window.web3) {
-    //     window.web3 = new Web3(window.web3.currentProvider)
-    //     const provider = await new ethers.providers.Web3Provider(
-    //       window.ethereum
-    //     )
-    //     console.log(this.getNetwork())
-    //     const address = await provider.getSigner().getAddress()
-    //     this.address = address
-    //     this.$emit('connected', address)
-    //     // Acccounts always exposed
-    //   } else {
-    //     this.ui.showError = true
-    //   }
-    // },
   },
 }
 </script>
