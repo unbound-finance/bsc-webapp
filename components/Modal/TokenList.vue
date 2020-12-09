@@ -137,11 +137,12 @@ export default {
       if (search) {
         const regex = new RegExp(search, 'ig')
         return this.supportedPoolTokens.filter(
-          ({ name, address, exchange }) =>
+          ({ name, address, exchange, displayName }) =>
             regex.test(name) ||
             (search.slice(0, 2).toLowerCase() === '0x' &&
               regex.test(address)) ||
-            regex.test(exchange)
+            regex.test(exchange) ||
+            regex.test(displayName)
         )
       }
       return this.supportedPoolTokens

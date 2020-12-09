@@ -185,7 +185,7 @@
                   <p
                     class="text-sm font-medium text-gray-600 dark:text-gray-400"
                   >
-                    Funding Rate
+                    Loan to Value
                   </p>
                   <p class="font-medium font-mono dark:text-white">
                     {{ (llc.loanRate * 100) / 1e6 }}%
@@ -333,7 +333,9 @@
             </p>
           </div>
           <div class="flex items-center justify-between pb-2">
-            <p class="text-sm text-gray-600 dark:text-gray-400">Funding Rate</p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Loan to Value
+            </p>
             <p class="font-medium text-sm dark:text-white font-mono">
               {{ (llc.loanRate * 100) / 1e6 }}%
             </p>

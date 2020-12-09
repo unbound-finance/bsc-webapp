@@ -212,6 +212,7 @@ export default [
 
   {
     name: 'TSLA-UND',
+    displayName: 'Tesla',
     exchange: 'Uniswap',
     category: 'UND Pool',
     address: '0xa26a772eed0cfe646eaac98b4212042953418aaa',

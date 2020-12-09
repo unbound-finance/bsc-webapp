@@ -13,6 +13,9 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+input:invalid {
+  box-shadow: none;
+}
 
 .main_container {
   max-width: 420px;
