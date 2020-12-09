@@ -10,12 +10,9 @@
           <div class="flex flex-col">
             <p class="font-medium text-sm text-gray-600">Total Locked</p>
             <div class="flex items-center justify-between">
-              <p class="font-medium text-3xl text-accent">
-                ${{
-                  accountInfo
-                    ? Number(accountInfo.totalValueLocked).toFixed(2)
-                    : '0'
-                }}
+              <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
+              <p v-else class="font-medium text-3xl text-accent">
+                ${{ Number(accountInfo.totalValueLocked).toFixed(2) }}
               </p>
               <!-- <button
                 class="focus:outline-none"
@@ -92,10 +89,9 @@
             <p class="font-medium text-sm text-gray-600">Total Minted</p>
             <div class="flex items-center space-x-6 pt-2">
               <div class="flex flex-col">
-                <p class="font-medium text-xl text-accent leading-tight">
-                  {{
-                    accountInfo ? Number(accountInfo.undMinted).toFixed(4) : '0'
-                  }}
+                <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
+                <p v-else class="font-medium text-xl text-accent leading-tight">
+                  {{ Number(accountInfo.undMinted).toFixed(4) }}
                 </p>
                 <div v-if="liquidity" class="flex items-center space-x-1">
                   <img
@@ -109,12 +105,9 @@
                 </div>
               </div>
               <div class="flex flex-col">
-                <p class="font-medium text-xl text-accent leading-tight">
-                  {{
-                    accountInfo
-                      ? Number(accountInfo.uEthMinted).toFixed(4)
-                      : '0'
-                  }}
+                <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
+                <p v-else class="font-medium text-xl text-accent leading-tight">
+                  {{ Number(accountInfo.uEthMinted).toFixed(4) }}
                 </p>
 
                 <div v-if="liquidity" class="flex items-center space-x-1">
@@ -141,8 +134,9 @@
               Collatralization Ratio
             </p>
             <div class="flex items-center justify-between">
-              <p class="font-medium text-3xl text-accent">
-                {{ accountInfo ? Number(accountInfo.cRatio) : '0' }}%
+              <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
+              <p v-else class="font-medium text-3xl text-accent">
+                {{ Number(accountInfo.cRatio) }}%
               </p>
             </div>
           </div>
@@ -273,7 +267,6 @@ export default {
   },
 
   mounted() {
-    this.ui.loading = true
     this.getAccountInfo()
     this.fetchLiquidity()
     this.getTotalUND()
@@ -314,6 +307,7 @@ export default {
     },
 
     async getAccountInfo() {
+      this.ui.loading = true
       const und = []
       const uEth = []
       const tvl = []
@@ -348,6 +342,8 @@ export default {
           (totalValueLocked / (undMinted + uEthMintedUsd)) * 100
         ).toFixed(2)
 
+        this.ui.loading = false
+
         this.accountInfo = {
           totalValueLocked,
           undMinted,
@@ -355,6 +351,7 @@ export default {
           cRatio,
         }
       } catch (error) {
+        this.ui.loading = false
         console.log(error)
       }
     },
