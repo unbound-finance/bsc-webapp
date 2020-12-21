@@ -112,6 +112,14 @@ export default {
    ** See https://nuxtjs.org/api/configuration-build/
    */
   build: {},
+  render: {
+    static: {
+      setHeaders(res) {
+        res.setHeader('X-Frame-Options', 'DENY')
+        res.setHeader('X-XSS-Protection', 1)
+      },
+    },
+  },
 
   purgeCSS: {
     whitelist: [
