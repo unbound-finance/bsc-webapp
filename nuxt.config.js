@@ -101,12 +101,14 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/dayjs',
     '@nuxtjs/dotenv',
-    '@dansmaculotte/nuxt-security',
+    [
+      '@dansmaculotte/nuxt-security',
+      {
+        additionalHeaders: true,
+      },
+    ],
   ],
 
-  security: {
-    additionalHeaders: true,
-  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
