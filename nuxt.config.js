@@ -101,7 +101,12 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/dayjs',
     '@nuxtjs/dotenv',
+    '@dansmaculotte/nuxt-security',
   ],
+
+  security: {
+    additionalHeaders: true,
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
@@ -112,15 +117,6 @@ export default {
    ** See https://nuxtjs.org/api/configuration-build/
    */
   build: {},
-  render: {
-    static: {
-      setHeaders(res) {
-        res.setHeader('X-Frame-Options', 'DENY')
-        res.setHeader('X-XSS-Protection', 1)
-      },
-    },
-  },
-
   purgeCSS: {
     whitelist: [
       'dark-mode',
