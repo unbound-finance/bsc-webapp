@@ -101,6 +101,7 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/dayjs',
     '@nuxtjs/dotenv',
+    'nuxt-logrocket',
     [
       '@dansmaculotte/nuxt-security',
       {
@@ -108,6 +109,13 @@ export default {
       },
     ],
   ],
+
+  /*
+   ** Logrocket module configuration
+   */
+  logRocket: {
+    logRocketId: 'zzzoxd/unbound',
+  },
 
   /*
    ** Axios module configuration

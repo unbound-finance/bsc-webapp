@@ -308,12 +308,23 @@ export default {
           UnboundDaiABI,
           signer
         )
-        // listen to mint event from UND contract
+        // listen to unlock event from UND contract
         UND.on('Burn', async (user, amount) => {
           const LPTBalance = await getLockedLPT(poolToken.address)
           this.poolToken.lockedBalance = LPTBalance
         })
       } catch (error) {
+        if (error.code !== 4001) {
+          this.$logRocket.captureException(error, {
+            tags: {
+              function: 'unlock',
+            },
+            extra: {
+              pageName: 'Unlock',
+            },
+          })
+          this.$logRocket.identify(this.$store.state.address)
+        }
         this.ui.showAwaiting = false
         this.ui.showRejected = true
       }

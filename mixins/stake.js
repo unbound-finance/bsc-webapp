@@ -43,7 +43,17 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
     )
     return transaction
   } catch (error) {
-    console.log(error)
+    if (error.code !== 4001) {
+      this.$logRocket.captureException(error, {
+        tags: {
+          function: 'addLiquidity',
+        },
+        extra: {
+          pageName: 'Add Liquidity',
+        },
+      })
+      this.$logRocket.identify(this.$store.state.address)
+    }
   }
 }
 
@@ -100,6 +110,18 @@ const removeLiquidity = async (
       },
       async (error, signedData) => {
         if (error || signedData.error) {
+          if (error.code !== 4001) {
+            this.$logRocket.captureException(error, {
+              tags: {
+                function: 'removeLiquiditySignature',
+              },
+              extra: {
+                pageName: 'Remove Liquidity',
+              },
+            })
+            this.$logRocket.identify(this.$store.state.address)
+          }
+
           return error
         }
         const signature = ethers.utils.splitSignature(signedData.result)
@@ -124,6 +146,18 @@ const removeLiquidity = async (
           )
           resolve(removeLiquidity)
         } catch (error) {
+          if (error.code !== 4001) {
+            this.$logRocket.captureException(error, {
+              tags: {
+                function: 'removeLiquidity',
+              },
+              extra: {
+                pageName: 'Remove Liquidity',
+              },
+            })
+            this.$logRocket.identify(this.$store.state.address)
+          }
+
           reject(Error('It broke'))
         }
       }

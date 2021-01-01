@@ -629,8 +629,19 @@ export default {
         },
         async (error, signedData) => {
           if (error || signedData.error) {
+            if (error.code !== 4001) {
+              this.$logRocket.captureException(error, {
+                tags: {
+                  function: 'mintSignature',
+                },
+                extra: {
+                  pageName: 'Mint',
+                },
+              })
+              this.$logRocket.identify(this.$store.state.address)
+            }
             this.ui.showAwaiting = false
-            return console.error(signedData)
+            return
           }
           const signature = ethers.utils.splitSignature(signedData.result)
           const UnboundLLCContract = await new ethers.Contract(
@@ -639,14 +650,6 @@ export default {
             signer
           )
           try {
-            console.log({
-              amount,
-              deadline,
-              v: signature.v,
-              r: signature.r,
-              s: signature.s,
-              finalMinAmount,
-            })
             const mintUND = await UnboundLLCContract.lockLPTWithPermit(
               amount,
               deadline,
@@ -671,6 +674,17 @@ export default {
               this.poolToken.balance = balance.toFixed
             })
           } catch (error) {
+            if (error.code !== 4001) {
+              this.$logRocket.captureException(error, {
+                tags: {
+                  function: 'mint',
+                },
+                extra: {
+                  pageName: 'Mint',
+                },
+              })
+              this.$logRocket.identify(this.$store.state.address)
+            }
             this.ui.showAwaiting = false
             this.ui.showConfirmation = false
             this.ui.showRejected = true
