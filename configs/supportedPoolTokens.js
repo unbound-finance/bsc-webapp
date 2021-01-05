@@ -154,6 +154,25 @@ export default [
   },
 
   {
+    name: 'FRONT-UND',
+    exchange: 'Uniswap',
+    category: 'ERC20-Stablecoin',
+    address: '0xfef9e7747985661670dfc8ab994d12453a3506b4',
+    llcAddress: '0xEbaA212a9D645b1fd37015d6c3d5d94954732C32',
+    uniswapAddress: '',
+    currencyOneLogo:
+      'https://assets.coingecko.com/coins/images/12479/large/frontier_logo.png',
+    currencyTwoLogo: 'https://i.ibb.co/5RqCxhD/unbound-logo.png',
+    stablecoin: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+    uToken: {
+      displayName: 'Unbound Dollar',
+      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+      symbol: 'UND',
+      icon: 'und.webp',
+    },
+  },
+
+  {
     name: 'WBTC-ETH',
     exchange: 'Uniswap',
     category: 'ERC20-ETH',
