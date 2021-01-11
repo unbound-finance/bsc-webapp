@@ -292,12 +292,18 @@ export default {
         signer
       )
 
-      let rawLPTAmount = ethers.utils.parseEther(
-        this.LPTAmount.toString().slice(0, 18)
+      let rawUNDAmount = ethers.utils.parseEther(
+        this.uTokenAmount.toString().slice(0, 18)
       )
-      rawLPTAmount = rawLPTAmount.toString()
+
+      rawUNDAmount = rawUNDAmount.toString()
+
+      // let rawLPTAmount = ethers.utils.parseEther(
+      //   this.LPTAmount.toString().slice(0, 18)
+      // )
+      // rawLPTAmount = rawLPTAmount.toString()
       try {
-        const unlock = await contract.unlockLPT(rawLPTAmount)
+        const unlock = await contract.unlockLPT(rawUNDAmount)
         this.ui.showAwaiting = false
         this.txLink = unlock.hash
         this.ui.showSuccess = true
