@@ -13,12 +13,22 @@ export default [
       },
       {
         internalType: 'address',
-        name: 'stableCoin',
+        name: 'baseAsset',
         type: 'address',
       },
       {
         internalType: 'address',
-        name: 'uToken',
+        name: 'priceFeedAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'priceFeedBaseAsset',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'uTokenAddr',
         type: 'address',
       },
     ],
@@ -53,12 +63,6 @@ export default [
         name: 'user',
         type: 'address',
       },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'uToken',
-        type: 'address',
-      },
     ],
     name: 'LockLPT',
     type: 'event',
@@ -78,15 +82,37 @@ export default [
         name: 'user',
         type: 'address',
       },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'uToken',
-        type: 'address',
-      },
     ],
     name: 'UnlockLPT',
     type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'CREnd',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [],
+    name: 'CRNorm',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
   },
   {
     inputs: [],
@@ -100,6 +126,7 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
+    constant: true,
   },
   {
     inputs: [],
@@ -113,44 +140,7 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_tokenAddr',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-    ],
-    name: 'claimTokens',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'disableLock',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'isOwner',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
+    constant: true,
   },
   {
     inputs: [],
@@ -164,24 +154,49 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
+    constant: true,
   },
   {
-    inputs: [
+    inputs: [],
+    name: 'maxPercentDiff',
+    outputs: [
       {
-        internalType: 'uint256',
-        name: 'LPTamt',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'minTokenAmount',
-        type: 'uint256',
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
       },
     ],
-    name: 'lockLPT',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
     type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [],
+    name: 'maxPercentDiffBaseAsset',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [],
+    name: 'pair',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
   },
   {
     inputs: [
@@ -222,17 +237,148 @@ export default [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'LPTamt',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'minTokenAmount',
+        type: 'uint256',
+      },
+    ],
+    name: 'lockLPT',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
-    name: 'pair',
+    name: 'getLatestPrice',
     outputs: [
       {
-        internalType: 'address',
+        internalType: 'int256',
         name: '',
-        type: 'address',
+        type: 'int256',
       },
     ],
     stateMutability: 'view',
     type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [],
+    name: 'getLatestPriceBaseAsset',
+    outputs: [
+      {
+        internalType: 'int256',
+        name: '',
+        type: 'int256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'uTokenAmt',
+        type: 'uint256',
+      },
+    ],
+    name: 'unlockLPT',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'tokensLocked',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'ratio',
+        type: 'uint256',
+      },
+    ],
+    name: 'setCREnd',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: 'amount',
+        type: 'uint8',
+      },
+    ],
+    name: 'setMaxPercentDifference',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_tokenAddr',
+        type: 'address',
+      },
+      {
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+    ],
+    name: 'claimTokens',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'disableLock',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'isOwner',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+    constant: true,
   },
   {
     inputs: [
@@ -256,51 +402,6 @@ export default [
       },
     ],
     name: 'setValuingAddress',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
-    name: 'tokensLocked',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'uToken',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'LPToken',
-        type: 'uint256',
-      },
-    ],
-    name: 'unlockLPT',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
