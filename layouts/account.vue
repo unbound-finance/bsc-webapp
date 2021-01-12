@@ -319,9 +319,12 @@ export default {
           supportedPoolTokens.map(async (e) => {
             const lockedLPT = await getLockedLPT(e.llcAddress)
             const price = await getLPTPrice(e)
-            const value = Number(lockedLPT * price)
+            const value = Number(lockedLPT.formatted * price)
             const loan = await checkLoan(e.llcAddress, e.uToken.address)
-            const minted = { minted: loan, symbol: e.uToken.symbol }
+            const minted = {
+              minted: loan.formattedBalance,
+              symbol: e.uToken.symbol,
+            }
 
             tvl.push(value)
 

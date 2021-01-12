@@ -124,8 +124,7 @@ import UnboundDaiABI from '~/configs/abi/UnboundDai'
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
 import { getDecimals } from '~/mixins/ERC20'
-import { getLLC } from '~/mixins/valuator'
-import { getLockedLPT } from '~/mixins/info'
+import { getLockedLPT, checkLoan } from '~/mixins/info'
 
 export default {
   data() {
@@ -149,6 +148,12 @@ export default {
         loanRate: '',
         fee: '',
       },
+      unlockData: {
+        CR: '',
+        valueStart: '',
+        currentLoan: '',
+        valueOfSingleLPT: '',
+      },
     }
   },
 
@@ -158,7 +163,19 @@ export default {
     },
 
     LPTOutput() {
-      return this.uTokenAmount / this.loanRatioPerLPT
+      console.log(this.uTokenAmount)
+      if (this.uTokenAmount > 0) {
+        const valueAfter =
+          parseInt(this.unlockData.CR) *
+          (parseInt(this.unlockData.currentLoan) - this.uTokenAmount)
+        return (
+          ((parseInt(this.unlockData.valueStart) - valueAfter) /
+            parseFloat(this.unlockData.valueOfSingleLPT)) *
+          1e18
+        )
+      } else {
+        return 0
+      }
     },
     isWalletConnected() {
       return !!this.$store.state.address
@@ -230,8 +247,6 @@ export default {
       const reserve = await contract.getReserves()
       const LPTTotalSupply = await contract.totalSupply()
       const token0 = await contract.token0()
-      const token1 = await contract.token1()
-      const llc = await getLLC(poolToken.llcAddress)
       if (token0.toLowerCase() === poolToken.stablecoin.toLowerCase()) {
         const stablecoinDecimal = await getDecimals(token0)
         let difference
@@ -249,19 +264,30 @@ export default {
           // removes decimals to match 18
           totalValueInDai = totalValueInDai / 10 ** difference
         }
-        this.loanRatioPerLPT =
-          ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
-        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
-          .toFixed(8)
-          .slice(0, -1)
+
+        const currentLoan = await checkLoan(
+          poolToken.llcAddress,
+          poolToken.uToken.address
+        )
+
+        const valueOfSingleLPT = totalValueInDai / LPTTotalSupply
+        const lockedLPT = await getLockedLPT(poolToken.address)
+
+        this.unlockData.CR = 2
+        this.unlockData.valueStart = valueOfSingleLPT * lockedLPT
+        this.unlockData.currentLoan = currentLoan.rawBalance
+        this.unlockData.valueOfSingleLPT = valueOfSingleLPT
+
+        console.log(this.unlockData)
+
         this.ui.priceLoader = false
       } else {
-        const stablecoinDecimal = await getDecimals(token1)
+        const stablecoinDecimal = await getDecimals(token0)
         let difference
         let totalValueInDai
+        totalValueInDai = reserve[1].toString() * 2
         // first case: tokenDecimal is smaller than 18
         // for stablecoins with less than 18 decimals
-        totalValueInDai = reserve[1].toString() * 2
         if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
           // calculate amount of decimals under 18
           difference = 18 - stablecoinDecimal
@@ -273,12 +299,22 @@ export default {
           totalValueInDai = totalValueInDai / 10 ** difference
         }
 
-        this.loanRatioPerLPT =
-          ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
-        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
-          .toFixed(8)
-          .slice(0, -1)
+        const currentLoan = await checkLoan(
+          poolToken.llcAddress,
+          poolToken.uToken.address
+        )
+
+        const valueOfSingleLPT = totalValueInDai / LPTTotalSupply
+
+        const lockedLPT = await getLockedLPT(poolToken.llcAddress)
+
+        this.unlockData.CR = 2
+        this.unlockData.valueStart = valueOfSingleLPT * lockedLPT.raw
+        this.unlockData.currentLoan = currentLoan.rawBalance
+        this.unlockData.valueOfSingleLPT = valueOfSingleLPT
         this.ui.priceLoader = false
+
+        console.log(this.unlockData)
       }
     },
 
@@ -317,7 +353,7 @@ export default {
         // listen to unlock event from UND contract
         UND.on('Burn', async (user, amount) => {
           const LPTBalance = await getLockedLPT(poolToken.address)
-          this.poolToken.lockedBalance = LPTBalance
+          this.poolToken.lockedBalance = LPTBalance.formatted
         })
       } catch (error) {
         if (error.code !== 4001) {

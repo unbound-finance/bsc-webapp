@@ -177,8 +177,8 @@ export default {
 
               return {
                 lptName: e.name,
-                locked: lockedLPT,
-                minted: loan + ' ' + e.uToken.symbol,
+                locked: lockedLPT.formatted,
+                minted: loan.formattedBalance + ' ' + e.uToken.symbol,
                 minted_raw: loan,
                 icons: {
                   token0: e.currencyOneLogo,

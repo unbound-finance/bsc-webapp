@@ -31,17 +31,24 @@ const checkLoan = async (LLCAddress, uTokenAddress) => {
   const getBalance = await contract.checkLoan(userAddress, LLCAddress)
   const balance = ethers.utils.formatEther(getBalance.toString())
   const formattedBalance = parseFloat(balance).toFixed(4).slice(0, -1)
-  return formattedBalance
+  return { formattedBalance, rawBalance: getBalance }
 }
 
-const getLockedLPT = async (LPTAddress) => {
-  const provider = new ethers.providers.Web3Provider(window.ethereum)
-  const signer = provider.getSigner()
-  const contract = new ethers.Contract(LPTAddress, UnboundLLCABI, signer)
-  const userAddress = signer.getAddress()
-  const getLocked = await contract.tokensLocked(userAddress)
-  const locked = ethers.utils.formatEther(getLocked.toString())
-  return locked
+const getLockedLPT = async (LLCAddress) => {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(LLCAddress, UnboundLLCABI, signer)
+    const userAddress = signer.getAddress()
+    const getLocked = await contract.tokensLocked(userAddress)
+    const locked = ethers.utils.formatEther(getLocked.toString())
+    return {
+      formatted: locked,
+      raw: getLocked,
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 const getTotalLockedLPT = async (LPTAddress, LLCAddress) => {

@@ -200,9 +200,9 @@ export default {
             return {
               ...poolToken,
               balance: balance.formatted,
-              lockedBalance,
+              lockedBalance: lockedBalance.formatted,
               uTokenBalance: uTokenBalance.formatted,
-              mintedUTokens,
+              mintedUTokens: mintedUTokens.formattedBalance,
             }
           })
         )
