@@ -167,12 +167,16 @@ export default {
       if (this.uTokenAmount > 0) {
         const valueAfter =
           parseInt(this.unlockData.CR) *
-          (parseInt(this.unlockData.currentLoan) - this.uTokenAmount)
-        return (
-          ((parseInt(this.unlockData.valueStart) - valueAfter) /
-            parseFloat(this.unlockData.valueOfSingleLPT)) *
-          1e18
-        )
+          (parseInt(this.unlockData.currentLoan) - this.uTokenAmount * 1e18)
+        console.log({
+          valueAfter,
+          unlockData: this.unlockData,
+          currentLoan: this.unlockData.currentLoan.toString(),
+        })
+        const lptToReturn =
+          (parseInt(this.unlockData.valueStart) - valueAfter) /
+          parseFloat(this.unlockData.valueOfSingleLPT)
+        return lptToReturn / 1e18
       } else {
         return 0
       }
