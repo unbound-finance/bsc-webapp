@@ -124,7 +124,7 @@ import UnboundDaiABI from '~/configs/abi/UnboundDai'
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
 import { getDecimals } from '~/mixins/ERC20'
-import { getLockedLPT, checkLoan } from '~/mixins/info'
+import { getLockedLPT, checkLoan, getCR } from '~/mixins/info'
 
 export default {
   data() {
@@ -159,20 +159,16 @@ export default {
 
   computed: {
     UNDOutput() {
-      return this.LPTAmount * this.loanRatioPerLPT
+      const data = this.unlockData
+      const value = (this.LPTAmount * 1e18 * data.valueOfSingleLPT) / data.CR
+      return value / 1e18
     },
 
     LPTOutput() {
-      console.log(this.uTokenAmount)
       if (this.uTokenAmount > 0) {
         const valueAfter =
           parseInt(this.unlockData.CR) *
           (parseInt(this.unlockData.currentLoan) - this.uTokenAmount * 1e18)
-        console.log({
-          valueAfter,
-          unlockData: this.unlockData,
-          currentLoan: this.unlockData.currentLoan.toString(),
-        })
         const lptToReturn =
           (parseInt(this.unlockData.valueStart) - valueAfter) /
           parseFloat(this.unlockData.valueOfSingleLPT)
@@ -277,13 +273,11 @@ export default {
         const valueOfSingleLPT = totalValueInDai / LPTTotalSupply
         const lockedLPT = await getLockedLPT(poolToken.address)
 
-        this.unlockData.CR = 2
+        this.unlockData.CR = await getCR(poolToken.llcAddress)
         this.unlockData.valueStart = valueOfSingleLPT * lockedLPT
         this.unlockData.currentLoan = currentLoan.rawBalance
         this.unlockData.valueOfSingleLPT = valueOfSingleLPT
-
         console.log(this.unlockData)
-
         this.ui.priceLoader = false
       } else {
         const stablecoinDecimal = await getDecimals(token0)

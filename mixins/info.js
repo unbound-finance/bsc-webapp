@@ -51,6 +51,18 @@ const getLockedLPT = async (LLCAddress) => {
   }
 }
 
+const getCR = async (LLCAddress) => {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(LLCAddress, UnboundLLCABI, signer)
+    const getCR = await contract.CREnd()
+    return getCR
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const getTotalLockedLPT = async (LPTAddress, LLCAddress) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
@@ -353,4 +365,5 @@ export {
   getTotalVolume,
   getDailyVolume,
   getTransactions,
+  getCR,
 }
