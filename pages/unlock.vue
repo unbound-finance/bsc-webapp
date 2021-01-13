@@ -1,114 +1,153 @@
 <template>
-  <div class="main_container my-4 md:my-8">
-    <div class="flex flex-col items-center w-full space-y-6 p-4">
-      <div class="flex w-full items-center justify-between">
-        <nuxt-link to="/">
-          <button class="focus:outline-none">
-            <i
-              class="fas fa-chevron-left text-gray-900 dark:text-white text-lg"
-            ></i>
+  <div
+    class="relative flex flex-col items-center justify-center flex-wrap my-4 md:my-8 p-4"
+  >
+    <div class="main_container">
+      <div class="flex flex-col items-center w-full space-y-6 p-4">
+        <div class="flex w-full items-center justify-between">
+          <nuxt-link to="/">
+            <button class="focus:outline-none">
+              <i
+                class="fas fa-chevron-left text-gray-900 dark:text-white text-lg"
+              ></i>
+            </button>
+          </nuxt-link>
+          <p class="text-center font-medium dark:text-white text-lg">Unlock</p>
+          <button
+            v-tooltip.auto="{
+              content: 'Unlock your liquidity pool tokens by burning UND.',
+              autoHide: true,
+              trigger: 'hover',
+            }"
+            class="focus:outline-none"
+          >
+            <i class="far fa-question-circle text-gray-600 text-lg"></i>
           </button>
-        </nuxt-link>
-        <p class="text-center font-medium dark:text-white text-lg">Unlock</p>
-        <button
-          v-tooltip.auto="{
-            content: 'Unlock your liquidity pool tokens by burning UND.',
-            autoHide: true,
-            trigger: 'hover',
-          }"
-          class="focus:outline-none"
+        </div>
+
+        <input-field
+          v-model="LPTAmount"
+          label="Unlock"
+          :pool-token.sync="poolToken"
+          type="unlock"
+          @focus="LPTAmountField = true"
+          @blur="LPTAmountField = false"
+        />
+
+        <i
+          v-if="poolToken"
+          class="fas fa-arrow-down text-gray-800 dark:text-gray-600"
+        ></i>
+
+        <input-field
+          v-if="poolToken"
+          v-model="uTokenAmount"
+          label="Burn"
+          :loading="ui.priceLoader"
+          @focus="uTokenAmountField = true"
+          @blur="uTokenAmountField = false"
         >
-          <i class="far fa-question-circle text-gray-600 text-lg"></i>
+          <template v-slot:showBalance>
+            <p v-if="poolToken" class="text-xs text-gray-500">
+              Balance:
+              <span
+                class="font-mono text-gray-900 dark:text-gray-500 font-medium"
+                >{{
+                  poolToken.uToken.symbol == 'UND'
+                    ? toFixed(poolToken.uTokenBalance || '').slice(0, 6)
+                    : toFixed(poolToken.uTokenBalance || '').slice(0, 18)
+                }}</span
+              >
+            </p>
+          </template>
+          <template v-slot:append>
+            <div class="flex flex-col">
+              <div class="flex items-center focus:outline-none">
+                <img
+                  :src="require(`~/assets/tokens/${poolToken.uToken.icon}`)"
+                  width="16"
+                  :alt="`${poolToken.uToken.symbol} logo`"
+                  style="max-width: 16px; max-height: 22px"
+                />
+                <div class="flex items-center p-1">
+                  <p
+                    class="text-gray-900 font-semibold text-right dark:text-gray-500"
+                  >
+                    {{ poolToken.uToken.symbol }}
+                  </p>
+                </div>
+              </div>
+              <span class="text-xs text-right text-gray-500 dark:text-gray-700"
+                >Unbound</span
+              >
+            </div>
+          </template>
+        </input-field>
+
+        <button
+          v-if="isWalletConnected"
+          class="font-medium w-full py-2 rounded-md focus:outline-none"
+          :class="[
+            !poolToken ? getDisabledClass : getActiveClass,
+            !LPTAmount ? getDisabledClass : getActiveClass,
+            isSufficientBalance ? getDisabledClass : getActiveClass,
+            Number(LPTAmount).toFixed(18) == 0.0
+              ? getDisabledClass
+              : getActiveClass,
+          ]"
+          :disabled="shouldDisableUnlock"
+          @click="unlock(poolToken)"
+        >
+          <span v-if="!poolToken">Select Pool Token</span>
+          <span v-else-if="!LPTAmount">Enter An Amount</span>
+          <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
+            >Amount should be greater than 0</span
+          >
+          <span v-else-if="isSufficientBalance">Insufficient Balance</span>
+          <span v-else>Unlock</span>
         </button>
+        <ConnectWalletBtn v-else class="w-full" />
       </div>
 
-      <input-field
-        v-model="LPTAmount"
-        label="Unlock"
-        :pool-token.sync="poolToken"
-        type="unlock"
-        @focus="LPTAmountField = true"
-        @blur="LPTAmountField = false"
-      />
-
-      <i
-        v-if="poolToken"
-        class="fas fa-arrow-down text-gray-800 dark:text-gray-600"
-      ></i>
-
-      <input-field
-        v-if="poolToken"
-        v-model="uTokenAmount"
-        label="Burn"
-        :loading="ui.priceLoader"
-        @focus="uTokenAmountField = true"
-        @blur="uTokenAmountField = false"
-      >
-        <template v-slot:showBalance>
-          <p v-if="poolToken" class="text-xs text-gray-500">
-            Balance:
-            <span
-              class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{
-                poolToken.uToken.symbol == 'UND'
-                  ? toFixed(poolToken.uTokenBalance || '').slice(0, 6)
-                  : toFixed(poolToken.uTokenBalance || '').slice(0, 18)
-              }}</span
-            >
-          </p>
-        </template>
-        <template v-slot:append>
-          <div class="flex flex-col">
-            <div class="flex items-center focus:outline-none">
-              <img
-                :src="require(`~/assets/tokens/${poolToken.uToken.icon}`)"
-                width="16"
-                :alt="`${poolToken.uToken.symbol} logo`"
-                style="max-width: 16px; max-height: 22px"
-              />
-              <div class="flex items-center p-1">
-                <p
-                  class="text-gray-900 font-semibold text-right dark:text-gray-500"
-                >
-                  {{ poolToken.uToken.symbol }}
-                </p>
-              </div>
-            </div>
-            <span class="text-xs text-right text-gray-500 dark:text-gray-700"
-              >Unbound</span
-            >
-          </div>
-        </template>
-      </input-field>
-
-      <button
-        v-if="isWalletConnected"
-        class="font-medium w-full py-2 rounded-md focus:outline-none"
-        :class="[
-          !poolToken ? getDisabledClass : getActiveClass,
-          !LPTAmount ? getDisabledClass : getActiveClass,
-          isSufficientBalance ? getDisabledClass : getActiveClass,
-          Number(LPTAmount).toFixed(18) == 0.0
-            ? getDisabledClass
-            : getActiveClass,
-        ]"
-        :disabled="shouldDisableUnlock"
-        @click="unlock(poolToken)"
-      >
-        <span v-if="!poolToken">Select Pool Token</span>
-        <span v-else-if="!LPTAmount">Enter An Amount</span>
-        <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
-          >Amount should be greater than 0</span
-        >
-        <span v-else-if="isSufficientBalance">Insufficient Balance</span>
-        <span v-else>Unlock</span>
-      </button>
-      <ConnectWalletBtn v-else class="w-full" />
+      <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
+      <RejectedModal v-model="ui.showRejected" />
+      <AwaitingModal v-model="ui.showAwaiting" />
     </div>
 
-    <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
-    <RejectedModal v-model="ui.showRejected" />
-    <AwaitingModal v-model="ui.showAwaiting" />
+    <!-- Show fees -->
+    <div
+      v-if="(LPTAmount || uTokenAmount) && poolToken"
+      class="bottom-container"
+    >
+      <div class="px-4">
+        <div class="flex flex-col space-y-1">
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Price Per LPT
+            </p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{ unlockData.valueOfSingleLPT }}
+              {{ poolToken.uToken.symbol }}
+            </p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600 dark:text-gray-400">Current Loan</p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{ (Number(unlockData.currentLoan) / 1e18).toFixed(4) }}
+              {{ poolToken.uToken.symbol }}
+            </p>
+          </div>
+          <div class="flex items-center justify-between">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Collatralization Ratio
+            </p>
+            <p class="font-medium text-sm dark:text-white font-mono">
+              {{ Number(unlockData.CR) * 100 }}%
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
