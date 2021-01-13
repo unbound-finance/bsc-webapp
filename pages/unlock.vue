@@ -139,10 +139,10 @@
           </div>
           <div class="flex items-center justify-between">
             <p class="text-sm text-gray-600 dark:text-gray-400">
-              Collatralization Ratio
+              Collateralization Ratio
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ Number(unlockData.CR) * 100 }}%
+              {{ Number(unlockData.CR) / 100 }}%
             </p>
           </div>
         </div>
@@ -199,17 +199,18 @@ export default {
   computed: {
     UNDOutput() {
       const data = this.unlockData
-      const value = (this.LPTAmount * 1e18 * data.valueOfSingleLPT) / data.CR
+      const value =
+        (this.LPTAmount * 1e18 * data.valueOfSingleLPT) / (data.CR / 10000)
       return value / 1e18
     },
 
     LPTOutput() {
       if (this.uTokenAmount > 0) {
         const valueAfter =
-          parseInt(this.unlockData.CR) *
+          (parseInt(this.unlockData.CR) / 10000) *
           (parseInt(this.unlockData.currentLoan) - this.uTokenAmount * 1e18)
         const lptToReturn =
-          (parseInt(this.unlockData.valueStart) - valueAfter) /
+          (parseFloat(this.unlockData.valueStart) - valueAfter) /
           parseFloat(this.unlockData.valueOfSingleLPT)
         return lptToReturn / 1e18
       } else {
@@ -345,13 +346,16 @@ export default {
 
         const lockedLPT = await getLockedLPT(poolToken.llcAddress)
 
-        this.unlockData.CR = 2
-        this.unlockData.valueStart = valueOfSingleLPT * lockedLPT.raw
+        this.unlockData.CR = await getCR(poolToken.llcAddress)
+        this.unlockData.valueStart = valueOfSingleLPT * Number(lockedLPT.raw)
         this.unlockData.currentLoan = currentLoan.rawBalance
         this.unlockData.valueOfSingleLPT = valueOfSingleLPT
         this.ui.priceLoader = false
 
         console.log(this.unlockData)
+        console.log(this.unlockData.CR.toString())
+        console.log(this.unlockData.currentLoan.toString())
+        console.log('lockedLPT', lockedLPT.raw.toString())
       }
     },
 
