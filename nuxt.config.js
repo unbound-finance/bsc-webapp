@@ -75,6 +75,8 @@ export default {
     '@/plugins/utils.js',
     '@/plugins/vue-content-loader.js',
     '@/plugins/directives.js',
+    '@/plugins/helpers.js',
+    '@/plugins/web3provider.js',
   ],
   /*
    ** Auto import components
