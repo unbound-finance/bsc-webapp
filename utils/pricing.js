@@ -1,8 +1,12 @@
+/**
+ * @info
+ * - Calculates loan ratio and fee for minting.
+ * - Calculates the uToken to be burned based on collatralization ratio.
+ */
+
 import { ethers } from 'ethers'
 import { getDecimals } from './ERC20'
 import { getProvider } from '~/plugins/web3provider'
-
-// import utils
 
 // import ABIs and contract addresses
 import { UNISWAP_LPT_ABI, UNBOUND_VALUATOR_ABI, contracts } from '~/constants'
