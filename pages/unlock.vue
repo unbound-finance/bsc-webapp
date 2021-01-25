@@ -370,9 +370,10 @@ export default {
         UNBOUND_LLC_ABI,
         signer
       )
-
-      const rawUNDAmount = ethers.utils.parseEther(this.uTokenAmount).toString()
-      console.log({ rawUNDAmount })
+      let rawUNDAmount = ethers.utils.parseEther(
+        this.uTokenAmount.toString().slice(0, 18)
+      )
+      rawUNDAmount = rawUNDAmount.toString()
 
       try {
         const unlock = await contract.unlockLPT(rawUNDAmount)
@@ -389,7 +390,6 @@ export default {
         // listen to unlock event from UND contract
         UND.on('Burn', async () => {
           const { formatted } = await getLockedLPT(poolToken.address)
-          console.log({ formatted })
           poolToken.lockedBalance = formatted
         })
       } catch (error) {
