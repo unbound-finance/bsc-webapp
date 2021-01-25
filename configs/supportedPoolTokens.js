@@ -62,7 +62,7 @@ export default [
     exchange: 'Uniswap',
     category: 'ETH-Stablecoin',
     address: '0x54870f44414e69af7eb2f3e1e144ebb7c79325b7',
-    llcAddress: '0x58A024F5dFe2be9d5E50E6D46222B417e069204a',
+    llcAddress: '0xD283CF3d9910C65679c5FF3B3bf06E76842C9952',
     uniswapAddress: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo:
@@ -70,7 +70,7 @@ export default [
     stablecoin: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
     uToken: {
       displayName: 'Unbound Dollar',
-      address: '0x416859b349E43AB530E83D0256C13796cfcD8A24',
+      address: '0xa76eEb404fB389c4e6290f8f3741cb009d775667',
       symbol: 'UND',
       icon: 'und.webp',
     },
