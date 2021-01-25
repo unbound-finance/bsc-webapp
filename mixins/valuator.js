@@ -1,14 +1,13 @@
 import { ethers } from 'ethers'
-import UnboundValuatorABI from '~/configs/abi/UnboundValuator'
-import config from '~/configs/config'
+import { UNBOUND_VALUATOR_ABI, contracts } from '~/constants'
 
 const getLLC = async (llcAddress) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   // get LLC details like feeRate and LTV
   const valuator = new ethers.Contract(
-    config.contracts.valuator,
-    UnboundValuatorABI,
+    contracts.valuator,
+    UNBOUND_VALUATOR_ABI,
     signer
   )
 

@@ -40,7 +40,7 @@
             Locked:
             <span
               class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ liquidity && Number(liquidity.token0).toFixed(4) }}</span
+              >{{ liquidity && liquidity.token0 | toFixed(4) }}</span
             >
           </p>
         </template>
@@ -91,17 +91,17 @@
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Pool Share</p>
               <p class="font-medium text-sm dark:text-white">
-                {{ Number(liquidity.poolShare).toFixed(4) }}%
+                {{ liquidity.poolShare | toFixed(4) }}%
               </p>
             </div>
             <div class="flex items-center justify-between">
               <p class="text-sm text-gray-600">Your Positions</p>
               <p class="font-medium text-sm dark:text-white">
                 <span class="text-gray-600">{{ uToken.token.name }}</span
-                >: {{ Number(liquidity.token1).toFixed(4) }},
+                >: {{ liquidity.token1 | toFixed(4) }},
                 <span class="text-gray-600">{{ uToken.name }}</span
                 >:
-                {{ Number(liquidity.token0).toFixed(4) }}
+                {{ liquidity.token0 | toFixed(4) }}
               </p>
             </div>
           </div>
@@ -152,12 +152,8 @@
 <script>
 import { ethers } from 'ethers'
 
-import ERC20ABI from '~/configs/abi/ERC20'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-
+import { ERC20_ABI, UNISWAP_LPT_ABI, contracts } from '~/constants'
 import { removeLiquidity, getAmountOfLockedTokens } from '~/mixins/stake'
-
-import config from '~/configs/config'
 
 export default {
   data() {
@@ -233,7 +229,7 @@ export default {
       const userAddress = provider.getSigner().getAddress()
       const poolTokenContract = new ethers.Contract(
         uToken.lptAddress,
-        UniswapLPTABI,
+        UNISWAP_LPT_ABI,
         signer
       )
       await poolTokenContract.balanceOf(userAddress)
@@ -248,10 +244,14 @@ export default {
     async approve(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
+      const contract = await new ethers.Contract(
+        tokenAddress,
+        ERC20_ABI,
+        signer
+      )
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(config.contracts.uniswapRouter, totalSupply)
+        await contract.approve(contracts.uniswapRouter, totalSupply)
         // this.ui.showSuccess = true
         // this.txLink = approve.hash
         this.approveState = {

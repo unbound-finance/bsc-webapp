@@ -116,7 +116,7 @@
                   <div
                     class="text-sm leading-5 text-gray-900 dark:text-gray-500"
                   >
-                    {{ Number(data.uTokenAmount).toFixed(2) }}
+                    {{ data.uTokenAmount | toFixed(2) }}
                     {{
                       data.uTokenAddress ==
                       '0xa729d5ca5bce0d275b69728881f5bb86511ea70b'

@@ -66,7 +66,7 @@
                 <p>Pooled Dai</p>
               </div>
               <div class="w-1/2 text-right">
-                <p>{{ Number(data.poolInfo.token0).toFixed(4) }}</p>
+                <p>{{ data.poolInfo.token0 | toFixed(4) }}</p>
               </div>
             </div>
             <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
@@ -74,7 +74,7 @@
                 <p>Pooled UND</p>
               </div>
               <div class="w-1/2 text-right">
-                <p>{{ Number(data.poolInfo.token1).toFixed(4) }}</p>
+                <p>{{ data.poolInfo.token1 | toFixed(4) }}</p>
               </div>
             </div>
 
@@ -83,7 +83,7 @@
                 <p>Your pool share</p>
               </div>
               <div class="w-1/2 text-right">
-                <p>{{ Number(data.poolInfo.poolShare).toFixed(6) }} %</p>
+                <p>{{ data.poolInfo.poolShare | toFixed(6) }} %</p>
               </div>
             </div>
 
@@ -117,14 +117,13 @@
 <script>
 import { ethers } from 'ethers'
 
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+import { UNISWAP_LPT_ABI } from '~/constants'
 import { getAmountOfLockedTokens } from '~/mixins/stake'
 
 import supportedUTokens from '~/configs/supportedUTokens'
 // import { ethers } from 'ethers'
 // import Web3 from 'web3'
 // import contractAddresses from '~/configs/addresses'
-// import stakingABI from '~/configs/abi/UnboundStaking'
 
 export default {
   data() {
@@ -154,7 +153,7 @@ export default {
             supportedUTokens.map(async (e) => {
               const poolTokenContract = new ethers.Contract(
                 e.lptAddress,
-                UniswapLPTABI,
+                UNISWAP_LPT_ABI,
                 signer
               )
               await poolTokenContract.balanceOf(userAddress)

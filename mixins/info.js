@@ -1,10 +1,10 @@
 import { ethers } from 'ethers'
 import Axios from 'axios'
 
-import ERC20ABI from '~/configs/abi/ERC20'
-import UnboundDollarABI from '~/configs/abi/UnboundDai'
-import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
+import ERC20ABI from '~/constants/abis/ERC20'
+import UnboundDollarABI from '~/constants/abis/UnboundDollar'
+import UnboundLLCABI from '~/constants/abis/UnboundLLCABI'
+import UniswapLPTABI from '~/constants/abis/UniswapLPTABI'
 
 import { getDecimals } from '~/mixins/ERC20'
 

@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 
-import ERC20ABI from '~/configs/abi/ERC20'
+import ERC20ABI from '~/constants/abis/ERC20'
 
 const getTokenBalance = async (tokenAddress) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)

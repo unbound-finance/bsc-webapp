@@ -370,8 +370,8 @@ import { ethers } from 'ethers'
 import { ContentLoader } from 'vue-content-loader'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import unboundTokenABI from '~/configs/abi/UnboundDai'
+
+import { UNISWAP_LPT_ABI, UNBOUND_DOLLAR_ABI, contracts } from '~/constants'
 
 import { getDecimals } from '~/mixins/ERC20'
 import { getLLC } from '~/mixins/valuator'
@@ -383,7 +383,6 @@ import {
   getDailyVolume,
 } from '~/mixins/info'
 import { getTotalLiquidity, getCRatio, getTVL } from '~/mixins/analytics'
-import config from '~/configs/config'
 import { dynamicsort } from '~/utils'
 
 export default {
@@ -452,8 +451,8 @@ export default {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
       const unboundToken = await new ethers.Contract(
-        config.contracts.unboundDai,
-        unboundTokenABI,
+        contracts.unboundDai,
+        UNBOUND_DOLLAR_ABI,
         signer
       )
 
@@ -487,7 +486,7 @@ export default {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
         poolToken.address,
-        UniswapLPTABI,
+        UNISWAP_LPT_ABI,
         signer
       )
       const reserve = await contract.getReserves()

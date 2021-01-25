@@ -133,7 +133,7 @@
           <div class="flex items-center justify-between">
             <p class="text-sm text-gray-600 dark:text-gray-400">Current Loan</p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ (Number(unlockData.currentLoan) / 1e18).toFixed(4) }}
+              {{ (unlockData.currentLoan / 1e18) | toFixed(4) }}
               {{ poolToken.uToken.symbol }}
             </p>
           </div>
@@ -156,9 +156,11 @@ import { ethers } from 'ethers'
 // import Web3 from 'web3'
 import { toFixed } from '~/utils'
 
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-import UnboundDaiABI from '~/configs/abi/UnboundDai'
+import {
+  UNISWAP_LPT_ABI,
+  UNBOUND_LLC_ABI,
+  UNBOUND_DOLLAR_ABI,
+} from '~/constants'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
@@ -281,7 +283,7 @@ export default {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
         poolToken.address,
-        UniswapLPTABI,
+        UNISWAP_LPT_ABI,
         signer
       )
       const reserve = await contract.getReserves()
@@ -365,7 +367,7 @@ export default {
       const signer = provider.getSigner()
       const contract = await new ethers.Contract(
         poolToken.llcAddress,
-        UnboundLLCABI,
+        UNBOUND_LLC_ABI,
         signer
       )
 
@@ -388,7 +390,7 @@ export default {
         // initiate the UND contract to detect the event so we can update the balances
         const UND = new ethers.Contract(
           poolToken.uToken.address,
-          UnboundDaiABI,
+          UNBOUND_DOLLAR_ABI,
           signer
         )
         // listen to unlock event from UND contract

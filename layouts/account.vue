@@ -12,7 +12,7 @@
             <div class="flex items-center justify-between">
               <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
               <p v-else class="font-medium text-3xl text-accent">
-                ${{ Number(accountInfo.totalValueLocked).toFixed(2) }}
+                ${{ accountInfo.totalValueLocked | toFixed(2) }}
               </p>
               <!-- <button
                 class="focus:outline-none"
@@ -36,7 +36,7 @@
                   <p class="text-right text-accent font-medium">
                     {{
                       (liquidity &&
-                        Number(liquidity[0].poolInfo.token0).toFixed(2)) ||
+                        liquidity[0].poolInfo.token0 | toFixed(2)) ||
                       0
                     }}
                   </p>
@@ -48,7 +48,7 @@
                   <p class="text-right text-accent font-medium">
                     {{
                       (liquidity &&
-                        Number(liquidity[0].poolInfo.token1).toFixed(2)) ||
+                        liquidity[0].poolInfo.token1 | toFixed(2)) ||
                       0
                     }}
                   </p>
@@ -60,7 +60,7 @@
                   <p class="text-right text-accent font-medium">
                     {{
                       (liquidity &&
-                        Number(liquidity[1].poolInfo.token0).toFixed(2)) ||
+                        liquidity[1].poolInfo.token0 | toFixed(2)) ||
                       0
                     }}
                   </p>
@@ -72,7 +72,7 @@
                   <p class="text-right text-accent font-medium">
                     {{
                       (liquidity &&
-                        Number(liquidity[1].poolInfo.token0).toFixed(2)) ||
+                        liquidity[1].poolInfo.token0 | toFixed(2)) ||
                       0
                     }}
                   </p>
@@ -91,7 +91,7 @@
               <div class="flex flex-col">
                 <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
                 <p v-else class="font-medium text-xl text-accent leading-tight">
-                  {{ Number(accountInfo.undMinted).toFixed(4) }}
+                  {{ accountInfo.undMinted | toFixed(4) }}
                 </p>
                 <div v-if="liquidity" class="flex items-center space-x-1">
                   <img
@@ -107,7 +107,7 @@
               <div class="flex flex-col">
                 <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
                 <p v-else class="font-medium text-xl text-accent leading-tight">
-                  {{ Number(accountInfo.uEthMinted).toFixed(4) }}
+                  {{ accountInfo.uEthMinted | toFixed(4) }}
                 </p>
 
                 <div v-if="liquidity" class="flex items-center space-x-1">
@@ -188,13 +188,10 @@
 import { mapGetters } from 'vuex'
 import { ethers } from 'ethers'
 
-// import config from '~/configs/config'
 import { getAmountOfLockedTokens } from '~/mixins/stake'
 import { getFeesAccrued } from '~/mixins/analytics'
 
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import config from '~/configs/config'
-import UnboundDai from '~/configs/abi/UnboundDai'
+import { UNISWAP_LPT_ABI, UNBOUND_DOLLAR_ABI, contracts } from '~/constants'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 import supportedUTokens from '~/configs/supportedUTokens'
@@ -297,8 +294,8 @@ export default {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const signer = provider.getSigner()
         const UND = new ethers.Contract(
-          config.contracts.unboundDai,
-          UnboundDai,
+          contracts.unboundDai,
+          UNBOUND_DOLLAR_ABI,
           signer
         )
         const supply = await UND.totalSupply()
@@ -370,7 +367,7 @@ export default {
           supportedUTokens.map(async (e) => {
             const poolTokenContract = new ethers.Contract(
               e.lptAddress,
-              UniswapLPTABI,
+              UNISWAP_LPT_ABI,
               signer
             )
             await poolTokenContract.balanceOf(userAddress)

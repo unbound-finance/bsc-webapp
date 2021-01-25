@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import config from '~/configs/config'
+import { CHAIN_ID } from '~/constants'
 
 // get nonce from Uniswap for the permit()s
 const getNonce = async (poolTokenAddress, signer) => {
@@ -73,7 +73,7 @@ const getEIP712Signature = (
   const domain = {
     name: 'Uniswap V2',
     version: '1',
-    chainId: parseInt(config.chainId),
+    chainId: parseInt(CHAIN_ID),
     verifyingContract: poolTokenAddress,
   }
   const data = JSON.stringify({

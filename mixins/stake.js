@@ -1,9 +1,7 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 
-import UniswapRouterABI from '~/configs/abi/UniswapRouter'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import config from '~/configs/config'
+import { UNISWAP_LPT_ABI, UNISWAP_ROUTER_ABI, contracts } from '~/constants'
 
 import { getEIP712Signature, getNonce } from '~/mixins/crypto'
 import { toFixed } from '~/utils'
@@ -11,9 +9,9 @@ import { toFixed } from '~/utils'
 const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
-  const contract = await new ethers.Contract(
-    config.contracts.uniswapRouter,
-    UniswapRouterABI,
+  const contract = new ethers.Contract(
+    contracts.uniswapRouter,
+    UNISWAP_ROUTER_ABI,
     signer
   )
   const formatAmountA = toFixed(amountA * 1e18).toString()
@@ -91,7 +89,7 @@ const removeLiquidity = async (
 
   const signedData = await getEIP712Signature(
     LPTAddress,
-    config.contracts.uniswapRouter,
+    contracts.uniswapRouter,
     userAddress,
     liquidity,
     nonce,
@@ -126,8 +124,8 @@ const removeLiquidity = async (
         }
         const signature = ethers.utils.splitSignature(signedData.result)
         const UniswapRouter = await new ethers.Contract(
-          config.contracts.uniswapRouter,
-          UniswapRouterABI,
+          contracts.uniswapRouter,
+          UNISWAP_ROUTER_ABI,
           signer
         )
         try {
@@ -208,7 +206,7 @@ const getPoolTokenBalance = async (address) => {
   const userAddress = signer.getAddress()
   const poolTokenContract = await new ethers.Contract(
     address,
-    UniswapLPTABI,
+    UNISWAP_LPT_ABI,
     signer
   )
   const balance = poolTokenContract.balanceOf(userAddress)
@@ -221,7 +219,7 @@ const getPoolTokenReserves = async (address) => {
     const signer = provider.getSigner()
     const poolTokenContract = new ethers.Contract(
       address,
-      UniswapLPTABI,
+      UNISWAP_LPT_ABI,
       signer
     )
     const reserves = await poolTokenContract.getReserves()
@@ -235,7 +233,11 @@ const getPoolTokenReserves = async (address) => {
 const getPoolTokenTotalSupply = async (address) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
-  const poolTokenContract = new ethers.Contract(address, UniswapLPTABI, signer)
+  const poolTokenContract = new ethers.Contract(
+    address,
+    UNISWAP_LPT_ABI,
+    signer
+  )
   const totalSupply = await poolTokenContract.totalSupply()
   return totalSupply
 }

@@ -1,23 +1,19 @@
 import { ethers } from 'ethers'
-import config from '@/configs/config'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import UnboundDai from '~/configs/abi/UnboundDai'
-
+import { UNISWAP_LPT_ABI, UNBOUND_DOLLAR_ABI, contracts } from '~/constants'
 import { getEthPrice, getLPTPrice, getTotalLockedLPT } from '~/mixins/info'
-
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
 
 export const getTotalLiquidity = async () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   const und = await new ethers.Contract(
-    config.contracts.UNDUniswapPool,
-    UniswapLPTABI,
+    contracts.UNDUniswapPool,
+    UNISWAP_LPT_ABI,
     signer
   )
   const ueth = await new ethers.Contract(
-    config.contracts.uETHUniswapPool,
-    UniswapLPTABI,
+    contracts.uETHUniswapPool,
+    UNISWAP_LPT_ABI,
     signer
   )
   const undReserve = await und.getReserves()
@@ -46,14 +42,14 @@ export const getCRatio = async () => {
   const signer = provider.getSigner()
   // Get total UND and uETH minted
   const und = await new ethers.Contract(
-    config.contracts.unboundDai,
-    UnboundDai,
+    contracts.unboundDai,
+    UNBOUND_DOLLAR_ABI,
     signer
   )
 
   const ueth = await new ethers.Contract(
-    config.contracts.unboundEth,
-    UnboundDai,
+    contracts.unboundEth,
+    UNBOUND_DOLLAR_ABI,
     signer
   )
 
@@ -104,8 +100,8 @@ export const getFeesAccrued = async () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   const unboundToken = await new ethers.Contract(
-    config.contracts.unboundDai,
-    UnboundDai,
+    contracts.unboundDai,
+    UNBOUND_DOLLAR_ABI,
     signer
   )
 

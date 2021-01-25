@@ -203,8 +203,7 @@ import { ethers } from 'ethers'
 
 import { toFixed } from '~/utils'
 
-import ERC20ABI from '~/configs/abi/ERC20'
-import config from '~/configs/config'
+import { ERC20_ABI, contracts } from '~/constants'
 export default {
   props: {
     label: {
@@ -282,10 +281,14 @@ export default {
     async approve(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
+      const contract = await new ethers.Contract(
+        tokenAddress,
+        ERC20_ABI,
+        signer
+      )
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(config.contracts.uniswapRouter, totalSupply)
+        await contract.approve(contracts.uniswapRouter, totalSupply)
         // this.ui.showSuccess = true
         // this.txLink = approve.hash
         this.approveState = {

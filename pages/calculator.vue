@@ -124,7 +124,7 @@
         </p>
         <p class="text-sm font-medium dark:text-white">
           $
-          {{ Number(calcResult.assetValue).toFixed(2) }}
+          {{ calcResult.assetValue | toFixed(2) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
@@ -133,7 +133,7 @@
         </p>
         <p class="text-sm font-medium dark:text-white">
           $
-          {{ Number(calcResult.breakEvenPrice).toFixed(2) }}
+          {{ calcResult.breakEvenPrice | toFixed(2) }}
         </p>
       </div>
       <!-- <div class="flex items-center justify-between">
@@ -175,14 +175,14 @@
         <p class="text-sm text-gray-600">Total Pool Value</p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.totalPoolValue / 1e18).toFixed(4) }}
+          {{ calcResult.totalPoolValue / 1e18 | toFixed(4) }}
         </p>
       </div>
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-600">Total Fees Earned</p>
         <p class="text-sm font-medium">
           $
-          {{ Number(calcResult.totalFees).toFixed(4) * 2 }}
+          {{ calcResult.totalFees | toFixed(4) * 2 }}
         </p>
       </div> -->
     </div>

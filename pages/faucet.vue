@@ -90,8 +90,7 @@
 <script>
 import { ethers } from 'ethers'
 
-import UnboundFaucet from '~/configs/abi/UnboundFaucet'
-import config from '~/configs/config'
+import { UNBOUND_FAUCET_ABI, FAUCET } from '~/constants'
 
 export default {
   data() {
@@ -179,11 +178,7 @@ export default {
       this.ui.errorMsg = null
       this.ui.successMsg = null
       this.ui.loading = true
-      const faucet = await new ethers.Contract(
-        config.faucet,
-        UnboundFaucet,
-        signer
-      )
+      const faucet = new ethers.Contract(FAUCET, UNBOUND_FAUCET_ABI, signer)
 
       try {
         if (this.$store.state.address) {

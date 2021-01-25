@@ -71,10 +71,9 @@ import { ethers } from 'ethers'
 import Modal from '@/components/Modal'
 
 import supportedUTokens from '@/configs/supportedUTokens'
-import ERC20ABI from '~/configs/abi/ERC20'
-import config from '~/configs/config'
+import { ERC20_ABI, contracts } from '~/constants'
 
-import { getTokenBalance } from '~/mixins/ERC20'
+import { getTokenBalance } from '~/utils/ERC20'
 import { getAmountOfLockedTokens } from '~/mixins/stake'
 
 export default {
@@ -135,10 +134,14 @@ export default {
 
       const signer = provider.getSigner()
       const userAddress = provider.getSigner().getAddress()
-      const contract = await new ethers.Contract(tokenAddress, ERC20ABI, signer)
+      const contract = await new ethers.Contract(
+        tokenAddress,
+        ERC20_ABI,
+        signer
+      )
       const allowance = await contract.allowance(
         userAddress,
-        config.contracts.uniswapRouter
+        contracts.uniswapRouter
       )
       return allowance
     },

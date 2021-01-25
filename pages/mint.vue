@@ -77,8 +77,11 @@
         >
           <p class="text-sm text-gray-600">Price Per LP Token</p>
           <div v-if="ui.priceLoader" class="loading-dots text-2xl">.</div>
-          <p v-else class="font-medium text-sm dark:text-white font-mono">
-            {{ LPTPrice }} {{ poolToken && poolToken.uToken.symbol }}
+          <p
+            v-else-if="llcDetails"
+            class="font-medium text-sm dark:text-white font-mono"
+          >
+            {{ llcDetails.LPTPrice }} {{ poolToken && poolToken.uToken.symbol }}
           </p>
         </div>
 
@@ -188,7 +191,10 @@
                     Loan to Value
                   </p>
                   <p class="font-medium font-mono dark:text-white">
-                    {{ (llc.loanRate * 100) / 1e6 }}%
+                    <template v-if="llcDetails">
+                      {{ (llcDetails.loanRate * 100) / 1e6 }}%
+                    </template>
+                    <template v-else>-</template>
                   </p>
                 </div>
                 <div class="flex items-center justify-between">
@@ -198,12 +204,17 @@
                     Minimum Receivable
                   </p>
                   <p class="font-medium font-mono dark:text-white">
-                    {{
-                      Number(
-                        parseFloat(LPTAmount) * loanRatioPerLPT -
-                          parseFloat(LPTAmount) * loanRatioPerLPT * 0.02
-                      ).toFixed(4)
-                    }}
+                    <template v-if="llcDetails">
+                      {{
+                        Number(
+                          parseFloat(LPTAmount) * llcDetails.loanRatioPerLPT -
+                            parseFloat(LPTAmount) *
+                              llcDetails.loanRatioPerLPT *
+                              0.02
+                        ).toFixed(4)
+                      }}
+                    </template>
+                    <template v-else>-</template>
                   </p>
                 </div>
 
@@ -214,7 +225,7 @@
                     Estimated {{ poolToken.uToken.symbol }} To Mint
                   </p>
                   <p class="font-medium font-mono dark:text-white">
-                    {{ Number(uTokenAmount).toFixed(2) }}
+                    {{ uTokenAmount | toFixed(2) }}
                     {{ poolToken.uToken.symbol }}
                   </p>
                 </div>
@@ -222,16 +233,23 @@
                   <p
                     class="text-sm font-medium text-gray-600 dark:text-gray-400"
                   >
-                    Minting Fees ({{ Number((llc.fee * 100) / 1e6) }}%)
+                    <template v-if="llcDetails">
+                      Minting Fees ({{ Number((llcDetails.fee * 100) / 1e6) }}%)
+                    </template>
+                    <template v-else> Minting Fees </template>
                   </p>
                   <p class="font-medium font-mono dark:text-white">
-                    -{{
-                      Number(
-                        (Number(uTokenAmount) * Number((llc.fee * 100) / 1e6)) /
-                          100
-                      ).toFixed(2)
-                    }}
-                    {{ poolToken.uToken.symbol }}
+                    <template v-if="llcDetails">
+                      -{{
+                        Number(
+                          (Number(uTokenAmount) *
+                            Number((llcDetails.fee * 100) / 1e6)) /
+                            100
+                        ) | toFixed(2)
+                      }}
+                      {{ poolToken.uToken.symbol }}
+                    </template>
+                    <template v-else>- {{ poolToken.uToken.symbol }}</template>
                   </p>
                 </div>
                 <div
@@ -244,17 +262,19 @@
                     Receivable {{ poolToken.uToken.symbol }}
                   </p>
                   <p class="font-medium font-mono dark:text-white">
-                    {{
-                      Number(
-                        Number(uTokenAmount).toFixed(2) -
+                    <template v-if="llcDetails">
+                      {{
+                        (Number(uTokenAmount).toFixed(2) -
                           Number(
                             (Number(uTokenAmount) *
-                              Number((llc.fee * 100) / 1e6)) /
+                              Number((llcDetails.fee * 100) / 1e6)) /
                               100
-                          ).toFixed(2)
-                      ).toFixed(2)
-                    }}
-                    {{ poolToken.uToken.symbol }}
+                          ).toFixed(2))
+                          | toFixed(2)
+                      }}
+                      {{ poolToken.uToken.symbol }}
+                    </template>
+                    <template v-else>- {{ poolToken.uToken.symbol }}</template>
                   </p>
                 </div>
                 <div
@@ -266,27 +286,20 @@
                   You will have to payback
                   <span
                     class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
-                    >{{ Number(uTokenAmount).toFixed(2) }}
+                    >{{ uTokenAmount | toFixed(2) }}
                     {{ poolToken.uToken.symbol }}</span
                   >
                   for unlocking your
                   <span
                     class="text-light-primary dark:text-dark-primary text-sm italic font-medium"
-                    >{{ Number(LPTAmount).toFixed(2) }}
-                    {{ poolToken.name }}</span
+                    >{{ LPTAmount | toFixed(2) }} {{ poolToken.name }}</span
                   >.
                 </p>
               </div>
               <button
                 class="w-full mt-4 py-4 bg-light-primary dark:bg-dark-primary font-medium text-white appearance-none focus:outline-none"
                 style="border-radius: 12px"
-                @click="
-                  mint(
-                    poolToken.address,
-                    poolToken.llcAddress,
-                    poolToken.uToken.address
-                  )
-                "
+                @click="mint(poolToken)"
               >
                 Confirm Mint
               </button>
@@ -306,16 +319,22 @@
         <div class="flex flex-col space-y-1">
           <div class="flex items-center justify-between">
             <p class="text-sm text-gray-600 dark:text-gray-400">
-              Minting Fees ({{ Number((llc.fee * 100) / 1e6) }}%)
+              <template v-if="llcDetails">
+                Minting Fees ({{ Number((llcDetails.fee * 100) / 1e6) }}%)
+              </template>
+              <template v-else>Minting Fees</template>
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{
-                Number(
-                  (Number(UNDOutput) * Number((llc.fee * 100) / 1e6)) / 100 ||
-                    ''
-                ).toFixed(4)
-              }}
-              {{ poolToken.uToken.symbol }}
+              <template v-if="llcDetails">
+                {{
+                  Number(
+                    (Number(UNDOutput) * Number((llcDetails.fee * 100) / 1e6)) /
+                      100 || ''
+                  ).toFixed(4)
+                }}
+                {{ poolToken.uToken.symbol }}
+              </template>
+              <template v-else> - {{ poolToken.uToken.symbol }} </template>
             </p>
           </div>
           <div class="flex items-center justify-between">
@@ -323,13 +342,16 @@
               Minimum Receivable
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{
-                Number(
-                  parseFloat(LPTAmount) * loanRatioPerLPT -
-                    parseFloat(LPTAmount) * loanRatioPerLPT * 0.02
-                ).toFixed(4)
-              }}
-              {{ poolToken.uToken.symbol }}
+              <template v-if="llcDetails">
+                {{
+                  Number(
+                    parseFloat(LPTAmount) * llcDetails.loanRatioPerLPT -
+                      parseFloat(LPTAmount) * llcDetails.loanRatioPerLPT * 0.02
+                  ).toFixed(4)
+                }}
+                {{ poolToken.uToken.symbol }}
+              </template>
+              <template v-else> - {{ poolToken.uToken.symbol }} </template>
             </p>
           </div>
           <div class="flex items-center justify-between pb-2">
@@ -337,7 +359,10 @@
               Loan to Value
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ (llc.loanRate * 100) / 1e6 }}%
+              <template v-if="llcDetails">
+                {{ (llcDetails.loanRate * 100) / 1e6 }}%
+              </template>
+              <template v-else> - </template>
             </p>
           </div>
 
@@ -381,57 +406,20 @@
 </template>
 
 <script>
-// import components
-
-import { ethers } from 'ethers'
-import Web3 from 'web3'
-
-import { toFixed, countDecimals } from '~/utils'
-
-import UnboundDaiABI from '~/configs/abi/UnboundDai.js'
-import UniswapLPTABI from '~/configs/abi/UniswapLPTABI'
-import UnboundLLCABI from '~/configs/abi/UnboundLLCABI'
-
-// import contractAddresses from '~/configs/addresses'
-import supportedPoolTokens from '~/configs/supportedPoolTokens'
-
-// import signature from '~/mixins/signature'
-import { getNonce, getEIP712Signature } from '~/mixins/crypto'
-import { getTokenBalance, getDecimals } from '~/mixins/ERC20'
-import { getLLC } from '~/mixins/valuator'
+import { countDecimals, toFixed } from '~/utils'
+import core from '~/mixins/core'
 
 export default {
-  data() {
-    return {
-      ui: {
-        showDialog: false,
-        showConfirmation: false,
-        showSuccess: false,
-        showRejected: false,
-        showAwaiting: false,
-        priceLoader: false,
-      },
-      poolToken: null,
-      LPTAmount: null,
-      uTokenAmount: null,
-      LPTPrice: '',
-      loanRatioPerLPT: '',
-      txLink: '',
-      supportedPoolTokens,
-      llc: {
-        loanRate: '',
-        fee: '',
-      },
-    }
-  },
-
+  mixins: [core],
   computed: {
     UNDOutput() {
-      return this.LPTAmount * this.loanRatioPerLPT
+      if (!this.llcDetails) return 0
+      return this.LPTAmount * this.llcDetails.loanRatioPerLPT
     },
 
     LPTOutput() {
-      return this.uTokenAmount / this.loanRatioPerLPT
+      if (!this.llcDetails) return 0
+      return this.uTokenAmount / this.llcDetails.loanRatioPerLPT
     },
 
     isWalletConnected() {
@@ -481,218 +469,24 @@ export default {
   },
 
   watch: {
-    poolToken(a) {
-      this.getLoanRatioPerLPT(a)
-    },
     UNDOutput(a) {
       if (a === 0 || a === '0') {
         this.uTokenAmount = null
         return
       }
-      if (!this.uTokenAmountField) this.uTokenAmount = toFixed(a)
+      if (!this.uTokenAmountField) this.uTokenAmount = this.$normalizedNumber(a)
     },
     LPTOutput(a, b) {
       if (a === 0 || a === '0') {
         this.LPTAmount = null
         return
       }
-      if (!this.LPTAmountField) this.LPTAmount = toFixed(a)
+      if (!this.LPTAmountField) this.LPTAmount = this.$normalizedNumber(a)
     },
   },
 
   methods: {
     toFixed,
-    async getLoanRatioPerLPT(poolToken) {
-      this.ui.priceLoader = true
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        poolToken.address,
-        UniswapLPTABI,
-        signer
-      )
-      const reserve = await contract.getReserves()
-      const LPTTotalSupply = await contract.totalSupply()
-      const token0 = await contract.token0()
-      const token1 = await contract.token1()
-      const llc = await getLLC(poolToken.llcAddress)
-      this.llc.loanRate = llc.loanRate
-      this.llc.fee = llc.fee
-      if (token0.toLowerCase() === poolToken.stablecoin.toLowerCase()) {
-        const stablecoinDecimal = await getDecimals(token0)
-        let difference
-        let totalValueInDai
-        totalValueInDai = reserve[0].toString() * 2
-        // first case: tokenDecimal is smaller than 18
-        // for stablecoins with less than 18 decimals
-        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
-          // calculate amount of decimals under 18
-          difference = 18 - stablecoinDecimal
-          totalValueInDai = totalValueInDai * 10 ** difference
-        } else if (stablecoinDecimal > '18') {
-          // caclulate amount of decimals over 18
-          difference = stablecoinDecimal - 18
-          // removes decimals to match 18
-          totalValueInDai = totalValueInDai / 10 ** difference
-        }
-        this.loanRatioPerLPT =
-          ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
-        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
-          .toFixed(4)
-          .slice(0, -1)
-        this.ui.priceLoader = false
-      } else {
-        const stablecoinDecimal = await getDecimals(token1)
-        let difference
-        let totalValueInDai
-        // first case: tokenDecimal is smaller than 18
-        // for stablecoins with less than 18 decimals
-        totalValueInDai = reserve[1].toString() * 2
-        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
-          // calculate amount of decimals under 18
-          difference = 18 - stablecoinDecimal
-          totalValueInDai = totalValueInDai * 10 ** difference
-        } else if (stablecoinDecimal > '18') {
-          // caclulate amount of decimals over 18
-          difference = stablecoinDecimal - 18
-          // removes decimals to match 18
-          totalValueInDai = totalValueInDai / 10 ** difference
-        }
-
-        this.loanRatioPerLPT =
-          ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
-        this.LPTPrice = (totalValueInDai / LPTTotalSupply)
-          .toFixed(4)
-          .slice(0, -1)
-        this.ui.priceLoader = false
-      }
-    },
-
-    async mint(poolTokenAddress, llcAddress, uToken) {
-      this.ui.showAwaiting = true
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-
-      const userAddress = await signer.getAddress()
-      const nonce = await getNonce(poolTokenAddress, signer)
-      const deadline = +new Date() + 5000
-
-      let amount = ethers.utils.parseEther(
-        this.LPTAmount.toString().slice(0, 18)
-      )
-      amount = amount.toString()
-
-      // let minAmount =
-      //   (this.LPTAmount * this.loanRatioPerLPT -
-      //     this.LPTAmount * this.loanRatioPerLPT * 0.2) *
-      //   1e18
-
-      // await this.getLoanRatioPerLPT()
-
-      let minAmount = toFixed(
-        (parseFloat(this.LPTAmount) * this.loanRatioPerLPT -
-          parseFloat(this.LPTAmount) * this.loanRatioPerLPT * 0.02) *
-          1e18
-      )
-
-      minAmount = minAmount.toString()
-
-      let minAmountFees =
-        (parseFloat(minAmount) * parseFloat(this.llc.fee)) / 1e6
-
-      minAmountFees = minAmountFees.toString()
-
-      const finalMinAmount = toFixed(minAmount - minAmountFees).toString()
-
-      console.log({
-        minAmount,
-        minAmountFees,
-        finalMinAmount,
-      })
-
-      const EIP712Signature = await getEIP712Signature(
-        poolTokenAddress,
-        llcAddress,
-        userAddress,
-        amount,
-        nonce,
-        deadline
-      )
-      const web3 = new Web3(window.ethereum)
-      const metamaskSigner = await web3.eth.getAccounts()
-
-      web3.currentProvider.sendAsync(
-        {
-          method: 'eth_signTypedData_v3',
-          params: [metamaskSigner[0], EIP712Signature],
-          from: metamaskSigner[0],
-        },
-        async (error, signedData) => {
-          if (error || signedData.error) {
-            if (error.code !== 4001) {
-              this.$logRocket.captureException(error, {
-                tags: {
-                  function: 'mintSignature',
-                },
-                extra: {
-                  pageName: 'Mint',
-                },
-              })
-              this.$logRocket.identify(this.$store.state.address)
-            }
-            this.ui.showAwaiting = false
-            return
-          }
-          const signature = ethers.utils.splitSignature(signedData.result)
-          const UnboundLLCContract = await new ethers.Contract(
-            llcAddress,
-            UnboundLLCABI,
-            signer
-          )
-          try {
-            const mintUND = await UnboundLLCContract.lockLPTWithPermit(
-              amount,
-              deadline,
-              signature.v,
-              signature.r,
-              signature.s,
-              finalMinAmount
-            )
-            // close awaiting modal
-            this.ui.showAwaiting = false
-            // show success screen
-            this.ui.showConfirmation = false
-            this.txLink = mintUND.hash
-            this.ui.showSuccess = true
-            this.LPTAmount = ''
-
-            // initiate the UND contract to detect the event so we can update the balances
-            const UND = new ethers.Contract(uToken, UnboundDaiABI, signer)
-            // listen to mint event from UND contract
-            UND.on('Mint', async (user, amount) => {
-              const balance = await getTokenBalance(poolTokenAddress)
-              this.poolToken.balance = balance.toFixed
-            })
-          } catch (error) {
-            if (error.code !== 4001) {
-              this.$logRocket.captureException(error, {
-                tags: {
-                  function: 'mint',
-                },
-                extra: {
-                  pageName: 'Mint',
-                },
-              })
-              this.$logRocket.identify(this.$store.state.address)
-            }
-            this.ui.showAwaiting = false
-            this.ui.showConfirmation = false
-            this.ui.showRejected = true
-          }
-        }
-      )
-    },
-
     setInputMax() {
       this.LPTAmount = this.poolToken.balance
     },
