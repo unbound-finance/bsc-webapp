@@ -365,22 +365,15 @@ export default {
       this.ui.showAwaiting = true
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
+      const contract = new ethers.Contract(
         poolToken.llcAddress,
         UNBOUND_LLC_ABI,
         signer
       )
 
-      let rawUNDAmount = ethers.utils.parseEther(
-        this.uTokenAmount.toString().slice(0, 18)
-      )
+      const rawUNDAmount = ethers.utils.parseEther(this.uTokenAmount).toString()
+      console.log({ rawUNDAmount })
 
-      rawUNDAmount = rawUNDAmount.toString()
-
-      // let rawLPTAmount = ethers.utils.parseEther(
-      //   this.LPTAmount.toString().slice(0, 18)
-      // )
-      // rawLPTAmount = rawLPTAmount.toString()
       try {
         const unlock = await contract.unlockLPT(rawUNDAmount)
         this.ui.showAwaiting = false
@@ -394,9 +387,10 @@ export default {
           signer
         )
         // listen to unlock event from UND contract
-        UND.on('Burn', async (user, amount) => {
-          const LPTBalance = await getLockedLPT(poolToken.address)
-          this.poolToken.lockedBalance = LPTBalance.formatted
+        UND.on('Burn', async () => {
+          const { formatted } = await getLockedLPT(poolToken.address)
+          console.log({ formatted })
+          poolToken.lockedBalance = formatted
         })
       } catch (error) {
         if (error.code !== 4001) {
