@@ -212,24 +212,40 @@ export default {
   computed: {
     UNDOutput() {
       if (this.LPTAmount > 0 && this.llcDetails) {
-        return (
-          (this.llcDetails.currentLoan -
-            ((this.llcDetails.lockedLPT.raw - this.LPTAmount * 1e18) *
-              this.llcDetails.LPTPrice) /
-              (this.llcDetails.cr / 10000)) /
-          1e18
-        )
+        if (this.llcDetails.currentCR / 10000 > this.llcDetails.cr / 10000) {
+          return (
+            (this.llcDetails.currentLoan * this.LPTAmount * 1e18) /
+            this.llcDetails.lockedLPT.raw /
+            1e18
+          )
+        } else {
+          return (
+            (this.llcDetails.currentLoan -
+              ((this.llcDetails.lockedLPT.raw - this.LPTAmount * 1e18) *
+                this.llcDetails.LPTPrice) /
+                (this.llcDetails.cr / 10000)) /
+            1e18
+          )
+        }
       } else return 0
     },
     LPTOutput() {
       if (this.uTokenAmount > 0 && this.llcDetails) {
-        const LPTReturn =
-          (this.llcDetails.LPTValue -
-            (this.llcDetails.cr / 10000) *
-              (this.llcDetails.currentLoan - this.uTokenAmount * 1e18)) /
-          this.llcDetails.LPTPrice /
-          1e18
-        return Math.max(0, LPTReturn)
+        if (this.llcDetails.currentCR / 10000 > this.llcDetails.cr / 10000) {
+          return (
+            (this.llcDetails.lockedLPT.raw * this.uTokenAmount * 1e18) /
+            this.llcDetails.currentLoan /
+            1e18
+          )
+        } else {
+          const LPTReturn =
+            (this.llcDetails.LPTValue -
+              (this.llcDetails.cr / 10000) *
+                (this.llcDetails.currentLoan - this.uTokenAmount * 1e18)) /
+            this.llcDetails.LPTPrice /
+            1e18
+          return Math.max(0, LPTReturn)
+        }
       } else {
         return 0
       }

@@ -112,6 +112,7 @@ export const loanRatioPerLPT = async (poolToken) => {
   return {
     ...llcDetails, // loanRate, fee, loanRatioPerLPT
     ...crDetails, // c-ratio, LPTValue, currentLoan, minValue
+    currentCR,
     LPTPrice,
     lockedLPT,
   }
