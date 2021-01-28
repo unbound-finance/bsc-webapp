@@ -46,7 +46,10 @@ export default {
       const deadline = +new Date() + 5000
 
       // converting decimals to 18 decimals format
-      const amount = ethers.utils.parseEther(this.LPTAmount).toString()
+      let amount = ethers.utils.parseEther(
+        this.LPTAmount.toString().slice(0, 18)
+      )
+      amount = amount.toString()
 
       // setting min amount (2%)
       let minAmount = toFixed(
