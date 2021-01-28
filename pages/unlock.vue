@@ -25,6 +25,13 @@
           </button>
         </div>
 
+        <template v-if="llcDetails && poolToken && llcDetails.minValue > 0">
+          <p class="text-xs font-medium text-red-500">
+            You'll need to pay {{ llcDetails.minValue | toFixed(4) }}
+            {{ poolToken.uToken.symbol }} extra to stabalize your
+            collatralization ratio.
+          </p>
+        </template>
         <input-field
           v-model="LPTAmount"
           label="Unlock"
@@ -84,6 +91,20 @@
           </template>
         </input-field>
 
+        <template
+          v-if="
+            llcDetails && poolToken && llcDetails.minValue && uTokenAmount > 0
+          "
+        >
+          <p
+            class="text-xs font-medium text-gray-500 w-full px-4"
+            style="margin-top: 8px"
+          >
+            +{{ llcDetails.minValue | toFixed(4) }}
+            {{ poolToken.uToken.symbol }}
+          </p>
+        </template>
+
         <button
           v-if="isWalletConnected"
           class="font-medium w-full py-2 rounded-md focus:outline-none"
@@ -94,7 +115,6 @@
             Number(LPTAmount).toFixed(18) == 0.0
               ? getDisabledClass
               : getActiveClass,
-            shouldDisableUnlock ? getDisabledClass : getActiveClass,
           ]"
           :disabled="shouldDisableUnlock"
           @click="unlock(poolToken)"
@@ -105,13 +125,16 @@
             >Amount should be greater than 0</span
           >
           <span v-else-if="isSufficientBalance">Insufficient Balance</span>
-          <template v-else-if="llcDetails && llcDetails.minValue > 0">
-            <span class="text-xs"
-              >You need min. {{ Number(llcDetails.minValue).toFixed(4) }}
-              {{ poolToken.uToken.symbol }} to unlock {{ LPTAmount }}
-              {{ poolToken.name }}</span
-            >
-          </template>
+          <span
+            v-else-if="llcDetails && llcDetails.minValue > 0"
+            class="text-sm"
+            >Pay
+            {{
+              (parseFloat(llcDetails.minValue) + parseFloat(UNDOutput))
+                | toFixed(4)
+            }}
+            {{ poolToken.uToken.symbol }} to unlock</span
+          >
           <span v-else>Unlock</span>
         </button>
         <ConnectWalletBtn v-else class="w-full" />
@@ -163,7 +186,7 @@
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
               <template v-if="llcDetails">
-                {{ Number(llcDetails.cr) / 100 }}% {{ LPTOutput }}
+                {{ Number(llcDetails.cr) / 100 }}%
               </template>
               <template v-else>- %</template>
             </p>
@@ -182,27 +205,25 @@ export default {
   mixins: [core],
   computed: {
     UNDOutput() {
-      if (this.llcDetails) {
+      if (this.LPTAmount > 0 && this.llcDetails) {
         return (
-          this.llcDetails.currentLoan -
-          ((this.LPTAmount * 1e18 - this.LPTOutput) *
-            this.llcDetails.LPTValue) /
-            (this.llcDetails.cr / 10000)
+          (this.llcDetails.currentLoan -
+            ((this.llcDetails.lockedLPT.raw - this.LPTAmount * 1e18) *
+              this.llcDetails.LPTPrice) /
+              (this.llcDetails.cr / 10000)) /
+          1e18
         )
-        // const value =
-        //   (this.LPTAmount * 1e18 * this.llcDetails.LPTPrice) /
-        //   (this.llcDetails.cr / 10000)
-        // return value / 1e18
       } else return 0
     },
     LPTOutput() {
-      if (this.llcDetails) {
-        return (
+      if (this.uTokenAmount > 0 && this.llcDetails) {
+        const LPTReturn =
           (this.llcDetails.LPTValue -
             (this.llcDetails.cr / 10000) *
               (this.llcDetails.currentLoan - this.uTokenAmount * 1e18)) /
-          this.llcDetails.LPTPrice
-        )
+          this.llcDetails.LPTPrice /
+          1e18
+        return Math.max(0, LPTReturn)
       } else {
         return 0
       }
@@ -231,8 +252,7 @@ export default {
           !this.LPTAmount ||
           // eslint-disable-next-line eqeqeq
           Number(this.LPTAmount).toFixed(18) == 0.0 ||
-          this.isSufficientBalance ||
-          this.llcDetails.minValue > 0
+          this.isSufficientBalance
         )
       } else return false
     },
