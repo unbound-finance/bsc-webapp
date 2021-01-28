@@ -94,6 +94,7 @@
             Number(LPTAmount).toFixed(18) == 0.0
               ? getDisabledClass
               : getActiveClass,
+            shouldDisableUnlock ? getDisabledClass : getActiveClass,
           ]"
           :disabled="shouldDisableUnlock"
           @click="unlock(poolToken)"
@@ -104,6 +105,13 @@
             >Amount should be greater than 0</span
           >
           <span v-else-if="isSufficientBalance">Insufficient Balance</span>
+          <template v-else-if="llcDetails && llcDetails.minValue > 0">
+            <span class="text-xs"
+              >You need min. {{ Number(llcDetails.minValue).toFixed(4) }}
+              {{ poolToken.uToken.symbol }} to unlock {{ LPTAmount }}
+              {{ poolToken.name }}</span
+            >
+          </template>
           <span v-else>Unlock</span>
         </button>
         <ConnectWalletBtn v-else class="w-full" />
@@ -126,15 +134,27 @@
               Price Per LPT
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ unlockData.valueOfSingleLPT }}
-              {{ poolToken.uToken.symbol }}
+              <template v-if="llcDetails">
+                {{ llcDetails.LPTPrice }}
+                {{ poolToken.uToken.symbol }}
+              </template>
+              <template v-else
+                >-
+                {{ poolToken.uToken.symbol }}
+              </template>
             </p>
           </div>
           <div class="flex items-center justify-between">
             <p class="text-sm text-gray-600 dark:text-gray-400">Current Loan</p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ (unlockData.currentLoan / 1e18) | toFixed(4) }}
-              {{ poolToken.uToken.symbol }}
+              <template v-if="llcDetails">
+                {{ (llcDetails.currentLoan / 1e18) | toFixed(4) }}
+                {{ poolToken.uToken.symbol }}
+              </template>
+              <template v-else
+                >-
+                {{ poolToken.uToken.symbol }}
+              </template>
             </p>
           </div>
           <div class="flex items-center justify-between">
@@ -142,7 +162,10 @@
               Collateralization Ratio
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
-              {{ Number(unlockData.CR) / 100 }}%
+              <template v-if="llcDetails">
+                {{ Number(llcDetails.cr) / 100 }}% {{ LPTOutput }}
+              </template>
+              <template v-else>- %</template>
             </p>
           </div>
         </div>
@@ -152,73 +175,39 @@
 </template>
 
 <script>
-import { ethers } from 'ethers'
-// import Web3 from 'web3'
 import { toFixed } from '~/utils'
-
-import {
-  UNISWAP_LPT_ABI,
-  UNBOUND_LLC_ABI,
-  UNBOUND_DOLLAR_ABI,
-} from '~/constants'
-
-import supportedPoolTokens from '~/configs/supportedPoolTokens'
-
-import { getDecimals } from '~/mixins/ERC20'
-import { getLockedLPT, checkLoan, getCR } from '~/mixins/info'
+import core from '~/mixins/core'
 
 export default {
-  data() {
-    return {
-      ui: {
-        showDialog: false,
-        showSuccess: false,
-        showRejected: false,
-        showAwaiting: false,
-        priceLoader: false,
-      },
-
-      LPTAmount: null,
-      uTokenAmount: null,
-      poolToken: null,
-      txLink: '',
-      uTokenBalance: null,
-      supportedPoolTokens,
-      loanRatioPerLPT: '',
-      llc: {
-        loanRate: '',
-        fee: '',
-      },
-      unlockData: {
-        CR: '',
-        valueStart: '',
-        currentLoan: '',
-        valueOfSingleLPT: '',
-      },
-    }
-  },
-
+  mixins: [core],
   computed: {
     UNDOutput() {
-      const data = this.unlockData
-      const value =
-        (this.LPTAmount * 1e18 * data.valueOfSingleLPT) / (data.CR / 10000)
-      return value / 1e18
+      if (this.llcDetails) {
+        return (
+          this.llcDetails.currentLoan -
+          ((this.LPTAmount * 1e18 - this.LPTOutput) *
+            this.llcDetails.LPTValue) /
+            (this.llcDetails.cr / 10000)
+        )
+        // const value =
+        //   (this.LPTAmount * 1e18 * this.llcDetails.LPTPrice) /
+        //   (this.llcDetails.cr / 10000)
+        // return value / 1e18
+      } else return 0
     },
-
     LPTOutput() {
-      if (this.uTokenAmount > 0) {
-        const valueAfter =
-          (parseInt(this.unlockData.CR) / 10000) *
-          (parseInt(this.unlockData.currentLoan) - this.uTokenAmount * 1e18)
-        const lptToReturn =
-          (parseFloat(this.unlockData.valueStart) - valueAfter) /
-          parseFloat(this.unlockData.valueOfSingleLPT)
-        return lptToReturn / 1e18
+      if (this.llcDetails) {
+        return (
+          (this.llcDetails.LPTValue -
+            (this.llcDetails.cr / 10000) *
+              (this.llcDetails.currentLoan - this.uTokenAmount * 1e18)) /
+          this.llcDetails.LPTPrice
+        )
       } else {
         return 0
       }
     },
+
     isWalletConnected() {
       return !!this.$store.state.address
     },
@@ -231,20 +220,21 @@ export default {
             parseFloat(this.poolToken.uTokenBalance)
         ) {
           return true
-        } else {
-          return false
-        }
+        } else return false
       }
       return false
     },
     shouldDisableUnlock() {
-      return (
-        !this.poolToken ||
-        !this.LPTAmount ||
-        // eslint-disable-next-line eqeqeq
-        Number(this.LPTAmount).toFixed(18) == 0.0 ||
-        this.isSufficientBalance
-      )
+      if (this.llcDetails) {
+        return (
+          !this.poolToken ||
+          !this.LPTAmount ||
+          // eslint-disable-next-line eqeqeq
+          Number(this.LPTAmount).toFixed(18) == 0.0 ||
+          this.isSufficientBalance ||
+          this.llcDetails.minValue > 0
+        )
+      } else return false
     },
 
     getDisabledClass() {
@@ -256,9 +246,6 @@ export default {
     },
   },
   watch: {
-    poolToken(a) {
-      this.getLoanRatioPerLPT(a)
-    },
     UNDOutput(a) {
       if (a === 0 || a === '0') {
         this.uTokenAmount = null
@@ -277,138 +264,6 @@ export default {
 
   methods: {
     toFixed,
-    async getLoanRatioPerLPT(poolToken) {
-      this.ui.priceLoader = true
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        poolToken.address,
-        UNISWAP_LPT_ABI,
-        signer
-      )
-      const reserve = await contract.getReserves()
-      const LPTTotalSupply = await contract.totalSupply()
-      const token0 = await contract.token0()
-      if (token0.toLowerCase() === poolToken.stablecoin.toLowerCase()) {
-        const stablecoinDecimal = await getDecimals(token0)
-        let difference
-        let totalValueInDai
-        totalValueInDai = reserve[0].toString() * 2
-        // first case: tokenDecimal is smaller than 18
-        // for stablecoins with less than 18 decimals
-        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
-          // calculate amount of decimals under 18
-          difference = 18 - stablecoinDecimal
-          totalValueInDai = totalValueInDai * 10 ** difference
-        } else if (stablecoinDecimal > '18') {
-          // caclulate amount of decimals over 18
-          difference = stablecoinDecimal - 18
-          // removes decimals to match 18
-          totalValueInDai = totalValueInDai / 10 ** difference
-        }
-
-        const currentLoan = await checkLoan(
-          poolToken.llcAddress,
-          poolToken.uToken.address
-        )
-
-        const valueOfSingleLPT = totalValueInDai / LPTTotalSupply
-        const lockedLPT = await getLockedLPT(poolToken.address)
-
-        this.unlockData.CR = await getCR(poolToken.llcAddress)
-        this.unlockData.valueStart = valueOfSingleLPT * lockedLPT
-        this.unlockData.currentLoan = currentLoan.rawBalance
-        this.unlockData.valueOfSingleLPT = valueOfSingleLPT
-        console.log(this.unlockData)
-        this.ui.priceLoader = false
-      } else {
-        const stablecoinDecimal = await getDecimals(token0)
-        let difference
-        let totalValueInDai
-        totalValueInDai = reserve[1].toString() * 2
-        // first case: tokenDecimal is smaller than 18
-        // for stablecoins with less than 18 decimals
-        if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
-          // calculate amount of decimals under 18
-          difference = 18 - stablecoinDecimal
-          totalValueInDai = totalValueInDai * 10 ** difference
-        } else if (stablecoinDecimal > '18') {
-          // caclulate amount of decimals over 18
-          difference = stablecoinDecimal - 18
-          // removes decimals to match 18
-          totalValueInDai = totalValueInDai / 10 ** difference
-        }
-
-        const currentLoan = await checkLoan(
-          poolToken.llcAddress,
-          poolToken.uToken.address
-        )
-
-        const valueOfSingleLPT = totalValueInDai / LPTTotalSupply
-
-        const lockedLPT = await getLockedLPT(poolToken.llcAddress)
-
-        this.unlockData.CR = await getCR(poolToken.llcAddress)
-        this.unlockData.valueStart = valueOfSingleLPT * Number(lockedLPT.raw)
-        this.unlockData.currentLoan = currentLoan.rawBalance
-        this.unlockData.valueOfSingleLPT = valueOfSingleLPT
-        this.ui.priceLoader = false
-
-        console.log(this.unlockData)
-        console.log(this.unlockData.CR.toString())
-        console.log(this.unlockData.currentLoan.toString())
-        console.log('lockedLPT', lockedLPT.raw.toString())
-      }
-    },
-
-    async unlock(poolToken) {
-      this.ui.showAwaiting = true
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = provider.getSigner()
-      const contract = new ethers.Contract(
-        poolToken.llcAddress,
-        UNBOUND_LLC_ABI,
-        signer
-      )
-      let rawUNDAmount = ethers.utils.parseEther(
-        this.uTokenAmount.toString().slice(0, 18)
-      )
-      rawUNDAmount = rawUNDAmount.toString()
-
-      try {
-        const unlock = await contract.unlockLPT(rawUNDAmount)
-        this.ui.showAwaiting = false
-        this.txLink = unlock.hash
-        this.ui.showSuccess = true
-
-        // initiate the UND contract to detect the event so we can update the balances
-        const UND = new ethers.Contract(
-          poolToken.uToken.address,
-          UNBOUND_DOLLAR_ABI,
-          signer
-        )
-        // listen to unlock event from UND contract
-        UND.on('Burn', async () => {
-          const { formatted } = await getLockedLPT(poolToken.address)
-          poolToken.lockedBalance = formatted
-        })
-      } catch (error) {
-        if (error.code !== 4001) {
-          this.$logRocket.captureException(error, {
-            tags: {
-              function: 'unlock',
-            },
-            extra: {
-              pageName: 'Unlock',
-            },
-          })
-          this.$logRocket.identify(this.$store.state.address)
-        }
-        this.ui.showAwaiting = false
-        this.ui.showRejected = true
-      }
-    },
-
     setInputMax() {
       this.LPTAmount = this.poolToken.lockedBalance
     },
