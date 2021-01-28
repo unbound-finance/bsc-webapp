@@ -34,8 +34,8 @@ export default {
     },
   },
   methods: {
-    // mint function
     async mint(poolToken) {
+      this.ui.showAwaiting = true
       const { SIGNER } = this.$getProvider()
       const userAddress = await SIGNER.getAddress()
 
@@ -147,6 +147,42 @@ export default {
           }
         }
       )
+    },
+
+    async unlock(poolToken) {
+      this.ui.showAwaiting = true
+      const { SIGNER } = this.$getProvider()
+
+      const contract = new ethers.Contract(
+        poolToken.llcAddress,
+        UNBOUND_LLC_ABI,
+        SIGNER
+      )
+      let rawUNDAmount = ethers.utils.parseEther(
+        this.uTokenAmount.toString().slice(0, 18)
+      )
+      rawUNDAmount = rawUNDAmount.toString()
+
+      try {
+        const unlock = await contract.unlockLPT(rawUNDAmount)
+        this.ui.showAwaiting = false
+        this.txLink = unlock.hash
+        this.ui.showSuccess = true
+      } catch (error) {
+        if (error.code !== 4001) {
+          this.$logRocket.captureException(error, {
+            tags: {
+              function: 'unlock',
+            },
+            extra: {
+              pageName: 'Unlock',
+            },
+          })
+          this.$logRocket.identify(this.$store.state.address)
+        }
+        this.ui.showAwaiting = false
+        this.ui.showRejected = true
+      }
     },
   },
 }
