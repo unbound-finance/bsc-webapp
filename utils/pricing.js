@@ -7,6 +7,7 @@
 import { ethers } from 'ethers'
 import { getDecimals } from './ERC20'
 import { getProvider } from '~/plugins/web3provider'
+import { getCR, getLockedLPT, checkLoan } from '~/data'
 
 // import ABIs and contract addresses
 import { UNISWAP_LPT_ABI, UNBOUND_VALUATOR_ABI, contracts } from '~/constants'
@@ -49,6 +50,13 @@ export const loanRatioPerLPT = async (poolToken) => {
     loanRatioPerLPT: '',
   }
 
+  const crDetails = {
+    cr: null,
+    currentLoan: null,
+    LPTValue: null,
+    minValue: null,
+  }
+
   const reserveIndex =
     tokens[0].toLowerCase() === poolToken.stablecoin.toLowerCase() ? 0 : 1
 
@@ -70,10 +78,41 @@ export const loanRatioPerLPT = async (poolToken) => {
   }
   llcDetails.loanRatioPerLPT =
     ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
-  const LPTPrice = (totalValueInDai / LPTTotalSupply).toFixed(4).slice(0, -1)
+
+  const currentLoan = await checkLoan(
+    poolToken.llcAddress,
+    poolToken.uToken.address
+  )
+  const LPTPrice = totalValueInDai / LPTTotalSupply
+  const lockedLPT = await getLockedLPT(poolToken.llcAddress)
+
+  const targetCR = await getCR(poolToken.llcAddress)
+  crDetails.cr = targetCR
+  crDetails.LPTValue = LPTPrice * lockedLPT.raw
+  crDetails.currentLoan = currentLoan.rawBalance
+
+  // calculate min value needed to unlock if c-ratio is below target CR
+  const currentCR = (crDetails.LPTValue / crDetails.currentLoan) * 10000
+  // condition: CR-target > CR-now
+  if (crDetails.cr > currentCR) {
+    crDetails.minValue =
+      (crDetails.currentLoan - crDetails.LPTValue / (crDetails.cr / 10000)) /
+      1e18
+  } else {
+    crDetails.minValue = 0
+  }
+
+  console.log({
+    ...crDetails,
+    currentCR,
+    LPTPrice,
+    targetCR: crDetails.cr.toString(),
+  })
 
   return {
     ...llcDetails, // loanRate, fee, loanRatioPerLPT
+    ...crDetails, // c-ratio, LPTValue, currentLoan, minValue
     LPTPrice,
+    lockedLPT,
   }
 }
