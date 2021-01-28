@@ -25,7 +25,9 @@
           </button>
         </div>
 
-        <template v-if="llcDetails && poolToken && llcDetails.minValue > 0">
+        <template
+          v-if="llcDetails && poolToken && uTokenAmount < llcDetails.minValue"
+        >
           <p class="text-xs font-medium text-red-500">
             You'll need to pay {{ llcDetails.minValue | toFixed(4) }}
             {{ poolToken.uToken.symbol }} extra to stabalize your
@@ -91,7 +93,7 @@
           </template>
         </input-field>
 
-        <template
+        <!-- <template
           v-if="
             llcDetails && poolToken && llcDetails.minValue && uTokenAmount > 0
           "
@@ -103,7 +105,7 @@
             +{{ llcDetails.minValue | toFixed(4) }}
             {{ poolToken.uToken.symbol }}
           </p>
-        </template>
+        </template> -->
 
         <button
           v-if="isWalletConnected"
@@ -115,6 +117,7 @@
             Number(LPTAmount).toFixed(18) == 0.0
               ? getDisabledClass
               : getActiveClass,
+            shouldDisableUnlock ? getDisabledClass : getActiveClass,
           ]"
           :disabled="shouldDisableUnlock"
           @click="unlock(poolToken)"
@@ -125,16 +128,14 @@
             >Amount should be greater than 0</span
           >
           <span v-else-if="isSufficientBalance">Insufficient Balance</span>
-          <span
-            v-else-if="llcDetails && llcDetails.minValue > 0"
-            class="text-sm"
-            >Pay
-            {{
-              (parseFloat(llcDetails.minValue) + parseFloat(UNDOutput))
-                | toFixed(4)
-            }}
-            {{ poolToken.uToken.symbol }} to unlock</span
+          <template
+            v-else-if="llcDetails && uTokenAmount < llcDetails.minValue"
           >
+            <span class="text-sm"
+              >you need min. {{ llcDetails.minValue }}
+              {{ poolToken.uToken.symbol }} to unlock</span
+            >
+          </template>
           <span v-else>Unlock</span>
         </button>
         <ConnectWalletBtn v-else class="w-full" />
@@ -252,7 +253,8 @@ export default {
           !this.LPTAmount ||
           // eslint-disable-next-line eqeqeq
           Number(this.LPTAmount).toFixed(18) == 0.0 ||
-          this.isSufficientBalance
+          this.isSufficientBalance ||
+          this.uTokenAmount < this.llcDetails.minValue
         )
       } else return false
     },
