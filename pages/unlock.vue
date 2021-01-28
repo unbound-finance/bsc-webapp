@@ -26,7 +26,12 @@
         </div>
 
         <template
-          v-if="llcDetails && poolToken && uTokenAmount < llcDetails.minValue"
+          v-if="
+            llcDetails &&
+            poolToken &&
+            llcDetails.minValue > 0 &&
+            uTokenAmount < llcDetails.minValue
+          "
         >
           <p class="text-xs font-medium text-red-500">
             You'll need to pay {{ llcDetails.minValue | toFixed(4) }}

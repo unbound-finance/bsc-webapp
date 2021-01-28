@@ -19,7 +19,7 @@ export const contracts = {
   UNDUniswapPool: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
   uETHUniswapPool: '0x1ab39c83bab36c8ecbafba448748c50f5eb4db2a',
   uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  valuator: '0xA552D09f27F1297558D28fD9fAfb755AE5d28fB0',
+  valuator: '0x4785692ddaB07535ee8078f283F51e59F1b52e3F',
 }
 
 // Chain ID
