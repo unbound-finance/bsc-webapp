@@ -4,7 +4,7 @@ export default [
     category: 'Stablecoins',
     exchange: 'Uniswap',
     address: '0x6f7400f3c954a873a459cc018cd53a3673db0cb0',
-    llcAddress: '0x19571F3fb4E732950d1d6c7048dF55F00cf4439F',
+    llcAddress: '0x52a726dC0490da8C17D7a767B3ca34F11e4893Ad',
     uniswapAddress: '0xb20bd5d04be54f870d5c0d3ca85d82b34b836405',
     currencyOneLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
@@ -13,7 +13,7 @@ export default [
     stablecoin: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
     uToken: {
       displayName: 'Unbound Dollar',
-      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+      address: '0x74E391535580cFe4916804E9c92829Feca6aE1F1',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -24,7 +24,7 @@ export default [
     exchange: 'Uniswap',
     category: 'Stablecoins',
     address: '0xb0a2a806ec900bb9fe30bd7f6cadd35d74971542',
-    llcAddress: '0x8eDe4b5897f484d0b0fB832a0eDC7D08A942DdA8',
+    llcAddress: '0xF219f98c999d14dCbFE314e089d7B195FA653Cec',
     uniswapAddress: '0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5',
     currencyOneLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
@@ -32,7 +32,7 @@ export default [
     stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
     uToken: {
       displayName: 'Unbound Dollar',
-      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+      address: '0x74E391535580cFe4916804E9c92829Feca6aE1F1',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -43,7 +43,7 @@ export default [
     exchange: 'Uniswap',
     category: 'Stablecoins',
     address: '0x78b8ba24b458fd6c74d07ae9fc903a3e7e1585d3',
-    llcAddress: '0x490F832243Dd08F2242A46bCf623Ad241143Db57',
+    llcAddress: '0x401274987892Ab7F58B92B50D174aD4E7065adA4',
     uniswapAddress: '0x3041cbd36888becc7bbcbc0045e3b1f144466f5f',
     currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     currencyTwoLogo:
@@ -51,7 +51,7 @@ export default [
     stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
     uToken: {
       displayName: 'Unbound Dollar',
-      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+      address: '0x74E391535580cFe4916804E9c92829Feca6aE1F1',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -81,7 +81,7 @@ export default [
     exchange: 'Uniswap',
     category: 'ETH-Stablecoin',
     address: '0xa338ae6943c03c48f6fb6c7bff012d9206c28558',
-    llcAddress: '0xFC53d7cb2b65C1157Db2837459cE74900b2F1D10',
+    llcAddress: '0xa95c9FF6a9b02cf145eCeeeb2804cfB713cef590 ',
     uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo:
@@ -89,7 +89,7 @@ export default [
     stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
     uToken: {
       displayName: 'Unbound Dollar',
-      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+      address: '0x74E391535580cFe4916804E9c92829Feca6aE1F1',
       symbol: 'UND',
       icon: 'und.webp',
     },
@@ -100,14 +100,14 @@ export default [
     exchange: 'Uniswap',
     category: 'ETH-Stablecoin',
     address: '0xd9628d193fd57fe1222b5c533f40d60fc0275c78',
-    llcAddress: '0xC91b5cbbA9003D87003e729269AE4195547F93Ad',
+    llcAddress: '0x06bA3CeD7BD0722e64BDf64129DA4633fb25b824',
     uniswapAddress: '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
     uToken: {
       displayName: 'Unbound Dollar',
-      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+      address: '0x74E391535580cFe4916804E9c92829Feca6aE1F1',
       symbol: 'UND',
       icon: 'und.webp',
     },
