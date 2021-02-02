@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center w-full">
     <div class="mint__input dark:border-gray-700">
       <div class="flex items-center justify-between">
-        <span class="text-sm text-gray-500">{{ label }}</span>
+        <span class="text-xs text-gray-500">{{ label }}</span>
         <slot name="showBalance">
           <div
             v-if="poolToken && type === 'mint'"
@@ -90,13 +90,21 @@
           <input
             v-else
             v-model="model"
-            type="number"
-            placeholder="0.00"
-            class="font-mono text-3xl pr-4 appearance-none bg-transparent text-gray-900 dark:text-gray-200 font-medium leading-tight focus:outline-none"
+            type="text"
+            inputmode="decimal"
+            title="Token Amount"
+            autocomplete="off"
+            autocorrect="off"
+            minlength="1"
+            maxlength="79"
+            spellcheck="false"
+            placeholder="0.0"
+            class="font-mono text-2xl pr-4 appearance-none bg-transparent text-gray-900 dark:text-gray-200 font-medium leading-tight focus:outline-none"
             style="min-width: 0"
             :class="readonly ? 'cursor-not-allowed' : ''"
             :readonly="readonly"
             v-on="listeners"
+            @keypress="onKeyPress"
           />
           <slot name="append">
             <div v-if="poolToken" class="flex flex-col">
@@ -229,7 +237,7 @@ export default {
   },
   data() {
     return {
-      model: this.value,
+      model: this.value || '',
       ui: {
         showTokenListModal: false,
         showUTokenListModal: false,
@@ -278,6 +286,15 @@ export default {
   },
   methods: {
     toFixed,
+    onKeyPress(e) {
+      const { keyCode } = e
+      if (keyCode === 46) {
+        if (!this.model.length) {
+          this.model = '0.'
+        } else if (!this.model.includes('.')) return
+      } else if (keyCode >= 48 && keyCode <= 57) return
+      e.preventDefault()
+    },
     async approve(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
