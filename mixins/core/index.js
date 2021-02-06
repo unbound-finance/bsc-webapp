@@ -1,10 +1,20 @@
 import { ethers } from 'ethers'
 import Web3 from 'web3'
 
-import { UNBOUND_LLC_ABI, UNBOUND_DOLLAR_ABI } from '~/constants'
+import {
+  UNBOUND_LLC_ABI,
+  UNBOUND_DOLLAR_ABI,
+  UNISWAP_ROUTER_ABI,
+  contracts,
+} from '~/constants'
 
 import { loanRatioPerLPT } from '~/utils/pricing'
-import { getEIP712Signature, getNonce, toFixed } from '~/utils'
+import {
+  getEIP712Signature,
+  getNonce,
+  toFixed,
+  isBlocktimeReached,
+} from '~/utils'
 import { getTokenBalance } from '~/utils/ERC20'
 
 import supportedPoolTokens from '~/configs/supportedPoolTokens'
@@ -18,6 +28,7 @@ export default {
         showSuccess: false,
         showRejected: false,
         showAwaiting: false,
+        showCoolDown: false,
         priceLoader: false,
       },
       poolToken: null,
@@ -154,31 +165,94 @@ export default {
 
     async unlock(poolToken) {
       this.ui.showAwaiting = true
-      const { SIGNER } = this.$getProvider()
+      const blockTimeExceeded = await isBlocktimeReached(
+        poolToken.llcAddress.toLowerCase()
+      )
+      if (blockTimeExceeded) {
+        const { SIGNER } = this.$getProvider()
 
+        const contract = new ethers.Contract(
+          poolToken.llcAddress,
+          UNBOUND_LLC_ABI,
+          SIGNER
+        )
+        let rawUNDAmount = ethers.utils.parseEther(
+          this.uTokenAmount.toString().slice(0, 18)
+        )
+        rawUNDAmount = rawUNDAmount.toString()
+
+        try {
+          const unlock = await contract.unlockLPT(rawUNDAmount)
+          this.ui.showAwaiting = false
+          this.txLink = unlock.hash
+          this.ui.showSuccess = true
+          this.LPTAmount = null
+        } catch (error) {
+          if (error.code !== 4001) {
+            this.$logRocket.captureException(error, {
+              tags: {
+                function: 'unlock',
+              },
+              extra: {
+                pageName: 'Unlock',
+              },
+            })
+            this.$logRocket.identify(this.$store.state.address)
+          }
+          this.ui.showAwaiting = false
+          this.ui.showRejected = true
+        }
+      } else {
+        this.ui.showAwaiting = false
+        this.ui.showCoolDown = true
+      }
+    },
+
+    async addLiquidity(tokenA, tokenB, amountA, amountB) {
+      this.ui.showAwaiting = true
+      const { SIGNER } = this.$getProvider()
       const contract = new ethers.Contract(
-        poolToken.llcAddress,
-        UNBOUND_LLC_ABI,
+        contracts.uniswapRouter,
+        UNISWAP_ROUTER_ABI,
         SIGNER
       )
-      let rawUNDAmount = ethers.utils.parseEther(
-        this.uTokenAmount.toString().slice(0, 18)
-      )
-      rawUNDAmount = rawUNDAmount.toString()
+      const formatAmountA = toFixed(amountA * 1e18).toString()
+      const formatAmountB = toFixed(amountB * 1e18).toString()
+
+      const amountADesired = formatAmountB
+      const amountBDesired = formatAmountB
+      const amountAMin = toFixed(
+        formatAmountA - (formatAmountA * 10) / 100
+      ).toString()
+      const amountBMin = toFixed(
+        formatAmountB - (formatAmountB * 10) / 100
+      ).toString()
+      const to = await SIGNER.getAddress()
+      const deadline = +new Date() + 5000
 
       try {
-        const unlock = await contract.unlockLPT(rawUNDAmount)
+        const transaction = await contract.addLiquidity(
+          tokenA,
+          tokenB,
+          amountADesired,
+          amountBDesired,
+          amountAMin,
+          amountBMin,
+          to,
+          deadline
+        )
+        this.txLink = transaction.hash
         this.ui.showAwaiting = false
-        this.txLink = unlock.hash
         this.ui.showSuccess = true
       } catch (error) {
         if (error.code !== 4001) {
+          if (error) throw new Error(error)
           this.$logRocket.captureException(error, {
             tags: {
-              function: 'unlock',
+              function: 'addLiquidity',
             },
             extra: {
-              pageName: 'Unlock',
+              pageName: 'Add Liquidity',
             },
           })
           this.$logRocket.identify(this.$store.state.address)

@@ -1,5 +1,7 @@
 import { ethers } from 'ethers'
-import { CHAIN_ID } from '~/constants'
+import Axios from 'axios'
+import { CHAIN_ID, ETHERSCAN_HOST } from '~/constants'
+import { getProvider } from '~/plugins/web3provider'
 
 // get nonce from Uniswap for the permit()s
 export const getNonce = async (poolTokenAddress, signer) => {
@@ -148,4 +150,49 @@ export function countDecimals(value) {
     return val.toString().split('.')[1].length || 0
   }
   return 0
+}
+
+const getBlockNumberByTimestamp = async (timestamp) => {
+  try {
+    const params = {
+      module: 'block',
+      action: 'getblocknobytime',
+      timestamp,
+      closest: 'after',
+    }
+    const { data } = await Axios.get(ETHERSCAN_HOST, { params })
+    return data.result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+export const isBlocktimeReached = async (llcAddress) => {
+  try {
+    const { SIGNER } = getProvider()
+    const userAddress = await SIGNER.getAddress()
+    const startBlock = await getBlockNumberByTimestamp(
+      Math.round(new Date().getTime() / 1000 - 20 * 60)
+    )
+    const params = {
+      module: 'account',
+      action: 'txlist',
+      address: userAddress,
+      sort: 'desc',
+      startBlock,
+      apiKey: 'HUWMR5VJHDQ7EEZYEUWQAAHBNMURE1R1CH',
+    }
+    const { data } = await Axios.get(ETHERSCAN_HOST, { params })
+    const txList = data.result || []
+    // checking for llc address presence in last 20 minutes
+    const llcPresent = txList
+      .map((tx) => {
+        return tx.to
+      })
+      .includes(llcAddress)
+    if (llcPresent) return false
+    else return true
+  } catch (error) {
+    throw new Error(error)
+  }
 }
