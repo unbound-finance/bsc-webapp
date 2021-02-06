@@ -108,38 +108,12 @@
         </div>
       </div>
 
-      <button
+      <remove-liq-button
         v-if="isWalletConnected"
-        class="font-medium w-full py-2 rounded-md focus:outline-none"
-        :class="[
-          !uToken ? getDisabledClass : getActiveClass,
-          !uTokenAmount ? getDisabledClass : getActiveClass,
-          isSufficentBalance ? getDisabledClass : getActiveClass,
-          uTokenAmount === '0' ? getDisabledClass : getActiveClass,
-          shouldDisableRemove ? getDisabledClass : getActiveClass,
-          Number(uTokenAmount).toFixed(18) == 0.0
-            ? getDisabledClass
-            : getActiveClass,
-        ]"
-        :disabled="shouldDisableRemove"
+        :u-token="uToken"
+        :u-token-amount="uTokenAmount"
         @click="removeLiquidity"
-      >
-        <span v-if="!uToken">Select Token</span>
-        <span v-else-if="!uTokenAmount">Enter An Amount</span>
-        <span v-else-if="isSufficentBalance.cd">{{
-          isSufficentBalance.msg
-        }}</span>
-        <span v-else-if="Number(uTokenAmount).toFixed(18) == 0.0"
-          >Amount should be greater than 0</span
-        >
-        <span
-          v-else-if="
-            uToken.uTokenAllowance == '0' || uToken.tokenAllowance == '0'
-          "
-          >Please Approve Tokens</span
-        >
-        <span v-else>Remove Liquidity</span>
-      </button>
+      />
       <ConnectWalletBtn v-else class="w-full" />
     </div>
 

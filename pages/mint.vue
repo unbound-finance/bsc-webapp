@@ -89,6 +89,7 @@
           v-if="isWalletConnected"
           :l-p-t-amount="LPTAmount"
           :pool-token="poolToken"
+          @click="mint(poolToken)"
         />
         <ConnectWalletBtn v-else class="w-full" />
       </div>

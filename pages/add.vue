@@ -107,21 +107,10 @@
           </div>
         </div>
       </div> -->
-
-      <button
+      <add-liq-button
         v-if="isWalletConnected"
-        class="font-medium w-full py-2 rounded-md focus:outline-none"
-        :class="[
-          !uToken ? getDisabledClass : getActiveClass,
-          !uTokenAmount ? getDisabledClass : getActiveClass,
-          isSufficentBalance ? getDisabledClass : getActiveClass,
-          uTokenAmount === '0' ? getDisabledClass : getActiveClass,
-          shouldDisableAddLiquidity ? getDisabledClass : getActiveClass,
-          Number(uTokenAmount).toFixed(18) == 0.0
-            ? getDisabledClass
-            : getActiveClass,
-        ]"
-        :disabled="shouldDisableAddLiquidity"
+        :u-token="uToken"
+        :u-token-amount="uTokenAmount"
         @click="
           addLiquidity(
             uToken.token.address,
@@ -130,24 +119,7 @@
             uTokenAmount
           )
         "
-      >
-        <span v-if="!uToken">Select Token</span>
-        <span v-else-if="!uTokenAmount">Enter An Amount</span>
-        <span v-else-if="isSufficentBalance.cd">{{
-          isSufficentBalance.msg
-        }}</span>
-        <span v-else-if="Number(uTokenAmount).toFixed(18) == 0.0"
-          >Amount should be greater than 0</span
-        >
-        <span
-          v-else-if="
-            uToken.uTokenAllowance == '0' || uToken.tokenAllowance == '0'
-          "
-          >Please Approve Tokens</span
-        >
-        <span v-else>Add Liquidity</span>
-      </button>
-
+      />
       <ConnectWalletBtn v-else class="w-full" />
     </div>
 
@@ -187,43 +159,6 @@ export default {
     isWalletConnected() {
       return !!this.$store.state.address
     },
-
-    isSufficentBalance() {
-      if (
-        this.uToken &&
-        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.uTokenbalance)
-      ) {
-        return { cd: true, msg: `Insufficient ${this.uToken.name} Balance` }
-      } else if (
-        this.uToken &&
-        parseFloat(this.uTokenAmount) > parseFloat(this.uToken.tokenBalance)
-      ) {
-        return {
-          cd: true,
-          msg: `Insufficient ${this.uToken.token.name} Balance`,
-        }
-      } else return false
-    },
-
-    shouldDisableAddLiquidity() {
-      return (
-        !this.uToken ||
-        !this.uTokenAmount ||
-        // eslint-disable-next-line eqeqeq
-        Number(this.uTokenAmount).toFixed(18) == 0.0 ||
-        this.isSufficentBalance.cd ||
-        this.uToken.uTokenAllowance === '0' ||
-        this.uToken.tokenAllowance === '0'
-      )
-    },
-
-    getDisabledClass() {
-      return 'bg-gray-300 dark:bg-gray-900 text-gray-600 dark:text-gray-700 cursor-not-allowed'
-    },
-
-    getActiveClass() {
-      return 'bg-light-primary text-white dark:bg-dark-primary'
-    },
   },
 
   methods: {
@@ -251,23 +186,6 @@ export default {
         this.ui.showRejected = true
       }
     },
-    // async addLiquidity(uToken, token) {
-    //   this.ui.showAwaiting = true
-    //   try {
-    //     const transaction = await addLiquidity(
-    //       this.uToken.token.address,
-    //       this.uToken.address,
-    //       this.uTokenAmount,
-    //       this.uTokenAmount
-    //     )
-    //     this.txLink = transaction.hash
-    //     this.ui.showAwaiting = false
-    //     this.ui.showSuccess = true
-    //   } catch (error) {
-    //     this.ui.showAwaiting = false
-    //     this.ui.showRejected = true
-    //   }
-    // },
   },
 }
 </script>

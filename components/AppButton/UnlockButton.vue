@@ -49,36 +49,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss">
-.app-button {
-  @apply font-medium;
-  @apply w-full;
-  @apply py-2;
-  @apply rounded-md;
-
-  &:focus {
-    @apply outline-none;
-  }
-  &.disable {
-    @apply bg-gray-300;
-    @apply text-gray-600;
-    @apply cursor-not-allowed;
-  }
-  &.active {
-    @apply bg-light-primary;
-    @apply text-white;
-  }
-}
-.dark-mode {
-  .app-button {
-    &.disable {
-      @apply bg-gray-900;
-      @apply text-gray-700;
-    }
-    &.active {
-      @apply bg-dark-primary;
-    }
-  }
-}
-</style>
