@@ -63,7 +63,7 @@
           <div v-if="data.expanded" class="flex flex-col pt-2">
             <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
               <div class="w-1/2">
-                <p>Pooled Dai</p>
+                <p>Pooled {{ data.token.name }}</p>
               </div>
               <div class="w-1/2 text-right">
                 <p>{{ data.poolInfo.token0 | toFixed(4) }}</p>
@@ -71,7 +71,7 @@
             </div>
             <div class="flex flex-wrap px-4 w-full dark:text-white text-sm">
               <div class="w-1/2">
-                <p>Pooled UND</p>
+                <p>Pooled {{ data.name }}</p>
               </div>
               <div class="w-1/2 text-right">
                 <p>{{ data.poolInfo.token1 | toFixed(4) }}</p>
