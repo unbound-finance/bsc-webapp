@@ -85,32 +85,11 @@
           </p>
         </div>
 
-        <button
+        <mint-button
           v-if="isWalletConnected"
-          class="font-medium w-full py-2 rounded-md focus:outline-none"
-          :class="[
-            !poolToken ? getDisabledClass : getActiveClass,
-            !LPTAmount ? getDisabledClass : getActiveClass,
-            LPTAmount === '0' ? getDisabledClass : getActiveClass,
-            isSufficentBalance ? getDisabledClass : getActiveClass,
-            Number(LPTAmount).toFixed(18) == 0.0
-              ? getDisabledClass
-              : getActiveClass,
-          ]"
-          :disabled="shouldDisableMint"
-          @click="ui.showConfirmation = true"
-        >
-          <span v-if="!poolToken">Select Pool Token</span>
-          <span v-else-if="!LPTAmount || LPTAmount === '0'"
-            >Enter An Amount</span
-          >
-          <span v-else-if="isSufficentBalance">Insufficient Balance</span>
-          <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
-            >Amount should be greater than 0</span
-          >
-          <span v-else>Mint</span>
-        </button>
-
+          :l-p-t-amount="LPTAmount"
+          :pool-token="poolToken"
+        />
         <ConnectWalletBtn v-else class="w-full" />
       </div>
 
@@ -408,8 +387,10 @@
 <script>
 import { countDecimals, toFixed } from '~/utils'
 import core from '~/mixins/core'
+import MintButton from '~/components/AppButton/MintButton.vue'
 
 export default {
+  components: { MintButton },
   mixins: [core],
   computed: {
     UNDOutput() {
@@ -441,14 +422,6 @@ export default {
         Number(this.LPTAmount).toFixed(18) == 0.0 ||
         this.isSufficentBalance
       )
-    },
-
-    getDisabledClass() {
-      return 'bg-gray-300 dark:bg-gray-900 text-gray-600 dark:text-gray-700 cursor-not-allowed'
-    },
-
-    getActiveClass() {
-      return 'bg-light-primary text-white dark:bg-dark-primary'
     },
 
     lptTextSize() {
@@ -494,18 +467,4 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.bottom-container {
-  width: 100%;
-  max-width: 400px;
-  padding-top: calc(24px + 2rem);
-  padding-bottom: 20px;
-  margin-top: -2rem;
-  margin-bottom: 2rem;
-  background: rgba(255, 255, 255, 0.75);
-  border-radius: 16px;
-  z-index: 1;
-  transform: translateY();
-  transition: transform 300ms ease-in-out 0s;
-}
-</style>
+<style lang="scss"></style>

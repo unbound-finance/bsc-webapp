@@ -112,43 +112,21 @@
           </p>
         </template> -->
 
-        <button
+        <unlock-button
           v-if="isWalletConnected"
-          class="font-medium w-full py-2 rounded-md focus:outline-none"
-          :class="[
-            !poolToken ? getDisabledClass : getActiveClass,
-            !LPTAmount ? getDisabledClass : getActiveClass,
-            isSufficientBalance ? getDisabledClass : getActiveClass,
-            Number(LPTAmount).toFixed(18) == 0.0
-              ? getDisabledClass
-              : getActiveClass,
-            shouldDisableUnlock ? getDisabledClass : getActiveClass,
-          ]"
-          :disabled="shouldDisableUnlock"
+          :l-p-t-amount="LPTAmount"
+          :u-token-amount="uTokenAmount"
+          :pool-token="poolToken"
+          :llc-details="llcDetails"
           @click="unlock(poolToken)"
-        >
-          <span v-if="!poolToken">Select Pool Token</span>
-          <span v-else-if="!LPTAmount">Enter An Amount</span>
-          <span v-else-if="Number(LPTAmount).toFixed(18) == 0.0"
-            >Amount should be greater than 0</span
-          >
-          <span v-else-if="isSufficientBalance">Insufficient Balance</span>
-          <template
-            v-else-if="llcDetails && uTokenAmount < llcDetails.minValue"
-          >
-            <span class="text-sm"
-              >you need min. {{ llcDetails.minValue }}
-              {{ poolToken.uToken.symbol }} to unlock</span
-            >
-          </template>
-          <span v-else>Unlock</span>
-        </button>
+        />
         <ConnectWalletBtn v-else class="w-full" />
       </div>
 
       <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
       <RejectedModal v-model="ui.showRejected" />
       <AwaitingModal v-model="ui.showAwaiting" />
+      <BlockTimeModal v-model="ui.showCoolDown" />
     </div>
 
     <!-- Show fees -->
@@ -253,39 +231,6 @@ export default {
 
     isWalletConnected() {
       return !!this.$store.state.address
-    },
-    isSufficientBalance() {
-      if (this.poolToken) {
-        if (
-          parseFloat(this.LPTAmount) >
-            parseFloat(this.poolToken.lockedBalance) ||
-          parseFloat(this.uTokenAmount) >
-            parseFloat(this.poolToken.uTokenBalance)
-        ) {
-          return true
-        } else return false
-      }
-      return false
-    },
-    shouldDisableUnlock() {
-      if (this.llcDetails) {
-        return (
-          !this.poolToken ||
-          !this.LPTAmount ||
-          // eslint-disable-next-line eqeqeq
-          Number(this.LPTAmount).toFixed(18) == 0.0 ||
-          this.isSufficientBalance ||
-          this.uTokenAmount < this.llcDetails.minValue
-        )
-      } else return false
-    },
-
-    getDisabledClass() {
-      return 'bg-gray-300 dark:bg-gray-900 text-gray-600 dark:text-gray-700 cursor-not-allowed'
-    },
-
-    getActiveClass() {
-      return 'bg-light-primary text-white dark:bg-dark-primary'
     },
   },
   watch: {
