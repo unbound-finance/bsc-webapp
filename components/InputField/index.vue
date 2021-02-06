@@ -59,7 +59,7 @@
               Balance:
               <span
                 class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-                >{{ uToken.uTokenbalance }}</span
+                >{{ uToken.uTokenbalance | toFixed(6) }}</span
               >
             </p>
           </div>
