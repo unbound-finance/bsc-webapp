@@ -5,7 +5,7 @@ import { UNBOUND_DOLLAR_ABI, UNBOUND_LLC_ABI } from '~/constants'
 
 const checkLoan = async (LLCAddress, uTokenAddress) => {
   const { SIGNER } = getProvider()
-  const contract = await new ethers.Contract(
+  const contract = new ethers.Contract(
     uTokenAddress,
     UNBOUND_DOLLAR_ABI,
     SIGNER
@@ -29,7 +29,7 @@ const getLockedLPT = async (LLCAddress) => {
       raw: getLocked,
     }
   } catch (error) {
-    console.log(error)
+    throw new Error(error)
   }
 }
 
@@ -40,7 +40,7 @@ const getCR = async (LLCAddress) => {
     const getCR = await contract.CREnd()
     return getCR
   } catch (error) {
-    console.log(error)
+    throw new Error(error)
   }
 }
 

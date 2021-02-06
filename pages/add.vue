@@ -47,7 +47,7 @@
             Balance:
             <span
               class="font-mono text-gray-900 dark:text-gray-500 font-medium"
-              >{{ uToken.tokenBalance }}</span
+              >{{ uToken.tokenBalance | toFixed(6) }}</span
             >
           </p>
         </template>
@@ -122,7 +122,14 @@
             : getActiveClass,
         ]"
         :disabled="shouldDisableAddLiquidity"
-        @click="addLiquidity(uToken.address, uToken.token.address)"
+        @click="
+          addLiquidity(
+            uToken.token.address,
+            uToken.address,
+            uTokenAmount,
+            uTokenAmount
+          )
+        "
       >
         <span v-if="!uToken">Select Token</span>
         <span v-else-if="!uTokenAmount">Enter An Amount</span>
@@ -152,11 +159,11 @@
 
 <script>
 import { ethers } from 'ethers'
-
 import { ERC20_ABI, contracts } from '~/constants'
-import { addLiquidity } from '~/mixins/stake'
+import core from '~/mixins/core'
 
 export default {
+  mixins: [core],
   data() {
     return {
       uTokenAmount: null,
@@ -223,11 +230,7 @@ export default {
     async approve(tokenAddress) {
       const provider = new ethers.providers.Web3Provider(window.ethereum)
       const signer = provider.getSigner()
-      const contract = await new ethers.Contract(
-        tokenAddress,
-        ERC20_ABI,
-        signer
-      )
+      const contract = new ethers.Contract(tokenAddress, ERC20_ABI, signer)
       try {
         const totalSupply = contract.totalSupply()
         await contract.approve(contracts.uniswapRouter, totalSupply)
@@ -248,23 +251,23 @@ export default {
         this.ui.showRejected = true
       }
     },
-    async addLiquidity(uToken, token) {
-      this.ui.showAwaiting = true
-      try {
-        const transaction = await addLiquidity(
-          this.uToken.token.address,
-          this.uToken.address,
-          this.uTokenAmount,
-          this.uTokenAmount
-        )
-        this.txLink = transaction.hash
-        this.ui.showAwaiting = false
-        this.ui.showSuccess = true
-      } catch (error) {
-        this.ui.showAwaiting = false
-        this.ui.showRejected = true
-      }
-    },
+    // async addLiquidity(uToken, token) {
+    //   this.ui.showAwaiting = true
+    //   try {
+    //     const transaction = await addLiquidity(
+    //       this.uToken.token.address,
+    //       this.uToken.address,
+    //       this.uTokenAmount,
+    //       this.uTokenAmount
+    //     )
+    //     this.txLink = transaction.hash
+    //     this.ui.showAwaiting = false
+    //     this.ui.showSuccess = true
+    //   } catch (error) {
+    //     this.ui.showAwaiting = false
+    //     this.ui.showRejected = true
+    //   }
+    // },
   },
 }
 </script>

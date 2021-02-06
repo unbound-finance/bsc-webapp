@@ -6,12 +6,12 @@ import supportedPoolTokens from '~/configs/supportedPoolTokens'
 export const getTotalLiquidity = async () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
-  const und = await new ethers.Contract(
+  const und = new ethers.Contract(
     contracts.UNDUniswapPool,
     UNISWAP_LPT_ABI,
     signer
   )
-  const ueth = await new ethers.Contract(
+  const ueth = new ethers.Contract(
     contracts.uETHUniswapPool,
     UNISWAP_LPT_ABI,
     signer
@@ -41,13 +41,13 @@ export const getCRatio = async () => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   // Get total UND and uETH minted
-  const und = await new ethers.Contract(
+  const und = new ethers.Contract(
     contracts.unboundDai,
     UNBOUND_DOLLAR_ABI,
     signer
   )
 
-  const ueth = await new ethers.Contract(
+  const ueth = new ethers.Contract(
     contracts.unboundEth,
     UNBOUND_DOLLAR_ABI,
     signer
