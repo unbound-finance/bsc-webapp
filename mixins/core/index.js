@@ -116,6 +116,14 @@ export default {
             SIGNER
           )
           try {
+            console.log({
+              amount,
+              deadline,
+              v: signature.v,
+              r: signature.r,
+              s: signature.s,
+              finalMinAmount,
+            })
             const mintUND = await UnboundLLCContract.lockLPTWithPermit(
               amount,
               deadline,

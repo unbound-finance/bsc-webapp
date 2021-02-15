@@ -76,6 +76,8 @@ export const loanRatioPerLPT = async (poolToken) => {
     // removes decimals to match 18
     totalValueInDai = totalValueInDai / 10 ** difference
   }
+
+  console.log({ totalValueInDai, LPTTotalSupply, loanRate: llc.loanRate })
   llcDetails.loanRatioPerLPT =
     ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
 
@@ -103,6 +105,7 @@ export const loanRatioPerLPT = async (poolToken) => {
   }
 
   console.log({
+    ...llcDetails,
     ...crDetails,
     currentCR,
     LPTPrice,
