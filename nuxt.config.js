@@ -104,6 +104,7 @@ export default {
     '@nuxtjs/dayjs',
     '@nuxtjs/dotenv',
     'nuxt-logrocket',
+    '@nuxt/http',
     [
       '@dansmaculotte/nuxt-security',
       {

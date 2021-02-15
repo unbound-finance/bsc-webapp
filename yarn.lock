@@ -1411,6 +1411,20 @@
     html-minifier "^4.0.0"
     node-html-parser "^1.2.20"
 
+"@nuxt/http@^0.6.2":
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/@nuxt/http/-/http-0.6.2.tgz#194002fcf037f69b1572a6439f449839154e4b6a"
+  integrity sha512-XD1w1W92iKqA5Jo7pT3AgoLsWIUy4k3Ae7zyi+sgmFLReISjvr8neXbWiwxRm0yolsAg/WM++gDKFfGTh2LH8g==
+  dependencies:
+    "@nuxtjs/proxy" "^2.1.0"
+    abort-controller "^3.0.0"
+    consola "^2.15.0"
+    defu "^3.2.2"
+    destr "^1.0.1"
+    ky "^0.25.1"
+    node-fetch "^2.6.1"
+    web-streams-polyfill "^3.0.1"
+
 "@nuxt/loading-screen@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@nuxt/loading-screen/-/loading-screen-2.0.2.tgz#2082e813a93bb4efa42be05a6b448121b5f1cad8"
@@ -1645,6 +1659,13 @@
   dependencies:
     consola "^2.11.3"
     http-proxy-middleware "^1.0.4"
+
+"@nuxtjs/proxy@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@nuxtjs/proxy/-/proxy-2.1.0.tgz#fa7715a11d237fa1273503c4e9e137dd1bf5575b"
+  integrity sha512-/qtoeqXgZ4Mg6LRg/gDUZQrFpOlOdHrol/vQYMnKu3aN3bP90UfOUB3QSDghUUK7OISAJ0xp8Ld78aHyCTcKCQ==
+  dependencies:
+    http-proxy-middleware "^1.0.6"
 
 "@nuxtjs/pwa@^3.0.0-beta.20":
   version "3.0.2"
@@ -2061,6 +2082,13 @@ abbrev@1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/abbrev/-/abbrev-1.1.1.tgz#f8f2c887ad10bf67f634f005b6987fed3179aac8"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
+
+abort-controller@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/abort-controller/-/abort-controller-3.0.0.tgz#eaf54d53b62bae4138e809ca225c8439a6efb392"
+  integrity sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==
+  dependencies:
+    event-target-shim "^5.0.0"
 
 accepts@~1.3.5, accepts@~1.3.7:
   version "1.3.7"
@@ -3899,6 +3927,11 @@ defu@^3.1.0:
   resolved "https://registry.yarnpkg.com/defu/-/defu-3.1.0.tgz#a6b5104cacc06aa1efa01923becddbedd32505e8"
   integrity sha512-pc7vS4wbYFtsRL+OaLHKD72VcpOz9eYgzZeoLz9pCs+R8htyPdZnD1CxKP9ttZuT90CLPYFTSaTyc3/7v4gG9A==
 
+defu@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/defu/-/defu-3.2.2.tgz#be20f4cc49b9805d54ee6b610658d53894942e97"
+  integrity sha512-8UWj5lNv7HD+kB0e9w77Z7TdQlbUYDVWqITLHNqFIn6khrNHv5WQo38Dcm1f6HeNyZf0U7UbPf6WeZDSdCzGDQ==
+
 delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
@@ -3931,6 +3964,11 @@ destr@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/destr/-/destr-1.0.0.tgz#c445ef0baaf3e51a6d08551d453d6f73fbda2dc6"
   integrity sha512-uw0zD4688l00hDftUP76EWyweDtOB/0mVd/8GvmwecYD+Akw5Z4v43pw4onVsz4rC/BsfnZnDMG2rdTGhVIODA==
+
+destr@^1.0.1:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/destr/-/destr-1.1.0.tgz#2da6add6ba71e04fd0abfb1e642d4f6763235095"
+  integrity sha512-Ev/sqS5AzzDwlpor/5wFCDu0dYMQu/0x2D6XfAsQ0E7uQmamIgYJ6Dppo2T2EOFVkeVYWjc+PCLKaqZZ57qmLg==
 
 destroy@^1.0.4, destroy@~1.0.4:
   version "1.0.4"
@@ -4795,6 +4833,11 @@ ethjs-util@0.1.6, ethjs-util@^0.1.3:
   dependencies:
     is-hex-prefixed "1.0.0"
     strip-hex-prefix "1.0.0"
+
+event-target-shim@^5.0.0:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
+  integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
 eventemitter3@4.0.4:
   version "4.0.4"
@@ -5894,6 +5937,17 @@ http-proxy-middleware@^1.0.4:
     lodash "^4.17.19"
     micromatch "^4.0.2"
 
+http-proxy-middleware@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/http-proxy-middleware/-/http-proxy-middleware-1.0.6.tgz#0618557722f450375d3796d701a8ac5407b3b94e"
+  integrity sha512-NyL6ZB6cVni7pl+/IT2W0ni5ME00xR0sN27AQZZrpKn1b+qRh+mLbBxIq9Cq1oGfmTc7BUq4HB77mxwCaxAYNg==
+  dependencies:
+    "@types/http-proxy" "^1.17.4"
+    http-proxy "^1.18.1"
+    is-glob "^4.0.1"
+    lodash "^4.17.20"
+    micromatch "^4.0.2"
+
 http-proxy@^1.18.1:
   version "1.18.1"
   resolved "https://registry.yarnpkg.com/http-proxy/-/http-proxy-1.18.1.tgz#401541f0534884bbf95260334e72f88ee3976549"
@@ -6634,6 +6688,11 @@ klona@^2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.4.tgz#7bb1e3affb0cb8624547ef7e8f6708ea2e39dfc0"
   integrity sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==
+
+ky@^0.25.1:
+  version "0.25.1"
+  resolved "https://registry.yarnpkg.com/ky/-/ky-0.25.1.tgz#0df0bd872a9cc57e31acd5dbc1443547c881bfbc"
+  integrity sha512-PjpCEWlIU7VpiMVrTwssahkYXX1by6NCT0fhTUX34F3DTinARlgMpriuroolugFPcMgpPWrOW4mTb984Qm1RXA==
 
 last-call-webpack-plugin@^3.0.0:
   version "3.0.0"
@@ -11068,6 +11127,11 @@ watchpack@^1.7.4:
   optionalDependencies:
     chokidar "^3.4.1"
     watchpack-chokidar2 "^2.0.0"
+
+web-streams-polyfill@^3.0.1:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/web-streams-polyfill/-/web-streams-polyfill-3.0.2.tgz#402061089a61a2465457938abaa1b9e4db1bcc0f"
+  integrity sha512-JTNkNbAKoSo8NKiqu2UUaqRFCDWWZaCOsXuJEsToWopikTA0YHKKUf91GNkS/SnD8JixOkJjVsiacNlrFnRECA==
 
 web3-bzz@1.3.0:
   version "1.3.0"
