@@ -1,7 +1,9 @@
+import { uToken } from '~/constants'
+
 export default [
   {
     name: 'UND',
-    address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+    address: uToken.UND,
     icon: 'und.webp',
     lptAddress: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
     token: {
