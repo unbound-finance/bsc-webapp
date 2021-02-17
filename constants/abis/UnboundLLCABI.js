@@ -17,14 +17,14 @@ export default [
         type: 'address',
       },
       {
-        internalType: 'address',
+        internalType: 'address[]',
         name: 'priceFeedAddress',
-        type: 'address',
+        type: 'address[]',
       },
       {
-        internalType: 'address',
+        internalType: 'address[]',
         name: 'priceFeedBaseAsset',
-        type: 'address',
+        type: 'address[]',
       },
       {
         internalType: 'address',
@@ -98,7 +98,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -112,7 +111,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -126,7 +124,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -140,7 +137,38 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'baseAssets',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'blockLimit',
+    outputs: [
+      {
+        internalType: 'uint8',
+        name: '',
+        type: 'uint8',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
@@ -154,21 +182,19 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
     name: 'maxPercentDiff',
     outputs: [
       {
-        internalType: 'uint8',
+        internalType: 'uint32',
         name: '',
-        type: 'uint8',
+        type: 'uint32',
       },
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [],
@@ -182,7 +208,25 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'nextBlock',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
@@ -196,7 +240,25 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'tokenFeeds',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [
@@ -255,34 +317,6 @@ export default [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'getLatestPrice',
-    outputs: [
-      {
-        internalType: 'int256',
-        name: '',
-        type: 'int256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-  {
-    inputs: [],
-    name: 'getLatestPriceBaseAsset',
-    outputs: [
-      {
-        internalType: 'int256',
-        name: '',
-        type: 'int256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-    constant: true,
-  },
-  {
     inputs: [
       {
         internalType: 'uint256',
@@ -313,7 +347,19 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint8',
+        name: 'newLimit',
+        type: 'uint8',
+      },
+    ],
+    name: 'setBlockLimit',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     inputs: [
@@ -378,7 +424,6 @@ export default [
     ],
     stateMutability: 'view',
     type: 'function',
-    constant: true,
   },
   {
     inputs: [
@@ -389,6 +434,13 @@ export default [
       },
     ],
     name: 'setOwner',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'claimOwner',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
