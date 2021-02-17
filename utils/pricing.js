@@ -79,12 +79,8 @@ export const loanRatioPerLPT = async (poolToken) => {
 
   console.log({ totalValueInDai, LPTTotalSupply, loanRate: llc.loanRate })
 
-  // if loanRate is 0 then loanRatio per LPT is 100%
   llcDetails.loanRatioPerLPT =
-    ((totalValueInDai / LPTTotalSupply) *
-      // eslint-disable-next-line eqeqeq
-      (llc.loanRate == 0 ? 100 * 10000 : llc.loanRate)) /
-    1e6
+    ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
 
   const currentLoan = await checkLoan(
     poolToken.llcAddress,

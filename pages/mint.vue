@@ -172,7 +172,7 @@
                   </p>
                   <p class="font-medium font-mono dark:text-white">
                     <template v-if="llcDetails">
-                      {{ (llcDetails.loanRate * 100) / 1e6 }}%
+                      {{ llcDetails.loanRate / 1e4 }}%
                     </template>
                     <template v-else>-</template>
                   </p>
@@ -340,7 +340,7 @@
             </p>
             <p class="font-medium text-sm dark:text-white font-mono">
               <template v-if="llcDetails">
-                {{ (llcDetails.loanRate * 100) / 1e6 }}%
+                {{ llcDetails.loanRate / 1e4 }}%
               </template>
               <template v-else> - </template>
             </p>
