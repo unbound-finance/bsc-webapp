@@ -178,7 +178,7 @@ export default {
       )
       if (blockTimeExceeded) {
         const { SIGNER } = this.$getProvider()
-
+        const userAddress = await SIGNER.getAddress()
         const contract = new ethers.Contract(
           poolToken.llcAddress,
           UNBOUND_LLC_ABI,
@@ -191,10 +191,22 @@ export default {
 
         try {
           const unlock = await contract.unlockLPT(rawUNDAmount)
+          localStorage.setItem(
+            'txStatus',
+            JSON.stringify({
+              pending: true,
+              txHash: unlock.hash,
+              llcAddress: poolToken.llcAddress,
+              userAddress,
+            })
+          )
           this.ui.showAwaiting = false
           this.txLink = unlock.hash
           this.ui.showSuccess = true
           this.LPTAmount = null
+          unlock.wait(5).then(() => {
+            localStorage.removeItem('txStatus')
+          })
         } catch (error) {
           if (error.code !== 4001) {
             this.$logRocket.captureException(error, {

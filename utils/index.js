@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import Axios from 'axios'
-import { CHAIN_ID, ETHERSCAN_HOST } from '~/constants'
+
+import { CHAIN_ID, ETHERSCAN_HOST, UNBOUND_LLC_ABI } from '~/constants'
 import { getProvider } from '~/plugins/web3provider'
 
 // get nonce from Uniswap for the permit()s
@@ -152,16 +153,37 @@ export function countDecimals(value) {
   return 0
 }
 
-const getBlockNumberByTimestamp = async (timestamp) => {
+const getBlockLimit = async (llcAddress) => {
+  const { SIGNER } = getProvider()
+  const llcContract = new ethers.Contract(llcAddress, UNBOUND_LLC_ABI, SIGNER)
+  const blockLimit = await llcContract.blockLimit()
+  return blockLimit || 0
+}
+
+const getCurrentBlock = async () => {
   try {
     const params = {
-      module: 'block',
-      action: 'getblocknobytime',
-      timestamp,
-      closest: 'after',
+      module: 'proxy',
+      action: 'eth_blockNumber',
     }
     const { data } = await Axios.get(ETHERSCAN_HOST, { params })
-    return data.result
+    return data.result.toString()
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+const isPending = (llcAddress, userAddress) => {
+  try {
+    const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+    if (
+      txStatus &&
+      txStatus.pending &&
+      txStatus.llcAddress.toLowerCase() === llcAddress &&
+      txStatus.userAddress.toLowerCase() === userAddress.toLowerCase()
+    )
+      return true
+    else return false
   } catch (error) {
     throw new Error(error)
   }
@@ -171,9 +193,11 @@ export const isBlocktimeReached = async (llcAddress) => {
   try {
     const { SIGNER } = getProvider()
     const userAddress = await SIGNER.getAddress()
-    const startBlock = await getBlockNumberByTimestamp(
-      Math.round(new Date().getTime() / 1000 - 20 * 60)
-    )
+    const pending = isPending(llcAddress, userAddress)
+    if (pending) return false
+    const llcBlockLimit = await getBlockLimit(llcAddress)
+    const currentBlock = await getCurrentBlock()
+    const startBlock = currentBlock - llcBlockLimit
     const params = {
       module: 'account',
       action: 'txlist',
