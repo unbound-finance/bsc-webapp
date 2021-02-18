@@ -5,7 +5,6 @@
         <p class="text-lg text-gray-800 dark:text-white font-medium">
           Cool Down ❄️
         </p>
-        {{ targetBlockNumber }}
         <p
           v-if="targetBlockNumber > 0"
           class="text-gray-600 dark:text-gray-700 text-xs py-1"
