@@ -36,6 +36,7 @@ export default {
       uTokenAmount: null,
       txLink: '',
       supportedPoolTokens,
+      targetBlockNumber: 0,
     }
   },
   asyncComputed: {
@@ -173,10 +174,10 @@ export default {
 
     async unlock(poolToken) {
       this.ui.showAwaiting = true
-      const blockTimeExceeded = await isBlocktimeReached(
+      const prevTx = await isBlocktimeReached(
         poolToken.llcAddress.toLowerCase()
       )
-      if (blockTimeExceeded) {
+      if (!prevTx.pending) {
         const { SIGNER } = this.$getProvider()
         const userAddress = await SIGNER.getAddress()
         const contract = new ethers.Contract(
@@ -204,7 +205,8 @@ export default {
           this.txLink = unlock.hash
           this.ui.showSuccess = true
           this.LPTAmount = null
-          unlock.wait(5).then(() => {
+          unlock.wait(3).then((receipt) => {
+            localStorage.setItem('blockNumber', receipt.blockNumber)
             localStorage.removeItem('txStatus')
           })
         } catch (error) {
@@ -224,6 +226,7 @@ export default {
         }
       } else {
         this.ui.showAwaiting = false
+        this.targetBlockNumber = prevTx.targetBlockNumber
         this.ui.showCoolDown = true
       }
     },

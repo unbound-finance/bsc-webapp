@@ -1,6 +1,7 @@
 export const state = () => ({
   address: null,
   network: null,
+  currentBlock: 0,
 })
 
 export const mutations = {
@@ -9,6 +10,9 @@ export const mutations = {
   },
   getNetwork(state, network) {
     state.network = network
+  },
+  SET_CURRENT_BLOCK(state, payload) {
+    state.currentBlock = payload
   },
 }
 

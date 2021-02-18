@@ -5,6 +5,13 @@
         <p class="text-lg text-gray-800 dark:text-white font-medium">
           Cool Down ❄️
         </p>
+        <p
+          v-if="targetBlockNumber > 0"
+          class="text-gray-600 dark:text-gray-700 text-xs"
+        >
+          Current block: {{ currentBlock }}, please wait until
+          {{ targetBlockNumber }} block
+        </p>
         <button
           class="w-full px-4 py-2 rounded mt-4 bg-blue-600 bg-opacity-25 text-blue-600 font-medium focus:outline-none"
           @click="modal = false"
@@ -18,10 +25,28 @@
 
 <script>
 import Modal from '@/components/Modal'
+import { getRealtimeCurrentBlock } from '~/utils'
 
 export default {
   extends: Modal,
+  props: {
+    targetBlockNumber: {
+      type: [String, Number],
+      default: 0,
+    },
+  },
+  computed: {
+    currentBlock() {
+      return this.$store.state.currentBlock
+    },
+  },
+  mounted() {
+    this.getCurrentBlock()
+  },
+  methods: {
+    getCurrentBlock() {
+      getRealtimeCurrentBlock.bind(this)()
+    },
+  },
 }
 </script>
-
-<style></style>

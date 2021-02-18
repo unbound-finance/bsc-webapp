@@ -29,7 +29,7 @@
           v-if="
             llcDetails &&
             poolToken &&
-            llcDetails.minValue > 0 &&
+            $options.filters.toFixed(llcDetails.minValue, 0) > 0 &&
             uTokenAmount < llcDetails.minValue
           "
         >
@@ -126,7 +126,10 @@
       <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
       <RejectedModal v-model="ui.showRejected" />
       <AwaitingModal v-model="ui.showAwaiting" />
-      <BlockTimeModal v-model="ui.showCoolDown" />
+      <BlockTimeModal
+        v-model="ui.showCoolDown"
+        :target-block-number="targetBlockNumber"
+      />
     </div>
 
     <!-- Show fees -->

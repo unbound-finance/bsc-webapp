@@ -194,7 +194,11 @@ export const isBlocktimeReached = async (llcAddress) => {
     const { SIGNER } = getProvider()
     const userAddress = await SIGNER.getAddress()
     const pending = isPending(llcAddress, userAddress)
-    if (pending) return false
+    if (pending)
+      return {
+        pending: true,
+        targetBlockNumber: 0,
+      }
     const llcBlockLimit = await getBlockLimit(llcAddress)
     const currentBlock = await getCurrentBlock()
     const startBlock = currentBlock - llcBlockLimit
@@ -208,15 +212,27 @@ export const isBlocktimeReached = async (llcAddress) => {
     }
     const { data } = await Axios.get(ETHERSCAN_HOST, { params })
     const txList = data.result || []
-    // checking for llc address presence in last 20 minutes
-    const llcPresent = txList
-      .map((tx) => {
-        return tx.to
-      })
-      .includes(llcAddress)
-    if (llcPresent) return false
-    else return true
+    // checking for llc address presence in specified last block numbers
+    const txs = txList.find((tx) => tx.to === llcAddress)
+    if (txs) {
+      const blockNumber = txs.blockNumber
+      return {
+        pending: true,
+        targetBlockNumber: Number(blockNumber) + Number(llcBlockLimit),
+      }
+    } else
+      return {
+        pending: false,
+        targetBlockNumber: 0,
+      }
   } catch (error) {
     throw new Error(error)
   }
+}
+
+export function getRealtimeCurrentBlock() {
+  const { PROVIDER } = getProvider()
+  PROVIDER.on('block', (blockNumber) => {
+    this.$store.commit('SET_CURRENT_BLOCK', blockNumber)
+  })
 }
