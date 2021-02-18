@@ -48,128 +48,152 @@ export default {
   methods: {
     async mint(poolToken) {
       this.ui.showAwaiting = true
-      const { SIGNER } = this.$getProvider()
-      const userAddress = await SIGNER.getAddress()
-
-      // get nonce
-      const nonce = await getNonce(poolToken.address, SIGNER)
-
-      // deadline is next 5 seconds
-      const deadline = +new Date() + 5000
-
-      // converting decimals to 18 decimals format
-      let amount = ethers.utils.parseEther(
-        this.LPTAmount.toString().slice(0, 18)
+      const prevTx = await isBlocktimeReached(
+        poolToken.llcAddress.toLowerCase()
       )
-      amount = amount.toString()
+      if (!prevTx.pending) {
+        const { SIGNER } = this.$getProvider()
+        const userAddress = await SIGNER.getAddress()
 
-      // setting min amount (2%)
-      let minAmount = toFixed(
-        (parseFloat(this.LPTAmount) * this.llcDetails.loanRatioPerLPT -
-          parseFloat(this.LPTAmount) * this.llcDetails.loanRatioPerLPT * 0.02) *
-          1e18
-      )
-      minAmount = minAmount.toString()
+        // get nonce
+        const nonce = await getNonce(poolToken.address, SIGNER)
 
-      let minAmountFees =
-        (parseFloat(minAmount) * parseFloat(this.llcDetails.fee)) / 1e6
+        // deadline is next 5 seconds
+        const deadline = +new Date() + 5000
 
-      minAmountFees = minAmountFees.toString()
+        // converting decimals to 18 decimals format
+        let amount = ethers.utils.parseEther(
+          this.LPTAmount.toString().slice(0, 18)
+        )
+        amount = amount.toString()
 
-      const finalMinAmount = toFixed(minAmount - minAmountFees).toString()
+        // setting min amount (2%)
+        let minAmount = toFixed(
+          (parseFloat(this.LPTAmount) * this.llcDetails.loanRatioPerLPT -
+            parseFloat(this.LPTAmount) *
+              this.llcDetails.loanRatioPerLPT *
+              0.02) *
+            1e18
+        )
+        minAmount = minAmount.toString()
 
-      // Requesting EIP712 signature
-      const EIP712Signature = getEIP712Signature(
-        poolToken.address,
-        poolToken.llcAddress,
-        userAddress,
-        amount,
-        nonce,
-        deadline
-      )
-      const web3 = new Web3(window.ethereum)
-      web3.currentProvider.sendAsync(
-        {
-          method: 'eth_signTypedData_v3',
-          params: [userAddress, EIP712Signature],
-          from: userAddress,
-        },
-        async (error, signedData) => {
-          if (error || signedData.error) {
-            if (error.code !== 4001) {
-              this.$logRocket.captureException(error, {
-                tags: {
-                  function: 'mintSignature',
-                },
-                extra: {
-                  pageName: 'Mint',
-                },
-              })
-              this.$logRocket.identify(this.$store.state.address)
+        let minAmountFees =
+          (parseFloat(minAmount) * parseFloat(this.llcDetails.fee)) / 1e6
+
+        minAmountFees = minAmountFees.toString()
+
+        const finalMinAmount = toFixed(minAmount - minAmountFees).toString()
+
+        // Requesting EIP712 signature
+        const EIP712Signature = getEIP712Signature(
+          poolToken.address,
+          poolToken.llcAddress,
+          userAddress,
+          amount,
+          nonce,
+          deadline
+        )
+        const web3 = new Web3(window.ethereum)
+        web3.currentProvider.sendAsync(
+          {
+            method: 'eth_signTypedData_v3',
+            params: [userAddress, EIP712Signature],
+            from: userAddress,
+          },
+          async (error, signedData) => {
+            if (error || signedData.error) {
+              if (error.code !== 4001) {
+                this.$logRocket.captureException(error, {
+                  tags: {
+                    function: 'mintSignature',
+                  },
+                  extra: {
+                    pageName: 'Mint',
+                  },
+                })
+                this.$logRocket.identify(this.$store.state.address)
+              }
+              this.ui.showAwaiting = false
+              return
             }
-            this.ui.showAwaiting = false
-            return
-          }
-          const signature = ethers.utils.splitSignature(signedData.result)
-          const UnboundLLCContract = new ethers.Contract(
-            poolToken.llcAddress,
-            UNBOUND_LLC_ABI,
-            SIGNER
-          )
-          try {
-            console.log({
-              amount,
-              deadline,
-              v: signature.v,
-              r: signature.r,
-              s: signature.s,
-              finalMinAmount,
-            })
-            const mintUND = await UnboundLLCContract.lockLPTWithPermit(
-              amount,
-              deadline,
-              signature.v,
-              signature.r,
-              signature.s,
-              finalMinAmount
-            )
-            // close awaiting modal
-            this.ui.showAwaiting = false
-            // show success screen
-            this.ui.showConfirmation = false
-            this.txLink = mintUND.hash
-            this.ui.showSuccess = true
-            this.LPTAmount = ''
-
-            // initiate the UND contract to detect the event so we can update the balances
-            const UND = new ethers.Contract(
-              poolToken.uToken.address,
-              UNBOUND_DOLLAR_ABI,
+            const signature = ethers.utils.splitSignature(signedData.result)
+            const UnboundLLCContract = new ethers.Contract(
+              poolToken.llcAddress,
+              UNBOUND_LLC_ABI,
               SIGNER
             )
-            // listen to mint event from UND contract
-            UND.on('Mint', async () => {
-              const balance = await getTokenBalance(poolToken.address)
-              this.poolToken.balance = balance.toFixed
-            })
-          } catch (error) {
-            if (error.code !== 4001) {
-              this.$logRocket.captureException(error, {
-                tags: {
-                  function: 'mint',
-                },
-                extra: {
-                  pageName: 'Mint',
-                },
+            try {
+              console.log({
+                amount,
+                deadline,
+                v: signature.v,
+                r: signature.r,
+                s: signature.s,
+                finalMinAmount,
               })
-              this.$logRocket.identify(this.$store.state.address)
+              const mintUND = await UnboundLLCContract.lockLPTWithPermit(
+                amount,
+                deadline,
+                signature.v,
+                signature.r,
+                signature.s,
+                finalMinAmount
+              )
+              localStorage.setItem(
+                'txStatus',
+                JSON.stringify({
+                  pending: true,
+                  txHash: mintUND.hash,
+                  llcAddress: poolToken.llcAddress,
+                  userAddress,
+                })
+              )
+              // close awaiting modal
+              this.ui.showAwaiting = false
+              // show success screen
+              this.ui.showConfirmation = false
+              this.txLink = mintUND.hash
+              this.ui.showSuccess = true
+              this.LPTAmount = null
+
+              mintUND.wait(3).then(() => {
+                localStorage.removeItem('txStatus')
+              })
+
+              // initiate the UND contract to detect the event so we can update the balances
+              const UND = new ethers.Contract(
+                poolToken.uToken.address,
+                UNBOUND_DOLLAR_ABI,
+                SIGNER
+              )
+              // listen to mint event from UND contract
+              UND.on('Mint', async () => {
+                const balance = await getTokenBalance(poolToken.address)
+                this.poolToken.balance = balance.toFixed
+              })
+            } catch (error) {
+              if (error.code !== 4001) {
+                this.$logRocket.captureException(error, {
+                  tags: {
+                    function: 'mint',
+                  },
+                  extra: {
+                    pageName: 'Mint',
+                  },
+                })
+                this.$logRocket.identify(this.$store.state.address)
+              }
+              this.ui.showAwaiting = false
+              this.ui.showConfirmation = false
+              this.ui.showRejected = true
             }
-            this.ui.showAwaiting = false
-            this.ui.showConfirmation = false
-            this.ui.showRejected = true
           }
-        }
-      )
+        )
+      } else {
+        this.ui.showAwaiting = false
+        this.targetBlockNumber = prevTx.targetBlockNumber
+        this.ui.showCoolDown = true
+      }
     },
 
     async unlock(poolToken) {
@@ -205,8 +229,7 @@ export default {
           this.txLink = unlock.hash
           this.ui.showSuccess = true
           this.LPTAmount = null
-          unlock.wait(3).then((receipt) => {
-            localStorage.setItem('blockNumber', receipt.blockNumber)
+          unlock.wait(3).then(() => {
             localStorage.removeItem('txStatus')
           })
         } catch (error) {

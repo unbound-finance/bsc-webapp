@@ -291,6 +291,10 @@
       <SuccessModal v-model="ui.showSuccess" :hash="txLink" />
       <RejectedModal v-model="ui.showRejected" />
       <AwaitingModal v-model="ui.showAwaiting" />
+      <BlockTimeModal
+        v-model="ui.showCoolDown"
+        :target-block-number="targetBlockNumber"
+      />
     </div>
 
     <!-- Show fees -->
