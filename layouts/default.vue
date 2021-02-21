@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full h-screen">
-    <Navbar class="fixed top-0 left-0 right-0" />
+  <div class="w-full min-h-screen">
+    <Navbar />
 
-    <div class="max-w-6xl mx-auto h-full">
-      <div class="w-full flex justify-center items-center h-full px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="w-full flex justify-center px-4">
         <nuxt />
       </div>
     </div>
