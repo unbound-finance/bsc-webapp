@@ -1,10 +1,27 @@
 <template>
-  <div class="w-full min-h-screen">
-    <Navbar />
+  <div class="w-full h-screen">
+    <Navbar class="fixed top-0 left-0 right-0" />
 
-    <div class="max-w-6xl mx-auto">
-      <div class="w-full flex justify-center px-4">
+    <div class="max-w-6xl mx-auto h-full">
+      <div class="w-full flex justify-center items-center h-full px-4">
         <nuxt />
+      </div>
+    </div>
+
+    <div class="fixed" style="bottom: 0.5rem; right: 1rem">
+      <div class="flex space-x-1 items-center">
+        <a
+          :href="`https://kovan.etherscan.io/block/${currentBlock}`"
+          target="_blank"
+        >
+          <span class="text-xs text-green-500 dark:text-green-600 font-mono">{{
+            currentBlock
+          }}</span>
+        </a>
+        <div
+          class="w-2 h-2 rounded-full bg-green-500 dark:bg-green-600"
+          style="margin-top: 2px"
+        ></div>
       </div>
     </div>
   </div>
@@ -12,8 +29,23 @@
 
 <script>
 import Navbar from '@/components/Navbar'
+import { getRealtimeCurrentBlock } from '~/utils'
+
 export default {
   components: { Navbar },
+  computed: {
+    currentBlock() {
+      return this.$store.state.currentBlock
+    },
+  },
+  mounted() {
+    this.getCurrentBlock()
+  },
+  methods: {
+    getCurrentBlock() {
+      getRealtimeCurrentBlock.bind(this)()
+    },
+  },
 }
 </script>
 
