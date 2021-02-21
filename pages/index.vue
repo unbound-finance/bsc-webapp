@@ -1,5 +1,5 @@
 <template>
-  <div class="main_container my-4 md:my-8">
+  <div class="main_container">
     <div class="flex flex-col items-center w-full p-4">
       <p class="text-center font-medium dark:text-white text-lg">
         Welcome to Unbound
