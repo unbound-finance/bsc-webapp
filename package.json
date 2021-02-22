@@ -28,6 +28,7 @@
     "nuxt": "^2.14.0",
     "nuxt-logrocket": "^1.5.2",
     "nuxt-purgecss": "^1.0.0",
+    "nuxt-vuex-localstorage": "^1.2.7",
     "sass-loader": "^10.0.1",
     "tailwindcss-dark-mode": "^1.1.6",
     "v-tooltip": "^2.0.3",

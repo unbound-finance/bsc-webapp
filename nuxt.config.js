@@ -105,6 +105,7 @@ export default {
     '@nuxtjs/dotenv',
     'nuxt-logrocket',
     '@nuxt/http',
+    'nuxt-vuex-localstorage',
     [
       '@dansmaculotte/nuxt-security',
       {
