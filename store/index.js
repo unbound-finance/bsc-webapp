@@ -2,6 +2,7 @@ export const state = () => ({
   address: null,
   network: null,
   currentBlock: 0,
+  txStatus: null,
 })
 
 export const mutations = {

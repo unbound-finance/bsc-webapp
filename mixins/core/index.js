@@ -139,15 +139,13 @@ export default {
                 signature.s,
                 finalMinAmount
               )
-              localStorage.setItem(
-                'txStatus',
-                JSON.stringify({
-                  pending: true,
-                  txHash: mintUND.hash,
-                  llcAddress: poolToken.llcAddress,
-                  userAddress,
-                })
-              )
+
+              this.$store.commit('localStorage/SET_TX_STATUS', {
+                pending: true,
+                txHash: mintUND.hash,
+                llcAddress: poolToken.llcAddress,
+                userAddress,
+              })
               // close awaiting modal
               this.ui.showAwaiting = false
               // show success screen
@@ -157,7 +155,7 @@ export default {
               this.LPTAmount = null
 
               mintUND.wait(3).then(() => {
-                localStorage.removeItem('txStatus')
+                this.$store.commit('localStorage/SET_TX_STATUS', null)
               })
 
               // initiate the UND contract to detect the event so we can update the balances
@@ -216,21 +214,19 @@ export default {
 
         try {
           const unlock = await contract.unlockLPT(rawUNDAmount)
-          localStorage.setItem(
-            'txStatus',
-            JSON.stringify({
-              pending: true,
-              txHash: unlock.hash,
-              llcAddress: poolToken.llcAddress,
-              userAddress,
-            })
-          )
+
+          this.$store.commit('localStorage/SET_TX_STATUS', {
+            pending: true,
+            txHash: unlock.hash,
+            llcAddress: poolToken.llcAddress,
+            userAddress,
+          })
           this.ui.showAwaiting = false
           this.txLink = unlock.hash
           this.ui.showSuccess = true
           this.LPTAmount = null
           unlock.wait(3).then(() => {
-            localStorage.removeItem('txStatus')
+            this.$store.commit('localStorage/SET_TX_STATUS', null)
           })
         } catch (error) {
           if (error.code !== 4001) {
