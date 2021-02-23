@@ -48,7 +48,7 @@ export default {
   methods: {
     async mint(poolToken) {
       this.ui.showAwaiting = true
-      const prevTx = await isBlocktimeReached(
+      const prevTx = await isBlocktimeReached.bind(this)(
         poolToken.llcAddress.toLowerCase()
       )
       if (!prevTx.pending) {
@@ -196,7 +196,7 @@ export default {
 
     async unlock(poolToken) {
       this.ui.showAwaiting = true
-      const prevTx = await isBlocktimeReached(
+      const prevTx = await isBlocktimeReached.bind(this)(
         poolToken.llcAddress.toLowerCase()
       )
       if (!prevTx.pending) {

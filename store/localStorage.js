@@ -7,3 +7,9 @@ export const mutations = {
     state.txStatus = payload
   },
 }
+
+export const getters = {
+  txStatus: (state) => {
+    return state.txStatus
+  },
+}

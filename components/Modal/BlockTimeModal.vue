@@ -16,7 +16,7 @@
         >
           please wait for
           <span class="font-medium text-blue-600">{{ blocksRemaining }}</span>
-          more blocks
+          more blocks.
         </p>
         <p
           v-if="
@@ -27,6 +27,12 @@
           class="text-gray-600 dark:text-gray-700 text-xs py-1"
         >
           You can now mint or unlock 🎉
+        </p>
+        <p
+          v-if="txStatus"
+          class="text-gray-600 dark:text-gray-700 text-xs py-1"
+        >
+          Please wait for at least 5 confirmations.
         </p>
         <button
           class="w-full px-4 py-2 rounded mt-4 bg-blue-600 bg-opacity-25 text-blue-600 font-medium focus:outline-none"

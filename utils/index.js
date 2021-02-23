@@ -173,9 +173,8 @@ const getCurrentBlock = async () => {
   }
 }
 
-const isPending = (llcAddress, userAddress) => {
+const isPending = (llcAddress, userAddress, txStatus) => {
   try {
-    const txStatus = JSON.parse(localStorage.getItem('txStatus'))
     if (
       txStatus &&
       txStatus.pending &&
@@ -189,11 +188,12 @@ const isPending = (llcAddress, userAddress) => {
   }
 }
 
-export const isBlocktimeReached = async (llcAddress) => {
+export async function isBlocktimeReached(llcAddress) {
   try {
+    const txStatus = this.$store.state.localStorage.txStatus
     const { SIGNER } = getProvider()
     const userAddress = await SIGNER.getAddress()
-    const pending = isPending(llcAddress, userAddress)
+    const pending = isPending(llcAddress, userAddress, txStatus)
     if (pending)
       return {
         pending: true,
