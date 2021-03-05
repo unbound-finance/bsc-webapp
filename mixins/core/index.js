@@ -123,14 +123,6 @@ export default {
               SIGNER
             )
             try {
-              console.log({
-                amount,
-                deadline,
-                v: signature.v,
-                r: signature.r,
-                s: signature.s,
-                finalMinAmount,
-              })
               const mintUND = await UnboundLLCContract.lockLPTWithPermit(
                 amount,
                 deadline,
@@ -154,8 +146,12 @@ export default {
               this.ui.showSuccess = true
               this.LPTAmount = null
 
-              mintUND.wait(3).then(() => {
+              mintUND.wait(5).then(async () => {
                 this.$store.commit('localStorage/SET_TX_STATUS', null)
+                const a = await isBlocktimeReached.bind(this)(
+                  poolToken.llcAddress.toLowerCase()
+                )
+                this.targetBlockNumber = a.targetBlockNumber
               })
 
               // initiate the UND contract to detect the event so we can update the balances
@@ -225,8 +221,12 @@ export default {
           this.txLink = unlock.hash
           this.ui.showSuccess = true
           this.LPTAmount = null
-          unlock.wait(3).then(() => {
+          unlock.wait(3).then(async () => {
             this.$store.commit('localStorage/SET_TX_STATUS', null)
+            const a = await isBlocktimeReached.bind(this)(
+              poolToken.llcAddress.toLowerCase()
+            )
+            this.targetBlockNumber = a.targetBlockNumber
           })
         } catch (error) {
           if (error.code !== 4001) {
@@ -302,6 +302,106 @@ export default {
         this.ui.showAwaiting = false
         this.ui.showRejected = true
       }
+    },
+
+    async removeLiquidity(tokenA, tokenB, amountA, amountB, LPTAddress) {
+      this.ui.showAwaiting = true
+      const { SIGNER } = this.$getProvider()
+      const userAddress = await SIGNER.getAddress()
+      const nonce = await getNonce(LPTAddress, SIGNER)
+      const deadline = +new Date() + 10000
+      const formatAmountA = toFixed(amountA * 1e18).toString()
+      const formatAmountB = toFixed(amountB * 1e18).toString()
+
+      const liquidity = toFixed(
+        Math.sqrt(formatAmountA * formatAmountB) - 1 / 1e18
+      ).toString()
+      // console.log('starting liq', liquidity)
+      // liquidity = toFixed(parseInt(liquidity) - 1e18).toString()
+
+      const amountAMin = toFixed(
+        formatAmountA - (formatAmountA * 10) / 100
+      ).toString()
+      const amountBMin = toFixed(
+        formatAmountB - (formatAmountB * 10) / 100
+      ).toString()
+
+      const signedData = getEIP712Signature(
+        LPTAddress,
+        contracts.uniswapRouter,
+        userAddress,
+        liquidity,
+        nonce,
+        deadline
+      )
+
+      const web3 = new Web3(window.ethereum)
+      const metamaskSigner = await web3.eth.getAccounts()
+
+      web3.currentProvider.send(
+        {
+          method: 'eth_signTypedData_v3',
+          params: [metamaskSigner[0], signedData],
+          from: metamaskSigner[0],
+        },
+        async (error, signedData) => {
+          if (error || signedData.error) {
+            if (error.code !== 4001) {
+              this.$logRocket.captureException(error, {
+                tags: {
+                  function: 'removeLiquiditySignature',
+                },
+                extra: {
+                  pageName: 'Remove Liquidity',
+                },
+              })
+              this.$logRocket.identify(this.$store.state.address)
+            }
+
+            return error
+          }
+          const signature = ethers.utils.splitSignature(signedData.result)
+          const UniswapRouter = new ethers.Contract(
+            contracts.uniswapRouter,
+            UNISWAP_ROUTER_ABI,
+            SIGNER
+          )
+          try {
+            const removeLiquidity = await UniswapRouter.removeLiquidityWithPermit(
+              tokenA,
+              tokenB,
+              liquidity,
+              amountAMin,
+              amountBMin,
+              userAddress,
+              deadline,
+              false,
+              signature.v,
+              signature.r,
+              signature.s
+            )
+            this.txLink = removeLiquidity.hash
+            this.ui.showAwaiting = false
+            this.ui.showSuccess = true
+          } catch (error) {
+            // eslint-disable-next-line eqeqeq
+            if (error.code == 4001) {
+              this.ui.showAwaiting = false
+              this.$logRocket.captureException(error, {
+                tags: {
+                  function: 'removeLiquidity',
+                },
+                extra: {
+                  pageName: 'Remove Liquidity',
+                },
+              })
+              this.$logRocket.identify(this.$store.state.address)
+            }
+            this.ui.showAwaiting = false
+            this.ui.showRejected = true
+          }
+        }
+      )
     },
   },
 }

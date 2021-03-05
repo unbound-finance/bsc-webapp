@@ -9,7 +9,7 @@
           class="mb-4"
         />
         <p class="text-xl dark:text-white font-medium text-gray-800">
-          Cool Down
+          {{ txStatus ? 'Pending Transaction' : 'Cool Down' }}
         </p>
         <p
           v-if="targetBlockNumber > 0 && blocksRemaining > 0"
