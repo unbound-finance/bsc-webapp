@@ -112,7 +112,15 @@
         v-if="isWalletConnected"
         :u-token="uToken"
         :u-token-amount="uTokenAmount"
-        @click="removeLiquidity"
+        @click="
+          removeLiquidity(
+            uToken.token.address,
+            uToken.address,
+            uTokenAmount,
+            uTokenAmount,
+            uToken.lptAddress
+          )
+        "
       />
       <ConnectWalletBtn v-else class="w-full" />
     </div>
@@ -127,9 +135,11 @@
 import { ethers } from 'ethers'
 
 import { ERC20_ABI, UNISWAP_LPT_ABI, contracts } from '~/constants'
-import { removeLiquidity, getAmountOfLockedTokens } from '~/mixins/stake'
+import { getAmountOfLockedTokens } from '~/mixins/stake'
+import core from '~/mixins/core'
 
 export default {
+  mixins: [core],
   data() {
     return {
       ui: {
@@ -244,37 +254,35 @@ export default {
       }
     },
 
-    async removeLiquidity() {
-      this.ui.showAwaiting = true
-      try {
-        // let amount = ethers.utils
-        //   .parseEther(this.uTokenAmount)
-        //   .toString()
-        //   .slice(0, 18)
+    // async removeLiquidity() {
+    //   this.ui.showAwaiting = true
+    //   try {
+    //     // let amount = ethers.utils
+    //     //   .parseEther(this.uTokenAmount)
+    //     //   .toString()
+    //     //   .slice(0, 18)
 
-        // amount = amount.toString()
+    //     // amount = amount.toString()
 
-        const transaction = await removeLiquidity(
-          this.uToken.token.address, // ETH
-          this.uToken.address,
-          this.uTokenAmount,
-          this.uTokenAmount,
-          this.uToken.lptAddress
-        )
-        this.txLink = transaction.hash
-        this.ui.showAwaiting = false
-        this.ui.showSuccess = true
-      } catch (error) {
-        // eslint-disable-next-line eqeqeq
-        if (error.code == 4001) {
-          this.ui.showAwaiting = false
-        }
-        this.ui.showAwaiting = false
-        this.ui.showRejected = true
-      }
-    },
+    //     const transaction = await removeLiquidity(
+    //       this.uToken.token.address, // ETH
+    //       this.uToken.address,
+    //       this.uTokenAmount,
+    //       this.uTokenAmount,
+    //       this.uToken.lptAddress
+    //     )
+    //     this.txLink = transaction.hash
+    //     this.ui.showAwaiting = false
+    //     this.ui.showSuccess = true
+    //   } catch (error) {
+    //     // eslint-disable-next-line eqeqeq
+    //     if (error.code == 4001) {
+    //       this.ui.showAwaiting = false
+    //     }
+    //     this.ui.showAwaiting = false
+    //     this.ui.showRejected = true
+    //   }
+    // },
   },
 }
 </script>
-
-<style></style>
