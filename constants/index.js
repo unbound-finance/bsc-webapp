@@ -7,6 +7,7 @@ import UNBOUND_STAKING_ABI from './abis/UnboundStaking'
 import UNBOUND_VALUATOR_ABI from './abis/UnboundValuator'
 import UNISWAP_LPT_ABI from './abis/UniswapLPTABI'
 import UNISWAP_ROUTER_ABI from './abis/UniswapRouter'
+import ORACLE_ABI from './abis/Oracle'
 
 export const contracts = {
   dai: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
@@ -19,10 +20,10 @@ export const contracts = {
   UNDUniswapPool: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
   uETHUniswapPool: '0x1ab39c83bab36c8ecbafba448748c50f5eb4db2a',
   uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  valuator: '0x6E06D72c6c171af58E37966c1907A06E670a7AfE',
+  valuator: '0x23CAe4d2b15De7591559824d2E501a279DE456A6',
 }
 export const uToken = {
-  UND: '0x9898977b550d7b32E337AF38A6B3E54361c24cEa',
+  UND: '0xAE4C262CA273385dac2857e231842dBB248a32bc',
 }
 // Chain ID
 export const CHAIN_ID = 42
@@ -48,4 +49,5 @@ export {
   UNBOUND_STAKING_ABI,
   UNBOUND_VALUATOR_ABI,
   UNISWAP_ROUTER_ABI,
+  ORACLE_ABI,
 }
