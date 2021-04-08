@@ -6,6 +6,7 @@
 
 import { ethers } from 'ethers'
 import { getDecimals } from './ERC20'
+import { fetchLPTPrice } from './oraclePricing'
 import { getProvider } from '~/plugins/web3provider'
 import { getCR, getLockedLPT, checkLoan } from '~/data'
 
@@ -37,6 +38,7 @@ export const loanRatioPerLPT = async (poolToken) => {
   )
 
   // parallely running ERC20 and LLC functions 🚀
+  // eslint-disable-next-line no-unused-vars
   const [reserve, LPTTotalSupply, tokens, llc] = await Promise.all([
     contract.getReserves(),
     contract.totalSupply(),
@@ -74,19 +76,17 @@ export const loanRatioPerLPT = async (poolToken) => {
     // caclulate amount of decimals over 18
     difference = stablecoinDecimal - 18
     // removes decimals to match 18
+    // eslint-disable-next-line no-unused-vars
     totalValueInDai = totalValueInDai / 10 ** difference
   }
 
-  console.log({ totalValueInDai, LPTTotalSupply, loanRate: llc.loanRate })
-
-  llcDetails.loanRatioPerLPT =
-    ((totalValueInDai / LPTTotalSupply) * llc.loanRate) / 1e6
+  const LPTPrice = Number((await fetchLPTPrice(poolToken.oracleAddress)) / 1e18)
+  llcDetails.loanRatioPerLPT = (LPTPrice * llc.loanRate) / 1e6
 
   const currentLoan = await checkLoan(
     poolToken.llcAddress,
     poolToken.uToken.address
   )
-  const LPTPrice = totalValueInDai / LPTTotalSupply
   const lockedLPT = await getLockedLPT(poolToken.llcAddress)
 
   const targetCR = await getCR(poolToken.llcAddress)
@@ -104,14 +104,6 @@ export const loanRatioPerLPT = async (poolToken) => {
   } else {
     crDetails.minValue = 0
   }
-
-  console.log({
-    ...llcDetails,
-    ...crDetails,
-    currentCR,
-    LPTPrice,
-    targetCR: crDetails.cr.toString(),
-  })
 
   return {
     ...llcDetails, // loanRate, fee, loanRatioPerLPT
