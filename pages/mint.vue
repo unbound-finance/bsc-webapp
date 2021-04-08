@@ -42,7 +42,7 @@
           v-if="poolToken"
           v-model="uTokenAmount"
           label="Mint"
-          :loading="ui.priceLoader"
+          :loading="!llcDetails"
           @focus="uTokenAmountField = true"
           @blur="uTokenAmountField = false"
         >
@@ -81,7 +81,8 @@
             v-else-if="llcDetails"
             class="font-medium text-sm dark:text-white font-mono"
           >
-            {{ llcDetails.LPTPrice }} {{ poolToken && poolToken.uToken.symbol }}
+            {{ llcDetails.LPTPrice.toFixed(4) }}
+            {{ poolToken && poolToken.uToken.symbol }}
           </p>
         </div>
 
@@ -89,7 +90,7 @@
           v-if="isWalletConnected"
           :l-p-t-amount="LPTAmount"
           :pool-token="poolToken"
-          @click="mint(poolToken)"
+          @click="ui.showConfirmation = true"
         />
         <ConnectWalletBtn v-else class="w-full" />
       </div>
