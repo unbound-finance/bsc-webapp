@@ -117,6 +117,7 @@ export default {
               return
             }
             const signature = ethers.utils.splitSignature(signedData.result)
+            console.log({ signature, amount, deadline, finalMinAmount })
             const UnboundLLCContract = new ethers.Contract(
               poolToken.llcAddress,
               UNBOUND_LLC_ABI,
