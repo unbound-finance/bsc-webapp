@@ -186,7 +186,7 @@ export async function isBlocktimeReached(llcAddress) {
     const llcBlockLimit = await getBlockLimit(llcAddress)
     const currentBlock = await getCurrentBlock()
 
-    if (txStatus && txStatus.llcAddress === llcAddress) {
+    if (txStatus && txStatus.llcAddress.toLowerCase() === llcAddress) {
       return {
         pending: true,
         targetBlockNumber: Number(currentBlock) + Number(llcBlockLimit) + 3,
