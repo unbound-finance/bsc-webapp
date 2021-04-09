@@ -117,7 +117,6 @@ export default {
               return
             }
             const signature = ethers.utils.splitSignature(signedData.result)
-            console.log({ signature, amount, deadline, finalMinAmount })
             const UnboundLLCContract = new ethers.Contract(
               poolToken.llcAddress,
               UNBOUND_LLC_ABI,
@@ -139,6 +138,7 @@ export default {
                 llcAddress: poolToken.llcAddress,
                 userAddress,
               })
+
               // close awaiting modal
               this.ui.showAwaiting = false
               // show success screen
@@ -147,13 +147,13 @@ export default {
               this.ui.showSuccess = true
               this.LPTAmount = null
 
-              mintUND.wait(5).then(async () => {
+              const a = await isBlocktimeReached.bind(this)(
+                poolToken.llcAddress.toLowerCase()
+              )
+              this.targetBlockNumber = a.targetBlockNumber
+              setTimeout(() => {
                 this.$store.commit('localStorage/SET_TX_STATUS', null)
-                const a = await isBlocktimeReached.bind(this)(
-                  poolToken.llcAddress.toLowerCase()
-                )
-                this.targetBlockNumber = a.targetBlockNumber
-              })
+              }, 60000)
 
               // initiate the UND contract to detect the event so we can update the balances
               const UND = new ethers.Contract(
@@ -222,13 +222,14 @@ export default {
           this.txLink = unlock.hash
           this.ui.showSuccess = true
           this.LPTAmount = null
-          unlock.wait(3).then(async () => {
+
+          const a = await isBlocktimeReached.bind(this)(
+            poolToken.llcAddress.toLowerCase()
+          )
+          this.targetBlockNumber = a.targetBlockNumber
+          setTimeout(() => {
             this.$store.commit('localStorage/SET_TX_STATUS', null)
-            const a = await isBlocktimeReached.bind(this)(
-              poolToken.llcAddress.toLowerCase()
-            )
-            this.targetBlockNumber = a.targetBlockNumber
-          })
+          }, 60000)
         } catch (error) {
           if (error.code !== 4001) {
             this.$logRocket.captureException(error, {

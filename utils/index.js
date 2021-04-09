@@ -1,7 +1,6 @@
 import { ethers } from 'ethers'
-import Axios from 'axios'
 
-import { CHAIN_ID, ETHERSCAN_HOST, UNBOUND_LLC_ABI } from '~/constants'
+import { CHAIN_ID, UNBOUND_LLC_ABI } from '~/constants'
 import { getProvider } from '~/plugins/web3provider'
 
 // get nonce from Uniswap for the permit()s
@@ -161,66 +160,36 @@ const getBlockLimit = async (llcAddress) => {
 }
 
 const getCurrentBlock = async () => {
-  try {
-    const params = {
-      module: 'proxy',
-      action: 'eth_blockNumber',
-    }
-    const { data } = await Axios.get(ETHERSCAN_HOST, { params })
-    return data.result.toString()
-  } catch (error) {
-    throw new Error(error)
-  }
+  const { PROVIDER } = getProvider()
+  const currentBlock = await PROVIDER.getBlockNumber()
+  return currentBlock
 }
 
-const isPending = (llcAddress, userAddress, txStatus) => {
-  try {
-    if (
-      txStatus &&
-      txStatus.pending &&
-      txStatus.llcAddress.toLowerCase() === llcAddress &&
-      txStatus.userAddress.toLowerCase() === userAddress.toLowerCase()
-    )
-      return true
-    else return false
-  } catch (error) {
-    throw new Error(error)
-  }
-}
+// const isPending = (llcAddress, userAddress, txStatus) => {
+//   try {
+//     if (
+//       txStatus &&
+//       txStatus.pending &&
+//       txStatus.llcAddress.toLowerCase() === llcAddress &&
+//       txStatus.userAddress.toLowerCase() === userAddress.toLowerCase()
+//     )
+//       return true
+//     else return false
+//   } catch (error) {
+//     throw new Error(error)
+//   }
+// }
 
 export async function isBlocktimeReached(llcAddress) {
   try {
     const txStatus = this.$store.state.localStorage.txStatus
-    const { SIGNER } = getProvider()
-    const userAddress = await SIGNER.getAddress()
-    const pending = isPending(llcAddress, userAddress, txStatus)
-    if (pending)
-      return {
-        pending: true,
-        targetBlockNumber: 0,
-      }
     const llcBlockLimit = await getBlockLimit(llcAddress)
     const currentBlock = await getCurrentBlock()
-    const startBlock = currentBlock - llcBlockLimit
-    const params = {
-      module: 'account',
-      action: 'txlist',
-      address: userAddress,
-      sort: 'desc',
-      startBlock,
-      apiKey: 'HUWMR5VJHDQ7EEZYEUWQAAHBNMURE1R1CH',
-    }
-    const {
-      data: { result },
-    } = await Axios.get(ETHERSCAN_HOST, { params })
-    const txList = result || []
-    // checking for llc address presence in specified last block numbers
-    const txs = txList.find((tx) => tx.to === llcAddress)
-    if (txs) {
-      const blockNumber = txs.blockNumber
+
+    if (txStatus && txStatus.llcAddress === llcAddress) {
       return {
         pending: true,
-        targetBlockNumber: Number(blockNumber) + Number(llcBlockLimit),
+        targetBlockNumber: Number(currentBlock) + Number(llcBlockLimit) + 3,
       }
     } else
       return {

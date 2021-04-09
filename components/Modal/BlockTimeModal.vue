@@ -9,7 +9,7 @@
           class="spin-clock mb-4"
         />
         <p class="text-xl dark:text-white font-medium text-gray-800">
-          {{ txStatus ? 'Pending Transaction' : 'Cool Down' }}
+          Cool Down
         </p>
         <p
           v-if="targetBlockNumber > 0 && blocksRemaining > 0"
@@ -25,12 +25,7 @@
         >
           You can now mint or unlock 🎉
         </p>
-        <p
-          v-if="txStatus"
-          class="text-gray-600 dark:text-gray-700 text-xs py-1"
-        >
-          Please wait for at least 5 confirmations.
-        </p>
+
         <button
           class="w-full px-4 py-2 rounded mt-4 bg-blue-600 bg-opacity-25 text-blue-600 font-medium focus:outline-none"
           @click="modal = false"
