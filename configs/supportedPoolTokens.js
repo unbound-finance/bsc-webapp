@@ -138,7 +138,7 @@ export default [
 
   {
     name: 'ENJ-USDT',
-    exchange: 'Uniswap',
+    exchange: 'Uniswap v2',
     category: 'ERC20-Stablecoin',
     address: '0xe1fdf0958759b8023ae6234d795f9bb95f1e685e',
     llcAddress: '0x00336E7CAcF5b6c9e727F26ED85b89759254bB4E',
