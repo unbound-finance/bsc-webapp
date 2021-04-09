@@ -210,8 +210,10 @@ export async function isBlocktimeReached(llcAddress) {
       startBlock,
       apiKey: 'HUWMR5VJHDQ7EEZYEUWQAAHBNMURE1R1CH',
     }
-    const { data } = await Axios.get(ETHERSCAN_HOST, { params })
-    const txList = data.result || []
+    const {
+      data: { result },
+    } = await Axios.get(ETHERSCAN_HOST, { params })
+    const txList = result || []
     // checking for llc address presence in specified last block numbers
     const txs = txList.find((tx) => tx.to === llcAddress)
     if (txs) {

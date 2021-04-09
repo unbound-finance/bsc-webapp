@@ -20,10 +20,10 @@ export const contracts = {
   UNDUniswapPool: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
   uETHUniswapPool: '0x1ab39c83bab36c8ecbafba448748c50f5eb4db2a',
   uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  valuator: '0x23CAe4d2b15De7591559824d2E501a279DE456A6',
+  valuator: '0xCF6d958c738fa2926Ce979671Ad154AbFEB5C61e',
 }
 export const uToken = {
-  UND: '0xAE4C262CA273385dac2857e231842dBB248a32bc',
+  UND: '0x17297e6f90D625646D3f5B207B74cEFD66a40732',
 }
 // Chain ID
 export const CHAIN_ID = 42
