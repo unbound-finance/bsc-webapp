@@ -115,26 +115,26 @@ export default [
       icon: 'und.webp',
     },
   },
-  {
-    name: 'ENJ-USDT',
-    exchange: 'Uniswap v2',
-    category: 'ERC20-Stablecoin',
-    address: '0xe1fdf0958759b8023ae6234d795f9bb95f1e685e',
-    llcAddress: '0x365E53365E0Fa448b6feE5Aa00157394C57A5DDd',
-    oracleAddress: '0x9122de2D6c736edC9E3d86B790D4Df53856f2126',
-    uniswapAddress: '0xd677b2d0dd5c8f71ce22ccdb700dffc6558fd1d1',
-    currencyOneLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c/logo.png',
-    currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
-    stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
-    uToken: {
-      displayName: 'Unbound Dollar',
-      address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
-      symbol: 'UND',
-      icon: 'und.webp',
-    },
-  },
+  // {
+  //   name: 'ENJ-USDT',
+  //   exchange: 'Uniswap v2',
+  //   category: 'ERC20-Stablecoin',
+  //   address: '0xe1fdf0958759b8023ae6234d795f9bb95f1e685e',
+  //   llcAddress: '0x365E53365E0Fa448b6feE5Aa00157394C57A5DDd',
+  //   oracleAddress: '0x9122de2D6c736edC9E3d86B790D4Df53856f2126',
+  //   uniswapAddress: '0xd677b2d0dd5c8f71ce22ccdb700dffc6558fd1d1',
+  //   currencyOneLogo:
+  //     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c/logo.png',
+  //   currencyTwoLogo:
+  //     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+  //   stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
+  //   uToken: {
+  //     displayName: 'Unbound Dollar',
+  //     address: '0xa729D5cA5BcE0d275B69728881f5bB86511EA70B',
+  //     symbol: 'UND',
+  //     icon: 'und.webp',
+  //   },
+  // },
 
   // {
   //   name: 'TOMOE-USDT',
