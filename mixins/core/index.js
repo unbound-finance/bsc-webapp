@@ -313,6 +313,8 @@ export default {
           to,
           deadline
         )
+
+        this.uTokenAmount = null
         this.txLink = transaction.hash
         this.ui.showAwaiting = false
         this.ui.showSuccess = true
@@ -410,6 +412,8 @@ export default {
               signature.r,
               signature.s
             )
+
+            this.uTokenAmount = null
             this.txLink = removeLiquidity.hash
             this.ui.showAwaiting = false
             this.ui.showSuccess = true
