@@ -45,6 +45,21 @@ export default {
       return loanRatioPerLPT(this.poolToken)
     },
   },
+  computed: {
+    txStatus() {
+      return this.$store.state.localStorage.txStatus
+    },
+  },
+  watch: {
+    '$store.state.currentBlock'(a) {
+      const txStatus = this.$store.state.localStorage.txStatus
+      if (txStatus) {
+        if (a >= this.targetBlockNumber) {
+          this.$store.commit('localStorage/SET_TX_STATUS', null)
+        }
+      }
+    },
+  },
   methods: {
     async mint(poolToken) {
       this.ui.showAwaiting = true
@@ -132,11 +147,15 @@ export default {
                 finalMinAmount
               )
 
+              const now = Date.now()
+              const delay = now + 30000
+
               this.$store.commit('localStorage/SET_TX_STATUS', {
                 pending: true,
                 txHash: mintUND.hash,
                 llcAddress: poolToken.llcAddress,
                 userAddress,
+                exp: delay,
               })
 
               // close awaiting modal
@@ -147,13 +166,16 @@ export default {
               this.ui.showSuccess = true
               this.LPTAmount = null
 
+              const timeout = Number(this.txStatus.exp) - Date.now()
+
+              setTimeout(() => {
+                this.$store.commit('localStorage/SET_TX_STATUS', null)
+              }, timeout)
+
               const a = await isBlocktimeReached.bind(this)(
                 poolToken.llcAddress.toLowerCase()
               )
               this.targetBlockNumber = a.targetBlockNumber
-              setTimeout(() => {
-                this.$store.commit('localStorage/SET_TX_STATUS', null)
-              }, 60000)
 
               // initiate the UND contract to detect the event so we can update the balances
               const UND = new ethers.Contract(
@@ -212,11 +234,15 @@ export default {
         try {
           const unlock = await contract.unlockLPT(rawUNDAmount)
 
+          const now = Date.now()
+          const delay = now + 30000
+
           this.$store.commit('localStorage/SET_TX_STATUS', {
             pending: true,
             txHash: unlock.hash,
             llcAddress: poolToken.llcAddress,
             userAddress,
+            exp: delay,
           })
           this.ui.showAwaiting = false
           this.txLink = unlock.hash
@@ -227,9 +253,11 @@ export default {
             poolToken.llcAddress.toLowerCase()
           )
           this.targetBlockNumber = a.targetBlockNumber
+
+          const timeout = Number(this.txStatus.exp) - Date.now()
           setTimeout(() => {
             this.$store.commit('localStorage/SET_TX_STATUS', null)
-          }, 60000)
+          }, timeout)
         } catch (error) {
           if (error.code !== 4001) {
             this.$logRocket.captureException(error, {
