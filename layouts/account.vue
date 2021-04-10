@@ -104,13 +104,13 @@
                   }}</span>
                 </div>
               </div>
-              <div class="flex flex-col">
+              <!-- <div class="flex flex-col">
                 <div v-if="ui.loading" class="loading-dots text-2xl">.</div>
                 <p v-else class="font-medium text-xl text-accent leading-tight">
                   {{ accountInfo.uEthMinted | toFixed(4) }}
-                </p>
+                </p> -->
 
-                <div v-if="liquidity" class="flex items-center space-x-1">
+              <!-- <div v-if="liquidity" class="flex items-center space-x-1">
                   <img
                     :src="require(`~/assets/tokens/${liquidity[1].icon}`)"
                     width="12"
@@ -120,8 +120,8 @@
                   <span class="text-gray-500 text-xs">{{
                     liquidity ? liquidity[1].name : ''
                   }}</span>
-                </div>
-              </div>
+                </div> -->
+              <!-- </div> -->
             </div>
           </div>
         </div>
