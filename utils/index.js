@@ -152,7 +152,7 @@ export function countDecimals(value) {
   return 0
 }
 
-const getBlockLimit = async (llcAddress) => {
+export const getBlockLimit = async (llcAddress) => {
   const { SIGNER } = getProvider()
   const llcContract = new ethers.Contract(llcAddress, UNBOUND_LLC_ABI, SIGNER)
   const blockLimit = await llcContract.blockLimit()
@@ -182,7 +182,8 @@ const getCurrentBlock = async () => {
 
 export async function isBlocktimeReached(llcAddress) {
   try {
-    const txStatus = this.$store.state.localStorage.txStatus
+    const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+
     const llcBlockLimit = await getBlockLimit(llcAddress)
     const currentBlock = await getCurrentBlock()
 

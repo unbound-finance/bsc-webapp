@@ -30,7 +30,6 @@
 <script>
 import Navbar from '@/components/Navbar'
 import { getRealtimeCurrentBlock } from '~/utils'
-import { getProvider } from '~/plugins/web3provider'
 
 export default {
   components: { Navbar },
@@ -38,32 +37,26 @@ export default {
     currentBlock() {
       return this.$store.state.currentBlock
     },
-    txStatus() {
-      return this.$store.state.localStorage.txStatus
-    },
   },
   watch: {
-    txStatus(e) {
-      if (e) this.removeConfirmedTx(e.txHash)
+    currentBlock() {
+      this.removeTxStatus()
     },
   },
   mounted() {
     this.getCurrentBlock()
-    if (this.txStatus) {
-      this.removeConfirmedTx(this.txStatus.txHash)
-    }
+    this.removeTxStatus()
   },
   methods: {
     getCurrentBlock() {
       getRealtimeCurrentBlock.bind(this)()
     },
-    removeConfirmedTx(hash) {
-      if (hash) {
-        console.log('hash provided')
-        const { PROVIDER } = getProvider()
-        PROVIDER.waitForTransaction(hash, 5).then((tx) => {
-          this.$store.commit('localStorage/SET_TX_STATUS', null)
-        })
+    removeTxStatus() {
+      const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+      if (txStatus) {
+        if (this.currentBlock >= txStatus.targetBlock) {
+          localStorage.removeItem('txStatus')
+        }
       }
     },
   },

@@ -14,6 +14,7 @@ import {
   getNonce,
   toFixed,
   isBlocktimeReached,
+  getBlockLimit,
 } from '~/utils'
 import { getTokenBalance } from '~/utils/ERC20'
 
@@ -48,6 +49,9 @@ export default {
   computed: {
     txStatus() {
       return this.$store.state.localStorage.txStatus
+    },
+    currentBlock() {
+      return this.$store.state.currentBlock
     },
   },
   watch: {
@@ -150,13 +154,29 @@ export default {
               const now = Date.now()
               const delay = now + 30000
 
-              this.$store.commit('localStorage/SET_TX_STATUS', {
-                pending: true,
-                txHash: mintUND.hash,
-                llcAddress: poolToken.llcAddress,
-                userAddress,
-                exp: delay,
-              })
+              const llcBlockLimit = await getBlockLimit(poolToken.llcAddress)
+              console.log({ llcBlockLimit })
+
+              localStorage.setItem(
+                'txStatus',
+                JSON.stringify({
+                  pending: true,
+                  txHash: mintUND.hash,
+                  llcAddress: poolToken.llcAddress,
+                  userAddress,
+                  exp: delay,
+                  targetBlock:
+                    Number(this.currentBlock) + Number(llcBlockLimit) + 3,
+                })
+              )
+
+              // this.$store.commit('localStorage/SET_TX_STATUS', {
+              //   pending: true,
+              //   txHash: mintUND.hash,
+              //   llcAddress: poolToken.llcAddress,
+              //   userAddress,
+              //   exp: delay,
+              // })
 
               // close awaiting modal
               this.ui.showAwaiting = false
@@ -166,16 +186,20 @@ export default {
               this.ui.showSuccess = true
               this.LPTAmount = null
 
-              const timeout = Number(this.txStatus.exp) - Date.now()
+              // const timeout = Number(this.txStatus.exp) - Date.now()
 
-              setTimeout(() => {
-                this.$store.commit('localStorage/SET_TX_STATUS', null)
-              }, timeout)
+              // setTimeout(() => {
+              //   this.$store.commit('localStorage/SET_TX_STATUS', null)
+              // }, timeout)
 
               const a = await isBlocktimeReached.bind(this)(
                 poolToken.llcAddress.toLowerCase()
               )
-              this.targetBlockNumber = a.targetBlockNumber
+              if (a.pending) {
+                const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+                this.targetBlockNumber = txStatus.targetBlock
+              }
+              // this.targetBlockNumber = a.targetBlockNumber
 
               // initiate the UND contract to detect the event so we can update the balances
               const UND = new ethers.Contract(
@@ -207,8 +231,9 @@ export default {
           }
         )
       } else {
+        const txStatus = JSON.parse(localStorage.getItem('txStatus'))
         this.ui.showAwaiting = false
-        this.targetBlockNumber = prevTx.targetBlockNumber
+        this.targetBlockNumber = txStatus.targetBlock
         this.ui.showCoolDown = true
       }
     },
@@ -237,13 +262,28 @@ export default {
           const now = Date.now()
           const delay = now + 30000
 
-          this.$store.commit('localStorage/SET_TX_STATUS', {
-            pending: true,
-            txHash: unlock.hash,
-            llcAddress: poolToken.llcAddress,
-            userAddress,
-            exp: delay,
-          })
+          const llcBlockLimit = await getBlockLimit(poolToken.llcAddress)
+
+          localStorage.setItem(
+            'txStatus',
+            JSON.stringify({
+              pending: true,
+              txHash: unlock.hash,
+              llcAddress: poolToken.llcAddress,
+              userAddress,
+              exp: delay,
+              targetBlock:
+                Number(this.currentBlock) + Number(llcBlockLimit) + 3,
+            })
+          )
+
+          // this.$store.commit('localStorage/SET_TX_STATUS', {
+          //   pending: true,
+          //   txHash: unlock.hash,
+          //   llcAddress: poolToken.llcAddress,
+          //   userAddress,
+          //   exp: delay,
+          // })
           this.ui.showAwaiting = false
           this.txLink = unlock.hash
           this.ui.showSuccess = true
@@ -252,12 +292,17 @@ export default {
           const a = await isBlocktimeReached.bind(this)(
             poolToken.llcAddress.toLowerCase()
           )
-          this.targetBlockNumber = a.targetBlockNumber
+          if (a.pending) {
+            const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+            this.targetBlockNumber = txStatus.targetBlock
+          }
 
-          const timeout = Number(this.txStatus.exp) - Date.now()
-          setTimeout(() => {
-            this.$store.commit('localStorage/SET_TX_STATUS', null)
-          }, timeout)
+          // this.targetBlockNumber = a.targetBlockNumber
+
+          // const timeout = Number(this.txStatus.exp) - Date.now()
+          // setTimeout(() => {
+          //   this.$store.commit('localStorage/SET_TX_STATUS', null)
+          // }, timeout)
         } catch (error) {
           if (error.code !== 4001) {
             this.$logRocket.captureException(error, {
@@ -274,8 +319,9 @@ export default {
           this.ui.showRejected = true
         }
       } else {
+        const txStatus = JSON.parse(localStorage.getItem('txStatus'))
         this.ui.showAwaiting = false
-        this.targetBlockNumber = prevTx.targetBlockNumber
+        this.targetBlockNumber = txStatus.targetBlock
         this.ui.showCoolDown = true
       }
     },
