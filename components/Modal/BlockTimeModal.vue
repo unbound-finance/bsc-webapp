@@ -21,10 +21,16 @@
         </p>
         <p
           v-if="!txStatus && blocksRemaining && blocksRemaining <= 0"
-          class="text-gray-600 dark:text-gray-700 text-xs py-1"
+          class="text-gray-600 dark:text-gray-700 text-xs py-1 pt-4"
         >
           You can now mint or unlock 🎉
         </p>
+        <a
+          class="text-blue-600 text-xs"
+          href="https://docs.unbound.finance/block-limit-lock-mechanism-a-security-layer"
+          target="_blank"
+          >Learn More</a
+        >
 
         <button
           class="w-full px-4 py-2 rounded mt-4 bg-blue-600 bg-opacity-25 text-blue-600 font-medium focus:outline-none"
