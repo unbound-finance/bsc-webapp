@@ -62,17 +62,17 @@ export const loanRatioPerLPT = async (poolToken) => {
   const reserveIndex =
     tokens[0].toLowerCase() === poolToken.stablecoin.toLowerCase() ? 0 : 1
 
-  const stablecoinDecimal = await getDecimals(tokens[reserveIndex])
+  const stablecoinDecimal = Number(await getDecimals(tokens[reserveIndex]))
   let difference
   let totalValueInDai
   totalValueInDai = reserve[reserveIndex].toString() * 2
   // first case: tokenDecimal is smaller than 18
   // for stablecoins with less than 18 decimals
-  if (stablecoinDecimal < '18' && stablecoinDecimal >= '0') {
+  if (stablecoinDecimal < 18 && stablecoinDecimal >= 0) {
     // calculate amount of decimals under 18
     difference = 18 - stablecoinDecimal
     totalValueInDai = totalValueInDai * 10 ** difference
-  } else if (stablecoinDecimal > '18') {
+  } else if (stablecoinDecimal > 0) {
     // caclulate amount of decimals over 18
     difference = stablecoinDecimal - 18
     // removes decimals to match 18
