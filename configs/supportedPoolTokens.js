@@ -6,8 +6,8 @@ export default [
     category: 'Stablecoins',
     exchange: 'Uniswap v2',
     address: '0x6f7400f3c954a873a459cc018cd53a3673db0cb0',
-    llcAddress: '0x6865c415Bf29B360c2De5343D0f19E4bD773aB25',
-    oracleAddress: '0x105927025c33981397d39001c6A25Dd2A8DFCc06',
+    llcAddress: '0x58878458e719ECcdF4BBD02E4598986F34e914B8',
+    oracleAddress: '0xdCb8f5E064f99803c00d4CA3C7fb708202fF2C33',
     uniswapAddress: '0xF6ec8abF0A62bE8c7cA60ACF5bBE41E7956Fb93c',
     currencyOneLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
@@ -45,8 +45,8 @@ export default [
     exchange: 'Uniswap v2',
     category: 'Stablecoins',
     address: '0x78b8ba24b458fd6c74d07ae9fc903a3e7e1585d3',
-    llcAddress: '0x3c62F53311CeBfee0e9a08C13907f32BE09604c2',
-    oracleAddress: '0x609CE3EF9BEDD2940Cb22Db68DbcDa851359feCC',
+    llcAddress: '0xd03E3CD62Bf133121A4D6469385119aEACB0631D',
+    oracleAddress: '0x2147767be15A8Cea63C54Aa4b576BcF9aaEE2c81',
     uniswapAddress: '0x3041cbd36888becc7bbcbc0045e3b1f144466f5f',
     currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
     currencyTwoLogo:
