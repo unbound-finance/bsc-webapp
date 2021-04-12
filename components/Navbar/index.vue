@@ -11,9 +11,9 @@
       <nuxt-link to="/account" class="font-medium dark:text-white">
         Account
       </nuxt-link>
-      <nuxt-link to="/analytics" class="font-medium dark:text-white">
+      <!-- <nuxt-link to="/analytics" class="font-medium dark:text-white">
         Analytics
-      </nuxt-link>
+      </nuxt-link> -->
       <nuxt-link to="/faucet" class="font-medium dark:text-white">
         Faucet
       </nuxt-link>
