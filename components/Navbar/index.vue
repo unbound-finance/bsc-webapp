@@ -17,6 +17,12 @@
       <nuxt-link to="/faucet" class="font-medium dark:text-white">
         Faucet
       </nuxt-link>
+      <a
+        href="https://testnet.unbound.finance/"
+        class="font-medium dark:text-white"
+      >
+        Testnet v1.0
+      </a>
     </div>
 
     <div class="flex items-center space-x-4">
