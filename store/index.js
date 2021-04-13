@@ -9,7 +9,7 @@ export const mutations = {
   getProvider(state, address) {
     state.address = address
   },
-  getNetwork(state, network) {
+  SET_NETWORK(state, network) {
     state.network = network
   },
   SET_CURRENT_BLOCK(state, payload) {
@@ -20,5 +20,8 @@ export const mutations = {
 export const getters = {
   getAddress: (state) => {
     return state.address
+  },
+  getNetworkID: (state) => {
+    return state.network
   },
 }

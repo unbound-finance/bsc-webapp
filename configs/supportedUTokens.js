@@ -9,7 +9,7 @@ export default [
     token: {
       name: 'DAI',
       exchange: 'Uniswap',
-      address: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
+      address: '0x9ec76597061ca31b3e3ebb2a2af991092808566b',
       icon:
         'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     },

@@ -36,7 +36,7 @@
               <div
                 class="text-gray-600 dark:text-white text-xs bg-gray-200 dark:bg-gray-800 py-1 px-4 rounded-full"
               >
-                {{ network }}{{ network !== 'main' ? ' testnet' : 'net' }}
+                {{ networks[network] }}
               </div>
             </div>
 
@@ -50,7 +50,7 @@
 
             <div class="mt-2">
               <a
-                :href="`https://${network}.etherscan.io/address/${address}`"
+                :href="`https://https://testnet.bscscan.com/address/${address}`"
                 target="_blank"
                 class="flex items-center space-x-1 hover:underline"
               >
@@ -82,11 +82,10 @@
             <p class="dark:text-gray-200 text-sm">
               We've detected that you need to switch your wallet's network from
               <span class="font-medium text-accent">
-                {{ network }}
-                {{ network === 'main' ? 'net' : 'testnet' }}</span
-              >
+                {{ networks[network] }}
+              </span>
               to
-              <span class="font-medium text-accent">kovan testnet</span>
+              <span class="font-medium text-accent">BSC testnet</span>
               network for this Dapp.
             </p>
           </div>
@@ -117,18 +116,27 @@
 <script>
 import { ethers } from 'ethers'
 import Web3 from 'web3'
+import { mapGetters } from 'vuex'
 import config from '../nuxt.config'
 
 export default {
   data() {
     return {
+      networks: {
+        1: 'Ethereum Mainnet',
+        3: 'Ropsten Testnet',
+        4: 'Rinkeby Testnet',
+        5: 'Goerli Testnet',
+        42: 'Kovan Testnet',
+        56: 'BSC Mainnet',
+        97: 'BSC Testnet',
+      },
       config,
       ui: {
         showDialog: false,
         showChgNetDialog: false,
         showError: false,
       },
-      network: null,
     }
   },
 
@@ -139,11 +147,12 @@ export default {
     address() {
       return this.$store.state.address
     },
+    ...mapGetters({ network: 'getNetworkID' }),
   },
 
   mounted() {
+    this.detectNetwork()
     this.isConnected()
-    this.getNetwork()
     this.reloadOnNetChange()
     this.reloadOnAccChange()
   },
@@ -159,11 +168,22 @@ export default {
 
           // Reload browser tab when newtork changed
           ethereum.on('chainChanged', async (chainId) => {
-            await this.getNetwork()
+            await this.detectNetwork()
           })
         }
       } catch (error) {
-        console.log(error)
+        throw new Error(error)
+      }
+    },
+
+    async detectNetwork() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const { chainId } = await provider.getNetwork()
+      await this.$store.commit('SET_NETWORK', chainId)
+      if (this.network !== 97) {
+        this.ui.showChgNetDialog = true
+      } else {
+        this.ui.showChgNetDialog = false
       }
     },
 
@@ -185,24 +205,22 @@ export default {
       }
     },
 
-    async getNetwork() {
-      try {
-        if (window.ethereum || window.web3) {
-          const web3 = new Web3(window.ethereum || window.web3)
-          const network = await web3.eth.net.getNetworkType()
-          this.$store.commit('getNetwork', network)
-          this.network = network
+    // async getNetwork() {
+    //   try {
+    //     if (window.ethereum || window.web3) {
+    //       const web3 = new Web3(window.ethereum || window.web3)
+    //       const network = await web3.eth.net.getNetworkType()
 
-          if (this.network !== 'kovan') {
-            this.ui.showChgNetDialog = true
-          } else {
-            this.ui.showChgNetDialog = false
-          }
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    },
+    //       if (this.network !== 'kovan') {
+    //         this.ui.showChgNetDialog = true
+    //       } else {
+    //         this.ui.showChgNetDialog = false
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    // },
 
     async isConnected() {
       try {
@@ -247,7 +265,6 @@ export default {
         const provider = await new ethers.providers.Web3Provider(
           window.ethereum
         )
-        console.log(this.getNetwork())
         const address = await provider.getSigner().getAddress()
         this.address = address
         this.$emit('connected', address)

@@ -1,76 +1,76 @@
 import { uToken } from '~/constants'
 
 export default [
-  {
-    name: 'DAI-USDT',
-    category: 'Stablecoins',
-    exchange: 'Uniswap v2',
-    address: '0x6f7400f3c954a873a459cc018cd53a3673db0cb0',
-    llcAddress: '0x58878458e719ECcdF4BBD02E4598986F34e914B8',
-    oracleAddress: '0xdCb8f5E064f99803c00d4CA3C7fb708202fF2C33',
-    uniswapAddress: '0xF6ec8abF0A62bE8c7cA60ACF5bBE41E7956Fb93c',
-    currencyOneLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-    currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
-    stablecoin: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
-    uToken: {
-      displayName: 'Unbound Dollar',
-      address: uToken.UND,
-      symbol: 'UND',
-      icon: 'und.webp',
-    },
-  },
-  {
-    name: 'DAI-USDC',
-    exchange: 'Uniswap v2',
-    category: 'Stablecoins',
-    address: '0xb0a2a806ec900bb9fe30bd7f6cadd35d74971542',
-    llcAddress: '0x59BF72062E2A23e85DaA910c9d952223Eff810A9',
-    oracleAddress: '0xd31a7489e02D533Fb8299295d9f047Fba2bF97BF',
-    uniswapAddress: '0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5',
-    currencyOneLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-    currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
-    stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
-    uToken: {
-      displayName: 'Unbound Dollar',
-      address: uToken.UND,
-      symbol: 'UND',
-      icon: 'und.webp',
-    },
-  },
-  {
-    name: 'USDC-USDT',
-    exchange: 'Uniswap v2',
-    category: 'Stablecoins',
-    address: '0x78b8ba24b458fd6c74d07ae9fc903a3e7e1585d3',
-    llcAddress: '0xd03E3CD62Bf133121A4D6469385119aEACB0631D',
-    oracleAddress: '0x2147767be15A8Cea63C54Aa4b576BcF9aaEE2c81',
-    uniswapAddress: '0x3041cbd36888becc7bbcbc0045e3b1f144466f5f',
-    currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
-    currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
-    stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
-    uToken: {
-      displayName: 'Unbound Dollar',
-      address: uToken.UND,
-      symbol: 'UND',
-      icon: 'und.webp',
-    },
-  },
+  // {
+  //   name: 'DAI-USDT',
+  //   category: 'Stablecoins',
+  //   exchange: 'Uniswap v2',
+  //   address: '0x6f7400f3c954a873a459cc018cd53a3673db0cb0',
+  //   llcAddress: '0x58878458e719ECcdF4BBD02E4598986F34e914B8',
+  //   oracleAddress: '0xdCb8f5E064f99803c00d4CA3C7fb708202fF2C33',
+  //   uniswapAddress: '0xF6ec8abF0A62bE8c7cA60ACF5bBE41E7956Fb93c',
+  //   currencyOneLogo:
+  //     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+  //   currencyTwoLogo:
+  //     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+  //   stablecoin: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
+  //   uToken: {
+  //     displayName: 'Unbound Dollar',
+  //     address: uToken.UND,
+  //     symbol: 'UND',
+  //     icon: 'und.webp',
+  //   },
+  // },
+  // {
+  //   name: 'DAI-USDC',
+  //   exchange: 'Uniswap v2',
+  //   category: 'Stablecoins',
+  //   address: '0xb0a2a806ec900bb9fe30bd7f6cadd35d74971542',
+  //   llcAddress: '0x59BF72062E2A23e85DaA910c9d952223Eff810A9',
+  //   oracleAddress: '0xd31a7489e02D533Fb8299295d9f047Fba2bF97BF',
+  //   uniswapAddress: '0xae461ca67b15dc8dc81ce7615e0320da1a9ab8d5',
+  //   currencyOneLogo:
+  //     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+  //   currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+  //   stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
+  //   uToken: {
+  //     displayName: 'Unbound Dollar',
+  //     address: uToken.UND,
+  //     symbol: 'UND',
+  //     icon: 'und.webp',
+  //   },
+  // },
+  // {
+  //   name: 'USDC-USDT',
+  //   exchange: 'Uniswap v2',
+  //   category: 'Stablecoins',
+  //   address: '0x78b8ba24b458fd6c74d07ae9fc903a3e7e1585d3',
+  //   llcAddress: '0xd03E3CD62Bf133121A4D6469385119aEACB0631D',
+  //   oracleAddress: '0x2147767be15A8Cea63C54Aa4b576BcF9aaEE2c81',
+  //   uniswapAddress: '0x3041cbd36888becc7bbcbc0045e3b1f144466f5f',
+  //   currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+  //   currencyTwoLogo:
+  //     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+  //   stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
+  //   uToken: {
+  //     displayName: 'Unbound Dollar',
+  //     address: uToken.UND,
+  //     symbol: 'UND',
+  //     icon: 'und.webp',
+  //   },
+  // },
   {
     name: 'ETH-DAI',
     exchange: 'Uniswap v2',
     category: 'ETH-Stablecoin',
-    address: '0x54870f44414e69af7eb2f3e1e144ebb7c79325b7',
-    llcAddress: '0xF6ec8abF0A62bE8c7cA60ACF5bBE41E7956Fb93c',
-    oracleAddress: '0x32a53b38B7bb7de4CA98FaaA4908a472141c2A8a',
+    address: '0xac473048ac22d70d2f5838be037f405e4a9566e0',
+    llcAddress: '0xea281Ab5765b95856659D166B275c2123D9cd8Df',
+    oracleAddress: '0x657ef3d976542252ee0eD8dA94D0e1a5926A700F',
     uniswapAddress: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-    stablecoin: '0x9CD539Ac8Dca5757efAc30Cd32da20CD955e0f8B',
+    stablecoin: '0x9ec76597061ca31b3e3ebb2a2af991092808566b',
     uToken: {
       displayName: 'Unbound Dollar',
       address: uToken.UND,
@@ -78,43 +78,43 @@ export default [
       icon: 'und.webp',
     },
   },
-  {
-    name: 'ETH-USDT',
-    exchange: 'Uniswap v2',
-    category: 'ETH-Stablecoin',
-    address: '0xa338ae6943c03c48f6fb6c7bff012d9206c28558',
-    llcAddress: '0xa613DC9eBCf5B96E797e9e0D2E7e940b0DA44967',
-    oracleAddress: '0x08a2deC7B988F5A9e2206f8C575F9e7fD55649D7',
-    uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-    currencyTwoLogo:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
-    stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
-    uToken: {
-      displayName: 'Unbound Dollar',
-      address: uToken.UND,
-      symbol: 'UND',
-      icon: 'und.webp',
-    },
-  },
-  {
-    name: 'ETH-USDC',
-    exchange: 'Uniswap v2',
-    category: 'ETH-Stablecoin',
-    address: '0xd9628d193fd57fe1222b5c533f40d60fc0275c78',
-    llcAddress: '0x0fC85f81D826F35E68c05C9dcd97Cd55B5789F11',
-    oracleAddress: '0xB5a74715f8247B62A67b6B7fC1E7eB6734EC253e',
-    uniswapAddress: '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
-    currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
-    stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
-    uToken: {
-      displayName: 'Unbound Dollar',
-      address: uToken.UND,
-      symbol: 'UND',
-      icon: 'und.webp',
-    },
-  },
+  // {
+  //   name: 'ETH-USDT',
+  //   exchange: 'Uniswap v2',
+  //   category: 'ETH-Stablecoin',
+  //   address: '0xa338ae6943c03c48f6fb6c7bff012d9206c28558',
+  //   llcAddress: '0xa613DC9eBCf5B96E797e9e0D2E7e940b0DA44967',
+  //   oracleAddress: '0x08a2deC7B988F5A9e2206f8C575F9e7fD55649D7',
+  //   uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
+  //   currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+  //   currencyTwoLogo:
+  //     'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+  //   stablecoin: '0xc1d7957dDdA47b0B50C57cfD2A8cc34F655E77c1',
+  //   uToken: {
+  //     displayName: 'Unbound Dollar',
+  //     address: uToken.UND,
+  //     symbol: 'UND',
+  //     icon: 'und.webp',
+  //   },
+  // },
+  // {
+  //   name: 'ETH-USDC',
+  //   exchange: 'Uniswap v2',
+  //   category: 'ETH-Stablecoin',
+  //   address: '0xd9628d193fd57fe1222b5c533f40d60fc0275c78',
+  //   llcAddress: '0x0fC85f81D826F35E68c05C9dcd97Cd55B5789F11',
+  //   oracleAddress: '0xB5a74715f8247B62A67b6B7fC1E7eB6734EC253e',
+  //   uniswapAddress: '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
+  //   currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+  //   currencyTwoLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+  //   stablecoin: '0xFB841B3f7a33999692e498Cac36D358632de93e8',
+  //   uToken: {
+  //     displayName: 'Unbound Dollar',
+  //     address: uToken.UND,
+  //     symbol: 'UND',
+  //     icon: 'und.webp',
+  //   },
+  // },
   // {
   //   name: 'ENJ-USDT',
   //   exchange: 'Uniswap v2',
@@ -135,7 +135,6 @@ export default [
   //     icon: 'und.webp',
   //   },
   // },
-
   // {
   //   name: 'TOMOE-USDT',
   //   exchange: 'Uniswap',
@@ -155,7 +154,6 @@ export default [
   //     icon: 'und.webp',
   //   },
   // },
-
   // {
   //   name: 'FRONT-UND',
   //   exchange: 'Uniswap',
@@ -174,7 +172,6 @@ export default [
   //     icon: 'und.webp',
   //   },
   // },
-
   // {
   //   name: 'WBTC-ETH',
   //   exchange: 'Uniswap',
@@ -193,7 +190,6 @@ export default [
   //     icon: 'uEth.svg',
   //   },
   // },
-
   // {
   //   name: 'UNI-ETH',
   //   exchange: 'Uniswap',
@@ -212,7 +208,6 @@ export default [
   //     icon: 'uEth.svg',
   //   },
   // },
-
   // {
   //   name: 'LINK-ETH',
   //   exchange: 'Uniswap',
@@ -231,7 +226,6 @@ export default [
   //     icon: 'uEth.svg',
   //   },
   // },
-
   // {
   //   name: 'TSLA-UND',
   //   displayName: 'Tesla',
@@ -251,7 +245,6 @@ export default [
   //     icon: 'und.webp',
   //   },
   // },
-
   // {
   //   name: 'ETH-USDC',
   //   exchange: 'Uniswap',
@@ -296,7 +289,6 @@ export default [
   //     icon: 'und.webp',
   //   },
   // },
-
   // {
   //   name: 'LINK-DAI',
   //   exchange: 'Uniswap',
