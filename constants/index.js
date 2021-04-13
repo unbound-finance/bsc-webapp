@@ -20,13 +20,13 @@ export const contracts = {
   UNDUniswapPool: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
   uETHUniswapPool: '0x1ab39c83bab36c8ecbafba448748c50f5eb4db2a',
   uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  valuator: '0x5Fb52bfa504de8b01f7D322824842140E4119a38',
+  valuator: '0x256118F04b4bB37c305B5C5EFccc13F68E705351',
 }
 export const uToken = {
-  UND: '0xe5bED7222bB8F6452FB3B691867A32a9870c509b',
+  UND: '0xf656aB6174E72e0521b3e8C6b9A7d77895e21e27',
 }
 // Chain ID
-export const CHAIN_ID = 42
+export const CHAIN_ID = 97
 
 // SAFU fund address
 export const SAFU_FUND = '0xcc729a114aa8f572971d4d85B21e661E265Df20C'

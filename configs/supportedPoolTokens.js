@@ -64,8 +64,8 @@ export default [
     exchange: 'Uniswap v2',
     category: 'ETH-Stablecoin',
     address: '0xac473048ac22d70d2f5838be037f405e4a9566e0',
-    llcAddress: '0xea281Ab5765b95856659D166B275c2123D9cd8Df',
-    oracleAddress: '0x657ef3d976542252ee0eD8dA94D0e1a5926A700F',
+    llcAddress: '0x8868Ec695022d313b1Ae2067DBC337919568e28d',
+    oracleAddress: '0x8F50Cbc393fC76FEA965DF27a0EF4dBEb524FA40',
     uniswapAddress: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11',
     currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
     currencyTwoLogo:
