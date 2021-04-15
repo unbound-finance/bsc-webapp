@@ -61,7 +61,7 @@ export default [
   // },
   {
     name: 'ETH-DAI',
-    exchange: 'Uniswap v2',
+    exchange: 'PancakeSwap',
     category: 'ETH-Stablecoin',
     address: '0xac473048ac22d70d2f5838be037f405e4a9566e0',
     llcAddress: '0x8868Ec695022d313b1Ae2067DBC337919568e28d',

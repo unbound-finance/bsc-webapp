@@ -103,6 +103,8 @@ export default {
 
         const finalMinAmount = toFixed(minAmount - minAmountFees).toString()
 
+        console.log({ poolToken, userAddress, amount, nonce, deadline })
+
         // Requesting EIP712 signature
         const EIP712Signature = getEIP712Signature(
           poolToken.address,
@@ -112,6 +114,7 @@ export default {
           nonce,
           deadline
         )
+        console.log({ EIP712Signature })
         const web3 = new Web3(window.ethereum)
         web3.currentProvider.sendAsync(
           {
