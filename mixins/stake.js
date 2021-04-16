@@ -7,7 +7,7 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
   const provider = new ethers.providers.Web3Provider(window.ethereum)
   const signer = provider.getSigner()
   const contract = new ethers.Contract(
-    contracts.uniswapRouter,
+    contracts.pancakeRouter,
     UNISWAP_ROUTER_ABI,
     signer
   )
@@ -86,7 +86,7 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 
 //   const signedData = await getEIP712Signature(
 //     LPTAddress,
-//     contracts.uniswapRouter,
+//     contracts.pancakeRouter,
 //     userAddress,
 //     liquidity,
 //     nonce,
@@ -121,7 +121,7 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 //         }
 //         const signature = ethers.utils.splitSignature(signedData.result)
 //         const UniswapRouter = await new ethers.Contract(
-//           contracts.uniswapRouter,
+//           contracts.pancakeRouter,
 //           UNISWAP_ROUTER_ABI,
 //           signer
 //         )
@@ -163,7 +163,7 @@ const addLiquidity = async (tokenA, tokenB, amountA, amountB) => {
 //   // const signature = ethers.utils.splitSignature(signedData.result)
 //   // console.log(signature)
 //   // const contract = await new ethers.Contract(
-//   //   config.contracts.uniswapRouter,
+//   //   config.contracts.pancakeRouter,
 //   //   UniswapRouterABI,
 //   //   signer
 //   // )

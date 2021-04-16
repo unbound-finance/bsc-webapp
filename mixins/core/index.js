@@ -333,7 +333,7 @@ export default {
       this.ui.showAwaiting = true
       const { SIGNER } = this.$getProvider()
       const contract = new ethers.Contract(
-        contracts.uniswapRouter,
+        contracts.pancakeRouter,
         UNISWAP_ROUTER_ABI,
         SIGNER
       )
@@ -409,7 +409,7 @@ export default {
 
       const signedData = getEIP712Signature(
         LPTAddress,
-        contracts.uniswapRouter,
+        contracts.pancakeRouter,
         userAddress,
         liquidity,
         nonce,
@@ -443,7 +443,7 @@ export default {
           }
           const signature = ethers.utils.splitSignature(signedData.result)
           const UniswapRouter = new ethers.Contract(
-            contracts.uniswapRouter,
+            contracts.pancakeRouter,
             UNISWAP_ROUTER_ABI,
             SIGNER
           )

@@ -19,7 +19,7 @@ export const contracts = {
   unboundStaking: '0x339004Ea6d1F74B94A905a314B52211f0DdeC00F',
   UNDUniswapPool: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
   uETHUniswapPool: '0x1ab39c83bab36c8ecbafba448748c50f5eb4db2a',
-  uniswapRouter: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
+  pancakeRouter: '0xD99D1c33F9fC3444f8101754aBC46c52416550D1',
   valuator: '0x256118F04b4bB37c305B5C5EFccc13F68E705351',
 }
 export const uToken = {

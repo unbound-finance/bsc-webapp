@@ -305,7 +305,7 @@ export default {
       )
       try {
         const totalSupply = contract.totalSupply()
-        await contract.approve(contracts.uniswapRouter, totalSupply)
+        await contract.approve(contracts.pancakeRouter, totalSupply)
         // this.ui.showSuccess = true
         // this.txLink = approve.hash
         this.approveState = {

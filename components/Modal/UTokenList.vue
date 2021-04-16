@@ -141,7 +141,7 @@ export default {
       )
       const allowance = await contract.allowance(
         userAddress,
-        contracts.uniswapRouter
+        contracts.pancakeRouter
       )
       return allowance
     },
