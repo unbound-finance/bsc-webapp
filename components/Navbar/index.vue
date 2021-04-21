@@ -26,6 +26,9 @@
     </div>
 
     <div class="flex items-center space-x-4">
+      <div class="p-1 rounded-full bg-black">
+        <img src="~/assets/icons/bsc.png" width="96" alt="bsc-icon" />
+      </div>
       <ConnectWalletBtn />
 
       <!-- Toggle Button for Light/Dark Mode -->
