@@ -126,7 +126,8 @@ export default [
     llcAddress: '0x8868Ec695022d313b1Ae2067DBC337919568e28d',
     oracleAddress: '0x8F50Cbc393fC76FEA965DF27a0EF4dBEb524FA40',
     uniswapAddress: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11',
-    currencyOneLogo: 'https://uniswap.info/static/media/eth.73dabb37.png',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/Uniswap/uniswap-interface/main/src/assets/images/ethereum-logo.png',
     currencyTwoLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     stablecoin: '0xBc1975906ACb85F31d57E125877a1bD1d09a329a',
