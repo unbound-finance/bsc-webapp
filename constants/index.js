@@ -10,20 +10,20 @@ import UNISWAP_ROUTER_ABI from './abis/UniswapRouter'
 import ORACLE_ABI from './abis/Oracle'
 
 export const contracts = {
-  dai: '0xAFde04218D9B64CA8B83B3d2006b294176f7cE96',
-  eth: '0x9e752025e3D3a3F11A7809D52bf9015664DD615f',
-  liquidityPoolToken: '0x7ec314edb873a5f12bc854c5f3f57ef02b44d2c0',
-  unboundDai: '0xAFde04218D9B64CA8B83B3d2006b294176f7cE96',
+  dai: '0x8149383796Be8a788B6e89821BC2012890C6C074',
+  eth: '0x961ba0F09960E037A62b2E34f369f5cB08494f70',
+  liquidityPoolToken: '0x25ab0fa41dd67f8323d7f02b5f94a3824769eb3f',
+  unboundDai: '0x4045f69cD2AfA168B2C81F467d38Acd4D98bcfe6',
   unboundEth: '0x9e752025e3D3a3F11A7809D52bf9015664DD615f',
-  liquidityLock: '0xee9a5129b7a913946B96ee76F67cd70EFb8Cc781',
+  liquidityLock: '0x5A9c643C3d04FEe228faa64C787Da8505E39Ba87',
   unboundStaking: '0x339004Ea6d1F74B94A905a314B52211f0DdeC00F',
-  UNDUniswapPool: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
+  UNDUniswapPool: '0x4dc5c2b346de93df66d5f73cda0725e296a09a75',
   uETHUniswapPool: '0x1ab39c83bab36c8ecbafba448748c50f5eb4db2a',
-  pancakeRouter: '0xe0EA5CB7F0412e09f9F7f1e5E8E5dC9d739078B5',
-  valuator: '0x44a0d3e0ef0dFF4d902fB8D7134df8a83042E483',
+  pancakeRouter: '0x5846E20e4601584186c9fe54511D50e462A23bF7',
+  valuator: '0x878987120CAe465fdEd23E7Af8919dd7bbea9BF4',
 }
 export const uToken = {
-  UND: '0xFA2595b6e266D2Aeb2701A992251E93Dd387e1be',
+  UND: '0x4045f69cD2AfA168B2C81F467d38Acd4D98bcfe6',
 }
 // Chain ID
 export const CHAIN_ID = 1666700000

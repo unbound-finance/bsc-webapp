@@ -5,9 +5,9 @@ export default [
     name: 'ETH-DAI',
     exchange: 'Uniswap v2',
     category: 'ETH-Stablecoin',
-    address: '0x7ec314edb873a5f12bc854c5f3f57ef02b44d2c0',
-    llcAddress: '0xee9a5129b7a913946B96ee76F67cd70EFb8Cc781',
-    oracleAddress: '0x10cDaF6363fd8789F7ea4321cc193E80dffA8766',
+    address: '0x25ab0fa41dd67f8323d7f02b5f94a3824769eb3f',
+    llcAddress: '0x5A9c643C3d04FEe228faa64C787Da8505E39Ba87',
+    oracleAddress: '0x7919Dad3b0AEB6bf4BE8d55DbF8CF4F0EF3F0c8d',
     uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
     currencyOneLogo:
       'https://raw.githubusercontent.com/Uniswap/uniswap-interface/main/src/assets/images/ethereum-logo.png',

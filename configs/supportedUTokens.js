@@ -5,11 +5,11 @@ export default [
     name: 'UND',
     address: uToken.UND,
     icon: 'und.webp',
-    lptAddress: '0x7451f151528760acf57c301f1352f5f90b3822bf',
+    lptAddress: '0x4dc5c2b346de93df66d5f73cda0725e296a09a75',
     token: {
       name: 'DAI',
       exchange: 'Uniswap',
-      address: '0xAFde04218D9B64CA8B83B3d2006b294176f7cE96',
+      address: '0x8149383796Be8a788B6e89821BC2012890C6C074',
       icon:
         'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     },
