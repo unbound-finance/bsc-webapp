@@ -2,18 +2,96 @@ import { uToken } from '~/constants'
 
 export default [
   {
+    name: 'ONE-DAI',
+    exchange: 'Uniswap v2',
+    category: 'ONE-Stablecoin',
+    address: '0x44Fc31484894b32488A1b5a4aeD8411465C551e7',
+    llcAddress: '0xBe42116fAe2b138A54c078957e1F013C915Db426',
+    oracleAddress: '0x1d0aFf97a523B78238B750ECcE44781eeFCd83b2',
+    uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/harmony/info/logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    stablecoin: '0xa6610F1ba3523352d5Da5FB2e25c0D8859da4007',
+    uToken: {
+      displayName: 'Unbound Dollar',
+      address: uToken.UND,
+      symbol: 'UND',
+      icon: 'und.webp',
+    },
+  },
+  {
     name: 'ETH-DAI',
     exchange: 'Uniswap v2',
     category: 'ETH-Stablecoin',
-    address: '0x25ab0fa41dd67f8323d7f02b5f94a3824769eb3f',
-    llcAddress: '0x5A9c643C3d04FEe228faa64C787Da8505E39Ba87',
-    oracleAddress: '0x7919Dad3b0AEB6bf4BE8d55DbF8CF4F0EF3F0c8d',
+    address: '0x26d35673AF4501b744f80D3ECc159De6408F1bbD',
+    llcAddress: '0xEf4F716F777DefD44300fdCF8893a98056Ed6e7f',
+    oracleAddress: '0xB99FeB900a6Fae2BaFB4376836a5273A86BFCa3D',
     uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
     currencyOneLogo:
       'https://raw.githubusercontent.com/Uniswap/uniswap-interface/main/src/assets/images/ethereum-logo.png',
     currencyTwoLogo:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-    stablecoin: '0xAFde04218D9B64CA8B83B3d2006b294176f7cE96',
+    stablecoin: '0xa6610F1ba3523352d5Da5FB2e25c0D8859da4007',
+    uToken: {
+      displayName: 'Unbound Dollar',
+      address: uToken.UND,
+      symbol: 'UND',
+      icon: 'und.webp',
+    },
+  },
+  {
+    name: 'USDC-USDT',
+    exchange: 'Uniswap v2',
+    category: 'Stablecoins',
+    address: '0x9c53D73D009B0879A308eae912AF4D19ad9D102a',
+    llcAddress: '0xAd6bFfcb0A3eB466b6B9C85bEF56Eb8AD160bE6A',
+    oracleAddress: '0x16919655d1C628D0B29490CAde35305717734d5f',
+    uniswapAddress: '0x3041cbd36888becc7bbcbc0045e3b1f144466f5f',
+    currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+    stablecoin: '0x922337914E641E830cE174f52288bD7660ef83C6',
+    uToken: {
+      displayName: 'Unbound Dollar',
+      address: uToken.UND,
+      symbol: 'UND',
+      icon: 'und.webp',
+    },
+  },
+  {
+    name: 'USDC-DAI',
+    exchange: 'Uniswap v2',
+    category: 'Stablecoins',
+    address: '0x33E614817f1b5d6622c947Cae744e807ee7a9F53',
+    llcAddress: '0x8fCCc83B354f3bE52c93e77c10057984cD83CD5b',
+    oracleAddress: '0x0c85EAB2670f4Fa04CA337bfeCEecBE5C15676Cd',
+    uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
+    currencyOneLogo: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    stablecoin: '0xa6610F1ba3523352d5Da5FB2e25c0D8859da4007',
+    uToken: {
+      displayName: 'Unbound Dollar',
+      address: uToken.UND,
+      symbol: 'UND',
+      icon: 'und.webp',
+    },
+  },
+  {
+    name: 'USDT-DAI',
+    exchange: 'Uniswap v2',
+    category: 'Stablecoins',
+    address: '0xb52F2d52CF673eB197604cfE106B6aaB8227dAe0',
+    llcAddress: '0x3Da70833Aeb28eD26e27442F96e9590118095cAd',
+    oracleAddress: '0x077b12BCc1b19E8822B652Ebc6466D47671233C2',
+    uniswapAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
+    currencyOneLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+    currencyTwoLogo:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    stablecoin: '0xa6610F1ba3523352d5Da5FB2e25c0D8859da4007',
     uToken: {
       displayName: 'Unbound Dollar',
       address: uToken.UND,
