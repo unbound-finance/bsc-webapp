@@ -4,36 +4,24 @@
       <p class="text-3xl font-bold text-gray-800 dark:text-gray-200">Faucet</p>
 
       <ul class="text-sm text-gray-600 list-disc px-4">
-        <li>You would need Kovan ETH to get started.</li>
-        <li>This faucet will give you our test tokens on kovan testnet.</li>
-        <!-- <li>
-          You can get kovan test ethers
+        <li>You would need Testnet ONE to get started.</li>
+        <li>This faucet will give you our test tokens on harmony testnet.</li>
+        <li>
+          You can get harmony test one from here
           <a
-            href="https://faucet.kovan.network/"
+            href="https://faucet.pops.one/"
             target="_blank"
             class="text-light-primary dark:text-dark-primary font-medium"
             >here</a
           >
-        </li> -->
-        <li>
-          These are ETH, DAI, USDC, USDT, WBTC, LINK, ENJ and TOMOE. You can
-          find token addresses
-          <a
-            href="https://www.notion.so/Unbound-Testnet-06c16fd6fcb4479da2cb3b03389b5c39"
-            target="_blank"
-            class="text-light-primary dark:text-dark-primary font-medium underline"
-            >here</a
-          >
         </li>
-        <li>
-          You can then go to Uniswap, provide liquidity to the pool and receive
-          Liquidity Pool Tokens(LPT).
-        </li>
+        <li>These are ETH, DAI, USDC, USDT and ONE.</li>
+        <li>LPT's are ETH-DAI, ONE-DAI, USDC-USDT, USDC-DAI and USDT-DAI.</li>
         <li>
           Then visit the unbound dashboard, use Mint to collatralize this LPT.
         </li>
         <li>
-          The Uniswap pools that we support on testent are
+          The Uniswap pools that we support on testnet are
           <nuxt-link
             to="/analytics"
             class="text-light-primary dark:text-dark-primary font-medium underline"
@@ -52,14 +40,14 @@
           type="button"
           class="w-full font-medium rounded-lg py-4 appearance-none focus:outline-none"
           :title="
-            ui.showRequestEth == false ? 'You already have kovan ETH' : ''
+            ui.showRequestEth == false ? 'You already have testnet ONE' : ''
           "
           :class="ui.showRequestEth ? getActiveClass : getDisabledClass"
           :disabled="ui.showRequestEth == false"
           @click="requestKeth"
         >
           <loader v-if="ui.ethLoading" />
-          <span v-else>Request KETH</span>
+          <span v-else>Request TestOne</span>
         </button>
 
         <button
@@ -144,32 +132,34 @@ export default {
       }
     },
 
-    async requestKeth() {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const signer = await provider.getSigner().getAddress()
-      this.ui.errorMsg = null
-      this.ui.successMsg = null
-      this.ui.ethLoading = true
+    requestKeth() {
+      window.open('https://faucet.pops.one/', '_blank')
 
-      try {
-        const { data } = await this.$axios.post(
-          'https://faucet.unbound.finance/api/release',
-          {
-            address: signer,
-          }
-        )
-        this.ui.successMsg = `0.05 kovan ETH sent. Please wait for the transaction to get confirmed before requesting the pool tokens.`
-        this.txLink = `https://kovan.etherscan.io/tx/${data.hash}`
-        this.ui.ethLoading = false
-        this.ui.showRequestEth = false
-        // this.ui.showRequestEth = false
-      } catch (error) {
-        this.ui.errorMsg = 'You can request kovan ETH only once in 24 hours.'
-        this.ui.ethLoading = false
-        setTimeout(() => {
-          this.ui.errorMsg = null
-        }, 2500)
-      }
+      // const provider = new ethers.providers.Web3Provider(window.ethereum)
+      // const signer = await provider.getSigner().getAddress()
+      // this.ui.errorMsg = null
+      // this.ui.successMsg = null
+      // this.ui.ethLoading = true
+
+      // try {
+      //   const { data } = await this.$axios.post(
+      //     'https://faucet.unbound.finance/api/release',
+      //     {
+      //       address: signer,
+      //     }
+      //   )
+      //   this.ui.successMsg = `0.05 kovan ETH sent. Please wait for the transaction to get confirmed before requesting the pool tokens.`
+      //   this.txLink = `https://kovan.etherscan.io/tx/${data.hash}`
+      //   this.ui.ethLoading = false
+      //   this.ui.showRequestEth = false
+      //   // this.ui.showRequestEth = false
+      // } catch (error) {
+      //   this.ui.errorMsg = 'You can request kovan ETH only once in 24 hours.'
+      //   this.ui.ethLoading = false
+      //   setTimeout(() => {
+      //     this.ui.errorMsg = null
+      //   }, 2500)
+      // }
     },
 
     async requestFaucet() {
@@ -182,6 +172,7 @@ export default {
 
       try {
         if (this.$store.state.address) {
+          console.log('calling funciton: ' + FAUCET)
           const distribute = await faucet.releaseAll(this.$store.state.address)
           this.ui.loading = false
           this.txLink = distribute.hash
