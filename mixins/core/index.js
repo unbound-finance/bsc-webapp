@@ -67,266 +67,261 @@ export default {
   methods: {
     async mint(poolToken) {
       this.ui.showAwaiting = true
-      const prevTx = await isBlocktimeReached.bind(this)(
-        poolToken.llcAddress.toLowerCase()
+      // const prevTx = await isBlocktimeReached.bind(this)(
+      //   poolToken.llcAddress.toLowerCase()
+      // )
+      const { SIGNER } = this.$getProvider()
+      const userAddress = await SIGNER.getAddress()
+
+      // get nonce
+      const nonce = await getNonce(poolToken.address, SIGNER)
+
+      // deadline is next 5 seconds
+      const deadline = +new Date() + 5000
+
+      // converting decimals to 18 decimals format
+      let amount = ethers.utils.parseEther(
+        this.LPTAmount.toString().slice(0, 18)
       )
-      if (!prevTx.pending) {
-        const { SIGNER } = this.$getProvider()
-        const userAddress = await SIGNER.getAddress()
+      amount = amount.toString()
 
-        // get nonce
-        const nonce = await getNonce(poolToken.address, SIGNER)
+      // setting min amount (2%)
+      let minAmount = toFixed(
+        (parseFloat(this.LPTAmount) * this.llcDetails.loanRatioPerLPT -
+          parseFloat(this.LPTAmount) * this.llcDetails.loanRatioPerLPT * 0.02) *
+          1e18
+      )
+      minAmount = minAmount.toString()
 
-        // deadline is next 5 seconds
-        const deadline = +new Date() + 5000
+      let minAmountFees =
+        (parseFloat(minAmount) * parseFloat(this.llcDetails.fee)) / 1e6
 
-        // converting decimals to 18 decimals format
-        let amount = ethers.utils.parseEther(
-          this.LPTAmount.toString().slice(0, 18)
-        )
-        amount = amount.toString()
+      minAmountFees = minAmountFees.toString()
 
-        // setting min amount (2%)
-        let minAmount = toFixed(
-          (parseFloat(this.LPTAmount) * this.llcDetails.loanRatioPerLPT -
-            parseFloat(this.LPTAmount) *
-              this.llcDetails.loanRatioPerLPT *
-              0.02) *
-            1e18
-        )
-        minAmount = minAmount.toString()
+      const finalMinAmount = toFixed(minAmount - minAmountFees).toString()
 
-        let minAmountFees =
-          (parseFloat(minAmount) * parseFloat(this.llcDetails.fee)) / 1e6
+      console.log({ poolToken, userAddress, amount, nonce, deadline })
 
-        minAmountFees = minAmountFees.toString()
-
-        const finalMinAmount = toFixed(minAmount - minAmountFees).toString()
-
-        console.log({ poolToken, userAddress, amount, nonce, deadline })
-
-        // Requesting EIP712 signature
-        const EIP712Signature = getEIP712Signature(
-          poolToken.address,
-          poolToken.llcAddress,
-          userAddress,
-          amount,
-          nonce,
-          deadline
-        )
-        console.log({ EIP712Signature })
-        const web3 = new Web3(window.ethereum)
-        web3.currentProvider.sendAsync(
-          {
-            method: 'eth_signTypedData_v3',
-            params: [userAddress, EIP712Signature],
-            from: userAddress,
-          },
-          async (error, signedData) => {
-            if (error || signedData.error) {
-              if (error.code !== 4001) {
-                this.$logRocket.captureException(error, {
-                  tags: {
-                    function: 'mintSignature',
-                  },
-                  extra: {
-                    pageName: 'Mint',
-                  },
-                })
-                this.$logRocket.identify(this.$store.state.address)
-              }
-              this.ui.showAwaiting = false
-              return
+      // Requesting EIP712 signature
+      const EIP712Signature = getEIP712Signature(
+        poolToken.address,
+        poolToken.llcAddress,
+        userAddress,
+        amount,
+        nonce,
+        deadline
+      )
+      console.log({ EIP712Signature })
+      const web3 = new Web3(window.ethereum)
+      web3.currentProvider.sendAsync(
+        {
+          method: 'eth_signTypedData_v3',
+          params: [userAddress, EIP712Signature],
+          from: userAddress,
+        },
+        async (error, signedData) => {
+          if (error || signedData.error) {
+            if (error.code !== 4001) {
+              this.$logRocket.captureException(error, {
+                tags: {
+                  function: 'mintSignature',
+                },
+                extra: {
+                  pageName: 'Mint',
+                },
+              })
+              this.$logRocket.identify(this.$store.state.address)
             }
-            const signature = ethers.utils.splitSignature(signedData.result)
-            const UnboundLLCContract = new ethers.Contract(
-              poolToken.llcAddress,
-              UNBOUND_LLC_ABI,
+            this.ui.showAwaiting = false
+            return
+          }
+          const signature = ethers.utils.splitSignature(signedData.result)
+          const UnboundLLCContract = new ethers.Contract(
+            poolToken.llcAddress,
+            UNBOUND_LLC_ABI,
+            SIGNER
+          )
+          try {
+            const mintUND = await UnboundLLCContract.lockLPTWithPermit(
+              amount,
+              deadline,
+              signature.v,
+              signature.r,
+              signature.s,
+              finalMinAmount
+            )
+
+            const now = Date.now()
+            const delay = now + 30000
+
+            const llcBlockLimit = await getBlockLimit(poolToken.llcAddress)
+            console.log({ llcBlockLimit })
+
+            localStorage.setItem(
+              'txStatus',
+              JSON.stringify({
+                pending: true,
+                txHash: mintUND.hash,
+                llcAddress: poolToken.llcAddress,
+                userAddress,
+                exp: delay,
+                targetBlock:
+                  Number(this.currentBlock) + Number(llcBlockLimit) + 3,
+              })
+            )
+
+            // this.$store.commit('localStorage/SET_TX_STATUS', {
+            //   pending: true,
+            //   txHash: mintUND.hash,
+            //   llcAddress: poolToken.llcAddress,
+            //   userAddress,
+            //   exp: delay,
+            // })
+
+            // close awaiting modal
+            this.ui.showAwaiting = false
+            // show success screen
+            this.ui.showConfirmation = false
+            this.txLink = mintUND.hash
+            this.ui.showSuccess = true
+            this.LPTAmount = null
+
+            // const timeout = Number(this.txStatus.exp) - Date.now()
+
+            // setTimeout(() => {
+            //   this.$store.commit('localStorage/SET_TX_STATUS', null)
+            // }, timeout)
+
+            const a = await isBlocktimeReached.bind(this)(
+              poolToken.llcAddress.toLowerCase()
+            )
+            if (a.pending) {
+              const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+              this.targetBlockNumber = txStatus.targetBlock
+            }
+            // this.targetBlockNumber = a.targetBlockNumber
+
+            // initiate the UND contract to detect the event so we can update the balances
+            const UND = new ethers.Contract(
+              poolToken.uToken.address,
+              UNBOUND_DOLLAR_ABI,
               SIGNER
             )
-            try {
-              const mintUND = await UnboundLLCContract.lockLPTWithPermit(
-                amount,
-                deadline,
-                signature.v,
-                signature.r,
-                signature.s,
-                finalMinAmount
-              )
-
-              const now = Date.now()
-              const delay = now + 30000
-
-              const llcBlockLimit = await getBlockLimit(poolToken.llcAddress)
-              console.log({ llcBlockLimit })
-
-              localStorage.setItem(
-                'txStatus',
-                JSON.stringify({
-                  pending: true,
-                  txHash: mintUND.hash,
-                  llcAddress: poolToken.llcAddress,
-                  userAddress,
-                  exp: delay,
-                  targetBlock:
-                    Number(this.currentBlock) + Number(llcBlockLimit) + 3,
-                })
-              )
-
-              // this.$store.commit('localStorage/SET_TX_STATUS', {
-              //   pending: true,
-              //   txHash: mintUND.hash,
-              //   llcAddress: poolToken.llcAddress,
-              //   userAddress,
-              //   exp: delay,
-              // })
-
-              // close awaiting modal
-              this.ui.showAwaiting = false
-              // show success screen
-              this.ui.showConfirmation = false
-              this.txLink = mintUND.hash
-              this.ui.showSuccess = true
-              this.LPTAmount = null
-
-              // const timeout = Number(this.txStatus.exp) - Date.now()
-
-              // setTimeout(() => {
-              //   this.$store.commit('localStorage/SET_TX_STATUS', null)
-              // }, timeout)
-
-              const a = await isBlocktimeReached.bind(this)(
-                poolToken.llcAddress.toLowerCase()
-              )
-              if (a.pending) {
-                const txStatus = JSON.parse(localStorage.getItem('txStatus'))
-                this.targetBlockNumber = txStatus.targetBlock
-              }
-              // this.targetBlockNumber = a.targetBlockNumber
-
-              // initiate the UND contract to detect the event so we can update the balances
-              const UND = new ethers.Contract(
-                poolToken.uToken.address,
-                UNBOUND_DOLLAR_ABI,
-                SIGNER
-              )
-              // listen to mint event from UND contract
-              UND.on('Mint', async () => {
-                const balance = await getTokenBalance(poolToken.address)
-                this.poolToken.balance = balance.toFixed
+            // listen to mint event from UND contract
+            UND.on('Mint', async () => {
+              const balance = await getTokenBalance(poolToken.address)
+              this.poolToken.balance = balance.toFixed
+            })
+          } catch (error) {
+            if (error.code !== 4001) {
+              this.$logRocket.captureException(error, {
+                tags: {
+                  function: 'mint',
+                },
+                extra: {
+                  pageName: 'Mint',
+                },
               })
-            } catch (error) {
-              if (error.code !== 4001) {
-                this.$logRocket.captureException(error, {
-                  tags: {
-                    function: 'mint',
-                  },
-                  extra: {
-                    pageName: 'Mint',
-                  },
-                })
-                this.$logRocket.identify(this.$store.state.address)
-              }
-              this.ui.showAwaiting = false
-              this.ui.showConfirmation = false
-              this.ui.showRejected = true
+              this.$logRocket.identify(this.$store.state.address)
             }
+            this.ui.showAwaiting = false
+            this.ui.showConfirmation = false
+            this.ui.showRejected = true
           }
-        )
-      } else {
-        const txStatus = JSON.parse(localStorage.getItem('txStatus'))
-        this.ui.showAwaiting = false
-        this.targetBlockNumber = txStatus.targetBlock
-        this.ui.showCoolDown = true
-      }
+        }
+      )
+      // } else {
+      //   const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+      //   this.ui.showAwaiting = false
+      //   this.targetBlockNumber = txStatus.targetBlock
+      //   this.ui.showCoolDown = true
+      // }
     },
 
     async unlock(poolToken) {
       this.ui.showAwaiting = true
-      const prevTx = await isBlocktimeReached.bind(this)(
-        poolToken.llcAddress.toLowerCase()
+      // const prevTx = await isBlocktimeReached.bind(this)(
+      //   poolToken.llcAddress.toLowerCase()
+      // )
+      const { SIGNER } = this.$getProvider()
+      const userAddress = await SIGNER.getAddress()
+      const contract = new ethers.Contract(
+        poolToken.llcAddress,
+        UNBOUND_LLC_ABI,
+        SIGNER
       )
-      if (!prevTx.pending) {
-        const { SIGNER } = this.$getProvider()
-        const userAddress = await SIGNER.getAddress()
-        const contract = new ethers.Contract(
-          poolToken.llcAddress,
-          UNBOUND_LLC_ABI,
-          SIGNER
+      let rawUNDAmount = ethers.utils.parseEther(
+        this.uTokenAmount.toString().slice(0, 18)
+      )
+      rawUNDAmount = rawUNDAmount.toString()
+
+      try {
+        const unlock = await contract.unlockLPT(rawUNDAmount)
+
+        const now = Date.now()
+        const delay = now + 30000
+
+        const llcBlockLimit = await getBlockLimit(poolToken.llcAddress)
+
+        localStorage.setItem(
+          'txStatus',
+          JSON.stringify({
+            pending: true,
+            txHash: unlock.hash,
+            llcAddress: poolToken.llcAddress,
+            userAddress,
+            exp: delay,
+            targetBlock: Number(this.currentBlock) + Number(llcBlockLimit) + 3,
+          })
         )
-        let rawUNDAmount = ethers.utils.parseEther(
-          this.uTokenAmount.toString().slice(0, 18)
-        )
-        rawUNDAmount = rawUNDAmount.toString()
 
-        try {
-          const unlock = await contract.unlockLPT(rawUNDAmount)
-
-          const now = Date.now()
-          const delay = now + 30000
-
-          const llcBlockLimit = await getBlockLimit(poolToken.llcAddress)
-
-          localStorage.setItem(
-            'txStatus',
-            JSON.stringify({
-              pending: true,
-              txHash: unlock.hash,
-              llcAddress: poolToken.llcAddress,
-              userAddress,
-              exp: delay,
-              targetBlock:
-                Number(this.currentBlock) + Number(llcBlockLimit) + 3,
-            })
-          )
-
-          // this.$store.commit('localStorage/SET_TX_STATUS', {
-          //   pending: true,
-          //   txHash: unlock.hash,
-          //   llcAddress: poolToken.llcAddress,
-          //   userAddress,
-          //   exp: delay,
-          // })
-          this.ui.showAwaiting = false
-          this.txLink = unlock.hash
-          this.ui.showSuccess = true
-          this.LPTAmount = null
-
-          const a = await isBlocktimeReached.bind(this)(
-            poolToken.llcAddress.toLowerCase()
-          )
-          if (a.pending) {
-            const txStatus = JSON.parse(localStorage.getItem('txStatus'))
-            this.targetBlockNumber = txStatus.targetBlock
-          }
-
-          // this.targetBlockNumber = a.targetBlockNumber
-
-          // const timeout = Number(this.txStatus.exp) - Date.now()
-          // setTimeout(() => {
-          //   this.$store.commit('localStorage/SET_TX_STATUS', null)
-          // }, timeout)
-        } catch (error) {
-          if (error.code !== 4001) {
-            this.$logRocket.captureException(error, {
-              tags: {
-                function: 'unlock',
-              },
-              extra: {
-                pageName: 'Unlock',
-              },
-            })
-            this.$logRocket.identify(this.$store.state.address)
-          }
-          this.ui.showAwaiting = false
-          this.ui.showRejected = true
-        }
-      } else {
-        const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+        // this.$store.commit('localStorage/SET_TX_STATUS', {
+        //   pending: true,
+        //   txHash: unlock.hash,
+        //   llcAddress: poolToken.llcAddress,
+        //   userAddress,
+        //   exp: delay,
+        // })
         this.ui.showAwaiting = false
-        this.targetBlockNumber = txStatus.targetBlock
-        this.ui.showCoolDown = true
+        this.txLink = unlock.hash
+        this.ui.showSuccess = true
+        this.LPTAmount = null
+
+        const a = await isBlocktimeReached.bind(this)(
+          poolToken.llcAddress.toLowerCase()
+        )
+        if (a.pending) {
+          const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+          this.targetBlockNumber = txStatus.targetBlock
+        }
+
+        // this.targetBlockNumber = a.targetBlockNumber
+
+        // const timeout = Number(this.txStatus.exp) - Date.now()
+        // setTimeout(() => {
+        //   this.$store.commit('localStorage/SET_TX_STATUS', null)
+        // }, timeout)
+      } catch (error) {
+        if (error.code !== 4001) {
+          this.$logRocket.captureException(error, {
+            tags: {
+              function: 'unlock',
+            },
+            extra: {
+              pageName: 'Unlock',
+            },
+          })
+          this.$logRocket.identify(this.$store.state.address)
+        }
+        this.ui.showAwaiting = false
+        this.ui.showRejected = true
       }
+      // } else {
+      //   const txStatus = JSON.parse(localStorage.getItem('txStatus'))
+      //   this.ui.showAwaiting = false
+      //   this.targetBlockNumber = txStatus.targetBlock
+      //   this.ui.showCoolDown = true
+      // }
     },
 
     async addLiquidity(tokenA, tokenB, amountA, amountB) {
