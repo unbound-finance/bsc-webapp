@@ -71,7 +71,7 @@ const getEIP712Signature = (
     deadline,
   }
   const domain = {
-    name: 'Pancake LPs',
+    name: 'Uniswap V2',
     version: '1',
     chainId: parseInt(CHAIN_ID),
     verifyingContract: poolTokenAddress,

@@ -10,32 +10,32 @@ import UNISWAP_ROUTER_ABI from './abis/UniswapRouter'
 import ORACLE_ABI from './abis/Oracle'
 
 export const contracts = {
-  dai: '0x10895Ca6157CCF0d6516dd365A4E9f53D92689Ff',
-  eth: '0x8A42863f8C880CBE257a0bAd503A9EBDA43ab411',
-  liquidityPoolToken: '0x81c82a8Cf97085925a56B0Bee1A8bD315A6445D9',
-  unboundDai: '0x10895Ca6157CCF0d6516dd365A4E9f53D92689Ff',
+  dai: '0xb4b085E895396a076e784F148949c309cCAB7792',
+  eth: '0x9187BEF12f16E7B40E0446f4cD7821e68149223f',
+  liquidityPoolToken: '0x6dBf98C35ad5f51E538270C6F48acB5A80b2E4Ff',
+  unboundDai: '0xE30e3BaC7123c99a6B927b551368f6b9d95Be7FC',
   unboundEth: '0xC692bF3B0525FdfCD52982075D22269de0BcA609',
-  liquidityLock: '0x94406511ab87d4d15B6a3bE179AA37f324499A08',
+  liquidityLock: '0x816101D8eb1860512a0d79820AE0E432155F3171',
   unboundStaking: '0x339004Ea6d1F74B94A905a314B52211f0DdeC00F',
   UNDUniswapPool: '0xa5c638db7a286b722406f03eaf5c8a8178927a19',
   uETHUniswapPool: '0x1ab39c83bab36c8ecbafba448748c50f5eb4db2a',
-  pancakeRouter: '0xa7F3bb34d5dBD1d32166fb2f9FBE37DCE208E566',
-  valuator: '0xfFd0Fd5C432F8aBe976Df1ea390da68ff689d29c',
+  pancakeRouter: '0xcfCd8D4d37C4a7F9632d0C729e640ba69F1eF5B3',
+  valuator: '0xDE26455c5728912e80438f77BA51A4d370a65ED2',
 }
 export const uToken = {
-  UND: '0x041Ae7a3BfF7095B158d998c63727cE7742A6C61',
+  UND: '0xE30e3BaC7123c99a6B927b551368f6b9d95Be7FC',
 }
 // Chain ID
 export const CHAIN_ID = 80001
 
 // SAFU fund address
-export const SAFU_FUND = '0xcc729a114aa8f572971d4d85B21e661E265Df20C'
+export const SAFU_FUND = '0xf493178109469c6a11D80497B67218735C2b44B7'
 
 // Dev fund address
-export const DEV_FUND = '0xeA6439DdaB48bF67e8e067b124Cf16d5bFBA8CDB'
+export const DEV_FUND = '0x2Fa2B98B091A5f641fa5dA4e5154F52250870235'
 
 // Faucet address
-export const FAUCET = '0x7FCc135CA31746aeed9a32bC7314347f6ec039C2'
+export const FAUCET = '0x455a230341Fa33F6a6a17f9bd3141C641cB4950a'
 
 // Etherscan API host (kovan)
 export const ETHERSCAN_HOST = 'https://api-kovan.etherscan.io/api'
