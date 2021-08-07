@@ -8,9 +8,9 @@
       <nuxt-link to="/claim" class="font-medium dark:text-white">
         Claim
       </nuxt-link>
-      <nuxt-link to="/account" class="font-medium dark:text-white">
+      <!-- <nuxt-link to="/account" class="font-medium dark:text-white">
         Account
-      </nuxt-link>
+      </nuxt-link> -->
       <!-- <nuxt-link to="/analytics" class="font-medium dark:text-white">
         Analytics
       </nuxt-link> -->
