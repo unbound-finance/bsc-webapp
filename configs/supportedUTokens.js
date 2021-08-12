@@ -5,7 +5,7 @@ export default [
     name: 'UND',
     address: uToken.UND,
     icon: 'und.webp',
-    lptAddress: '0x7451f151528760acf57c301f1352f5f90b3822bf',
+    lptAddress: '0x9839bb9fee8adbd2c7044772d6fdffa3a9780d1a',
     token: {
       name: 'DAI',
       exchange: 'Uniswap',
