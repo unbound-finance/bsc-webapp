@@ -4,8 +4,8 @@
       <p class="text-3xl font-bold text-gray-800 dark:text-gray-200">Faucet</p>
 
       <ul class="text-sm text-gray-600 list-disc px-4">
-        <li>You would need Kovan ETH to get started.</li>
-        <li>This faucet will give you our test tokens on kovan testnet.</li>
+        <li>You would need Testnet BNB to get started.</li>
+        <li>This faucet will give you our test tokens on BSC testnet.</li>
         <!-- <li>
           You can get kovan test ethers
           <a
@@ -48,7 +48,7 @@
       </p>
 
       <div v-if="isWalletConnected" class="flex items-center space-x-2">
-        <button
+        <!-- <button
           type="button"
           class="w-full font-medium rounded-lg py-4 appearance-none focus:outline-none"
           :title="
@@ -59,8 +59,14 @@
           @click="requestKeth"
         >
           <loader v-if="ui.ethLoading" />
-          <span v-else>Request KETH</span>
-        </button>
+          <span v-else>Request BNB</span>
+        </button> -->
+        <a
+          href="https://testnet.binance.org/faucet-smart"
+          target="_blank"
+          class="w-full text-center font-medium bg-gradient-to-r from-light-primary to-dark-primary text-white rounded-lg py-4 appearance-none focus:outline-none"
+          >Request BNB</a
+        >
 
         <button
           type="button"

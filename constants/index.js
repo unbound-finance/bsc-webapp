@@ -35,7 +35,7 @@ export const SAFU_FUND = '0xcc729a114aa8f572971d4d85B21e661E265Df20C'
 export const DEV_FUND = '0xeA6439DdaB48bF67e8e067b124Cf16d5bFBA8CDB'
 
 // Faucet address
-export const FAUCET = '0x7FCc135CA31746aeed9a32bC7314347f6ec039C2'
+export const FAUCET = '0x4eaF87751a45118C8A0FFa579a99d680e4F2078d'
 
 // Etherscan API host (kovan)
 export const ETHERSCAN_HOST = 'https://api-kovan.etherscan.io/api'
